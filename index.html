@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Abogados Especialistas en Reclamaciones — Deudas, Cláusulas Bancarias y Multas | LexReclama</title>
+  <title>Abogados especialistas en reclamaciones bancarias y multas | LexReclama</title>
   <meta name="description" content="LexReclama: reclamamos deudas impagadas, cláusula suelo, gastos hipotecarios e IRPH. También multas DGT y sanciones. Consulta gratuita. Cobramos solo si ganamos." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.lexreclama.es/" />
@@ -15,10 +15,12 @@
   <!-- Open Graph -->
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://www.lexreclama.es/" />
-  <meta property="og:title"       content="Abogados Especialistas en Reclamaciones — Deudas, Cláusulas Bancarias y Multas | LexReclama" />
+  <meta property="og:title"       content="Abogados especialistas en reclamaciones bancarias y multas | LexReclama" />
   <meta property="og:description" content="LexReclama: reclamamos deudas impagadas, cláusula suelo, gastos hipotecarios e IRPH. También multas DGT y sanciones. Consulta gratuita. Cobramos solo si ganamos." />
   <meta property="og:locale"      content="es_ES" />
+  <meta property="og:image"       content="https://www.lexreclama.es/og-image.png" />
   <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="https://www.lexreclama.es/og-image.png" />
 
   <!-- Schema.org: LegalService + LocalBusiness -->
   <script type="application/ld+json">
@@ -26,35 +28,104 @@
     "@context": "https://schema.org",
     "@type": ["LegalService", "LocalBusiness"],
     "name": "LexReclama Abogados",
-    "description": "Especialistas en reclamación de deudas, cláusulas bancarias abusivas y multas",
+    "description": "Especialistas en reclamación de deudas, cláusulas bancarias abusivas y multas. Primera consulta gratuita. Sin pago por adelantado.",
     "url": "https://www.lexreclama.es",
     "email": "hola@lexreclama.es",
+    "telephone": "+34-900-000-000",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "ES"
+    },
     "areaServed": "ES",
     "priceRange": "Sin pago por adelantado",
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+      "opens": "09:00",
+      "closes": "19:00"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "500",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "knowsAbout": [
       "reclamación de deudas",
+      "juicio monitorio",
       "cláusula suelo",
       "gastos hipotecarios",
       "IRPH",
-      "impugnación de multas DGT"
+      "comisión de apertura hipoteca",
+      "impugnación de multas DGT",
+      "recurso sanción administrativa"
+    ]
+  }
+  </script>
+
+  <!-- Schema.org: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Cuánto cuesta contratar a LexReclama?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "La consulta inicial es completamente gratuita. En la mayoría de los casos trabajamos con honorarios a éxito: solo cobramos si recuperamos tu dinero. Sin pago por adelantado."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué reclamaciones gestionáis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Reclamamos deudas impagadas mediante procedimiento monitorio, cláusulas bancarias abusivas (gastos hipotecarios, cláusula suelo, IRPH, comisión de apertura) y multas de tráfico DGT y sanciones administrativas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuánto tiempo tarda una reclamación?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Depende del tipo de caso. Las reclamaciones de deuda por procedimiento monitorio suelen resolverse en 30-90 días. Las reclamaciones bancarias extrajudiciales, en 2-4 meses. Los recursos de multas, en 1-3 meses."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Puedo reclamar la cláusula suelo o los gastos hipotecarios si ya cancelé la hipoteca?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. La cancelación de la hipoteca no extingue el derecho a reclamar las cantidades cobradas indebidamente. El plazo de prescripción es de 5 años desde que conociste el carácter abusivo de la cláusula."
+        }
+      }
     ]
   }
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <!-- GA4_SNIPPET -->
 </head>
-<body>
+<body class="home-page">
 
   <!-- NAV -->
   <nav class="nav" id="main-nav">
     <div class="nav-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span>LexReclama</a>
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <ul class="nav-links" role="list">
+        <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
+        <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
+        <li><a href="/recurrir-multas/">Recurrir multa</a></li>
+        <li><a href="/blog/">Blog jurídico</a></li>
+      </ul>
       <a href="#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
     </div>
   </nav>
@@ -63,7 +134,7 @@
   <section class="hero">
     <div class="container">
       <div class="hero-badge" data-animate>Despacho de abogados especializado</div>
-      <h1 data-animate data-delay="1">Recupera lo<br />que es tuyo.</h1>
+      <h1 data-animate data-delay="1">Recupera lo que es tuyo —<br /><span class="h1-sub">abogados especialistas en reclamaciones</span></h1>
       <p class="hero-sub" data-animate data-delay="2">Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas. Sin pago por adelantado — cobramos solo si ganamos.</p>
       <div class="hero-actions" data-animate data-delay="3">
         <a href="#calculadora" class="btn btn-primary">Calcula cuánto puedes recuperar</a>
@@ -87,11 +158,11 @@
         </article>
         <article class="stat-card" data-animate data-delay="2">
           <p class="stat-value">+2M€</p>
-          <p class="stat-label">recuperados para clientes</p>
+          <p class="stat-label">recuperados en total</p>
         </article>
         <article class="stat-card" data-animate data-delay="3">
           <p class="stat-value">24h</p>
-          <p class="stat-label">primera respuesta garantizada</p>
+          <p class="stat-label">respuesta garantizada</p>
         </article>
       </div>
     </div>
@@ -124,7 +195,7 @@
           <h3>Cláusulas bancarias abusivas</h3>
           <p>Reclamamos gastos hipotecarios, cláusula suelo, IRPH y comisiones de apertura que tu banco te cobró indebidamente.</p>
           <ul class="area-list">
-            <li>Gastos hipotecarios: notaría, gestoría, registro</li>
+            <li>Gastos: notaría, registro y gestoría</li>
             <li>Cláusula suelo: diferencia histórica</li>
             <li>IRPH: exceso respecto a Euribor</li>
           </ul>
@@ -281,7 +352,7 @@
         <div class="step-divider"></div>
         <div class="step" data-animate data-delay="2">
           <span class="step-num">03</span>
-          <h3>Cobras</h3>
+          <h3>Cobras lo tuyo</h3>
           <p>Solo cobramos honorarios si recuperamos tu dinero. Sin adelantos, sin riesgo para ti.</p>
         </div>
       </div>
@@ -303,9 +374,40 @@
           <p class="testimonio-author">Javier M. · Madrid</p>
         </article>
         <article class="testimonio-card" data-animate data-delay="2">
-          <p class="testimonio-copy">Nos anularon una multa de 600 € por defectos en la notificación. Trato rápido y muy claro.</p>
+          <p class="testimonio-copy">Nos anularon una multa de 600 € por defecto de notificación. Resolvieron rápido y con total claridad.</p>
           <p class="testimonio-author">Laura G. · Sevilla</p>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUÍAS Y RECURSOS (SEO: blog internal links) -->
+  <section class="recursos">
+    <div class="container">
+      <h2 class="section-title" data-animate>Guías jurídicas gratuitas</h2>
+      <p class="section-sub" data-animate data-delay="1">Todo lo que necesitas saber para reclamar, explicado sin tecnicismos.</p>
+      <div class="recursos-grid">
+        <a href="/blog/procedimiento-monitorio/" class="recurso-card" data-animate>
+          <span class="recurso-tag">Reclamación de deudas</span>
+          <h3>Procedimiento monitorio: qué es y cómo funciona paso a paso</h3>
+          <p>La vía judicial más rápida para recuperar deudas documentadas de hasta 250.000 €.</p>
+          <span class="recurso-link">Leer guía →</span>
+        </a>
+        <a href="/blog/recurrir-multa-dgt/" class="recurso-card" data-animate data-delay="1">
+          <span class="recurso-tag">Multas DGT</span>
+          <h3>Cómo recurrir una multa de la DGT en 2026: guía completa</h3>
+          <p>Plazos, motivos de recurso y qué documentación necesitas para impugnar una sanción de tráfico.</p>
+          <span class="recurso-link">Leer guía →</span>
+        </a>
+        <a href="/clausulas-bancarias/clausula-suelo/" class="recurso-card" data-animate data-delay="2">
+          <span class="recurso-tag">Cláusulas bancarias</span>
+          <h3>Cláusula suelo en 2026: ¿todavía puedes reclamarla?</h3>
+          <p>El TJUE declaró nulas las cláusulas suelo no transparentes. Si tienes hipoteca pre-2013, consulta si puedes reclamar.</p>
+          <span class="recurso-link">Leer guía →</span>
+        </a>
+      </div>
+      <div class="recursos-footer" data-animate>
+        <a href="/blog/" class="btn btn-ghost">Ver todas las guías →</a>
       </div>
     </div>
   </section>
@@ -416,7 +518,7 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span>LexReclama</a>
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
       <div class="footer-links">
         <a href="/aviso-legal">Aviso legal</a>
         <a href="/politica-privacidad">Política de privacidad</a>

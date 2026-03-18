@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Blue background — always visible in browser tabs -->
-  <rect width="32" height="32" rx="7" fill="#2563eb"/>
-  <!-- White "L" lettermark -->
+  <!-- Blue squircle, consistent with logo mark -->
+  <rect width="32" height="32" rx="8" fill="#2563eb"/>
   <text
     x="6" y="24"
-    font-family="-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif"
-    font-size="21"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="20"
     font-weight="700"
     fill="#ffffff">L</text>
 </svg>

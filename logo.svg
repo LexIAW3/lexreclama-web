@@ -1,17 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 296 44" width="296" height="44">
-  <!-- Icon mark: blue square with "L" -->
-  <rect x="0" y="2" width="38" height="38" rx="8" fill="#2563eb"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292 48" width="292" height="48">
+  <!-- Icon mark: blue squircle + white L -->
+  <rect x="0" y="4" width="40" height="40" rx="10" fill="#2563eb"/>
   <text
-    x="8" y="30"
-    font-family="-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif"
-    font-size="22"
+    x="9" y="33"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="24"
     font-weight="700"
     fill="#ffffff">L</text>
-  <!-- Wordmark -->
+  <!-- Wordmark: single black color, no split -->
   <text
-    x="50" y="33"
-    font-family="-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif"
-    font-size="28"
+    x="52" y="34"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="26"
     font-weight="700"
     fill="#0a0a0a"
     letter-spacing="-0.8">LexReclama</text>

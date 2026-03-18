@@ -84,64 +84,13 @@
     }
   ]
   </script>
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827; background: #fff; }
-    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
-    .nav { background: #1e3a5f; padding: 16px 0; }
-    .nav .container { display: flex; justify-content: space-between; align-items: center; }
-    .nav .logo { color: #fff; font-size: 1.4rem; font-weight: 700; text-decoration: none; }
-    .nav .logo span { color: #f59e0b; }
-    .nav-links { display: flex; gap: 24px; list-style: none; }
-    .nav-links a { color: #cbd5e1; font-size: 0.9rem; text-decoration: none; }
-    .nav-links a:hover { color: #fff; }
-    .hero { background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%); color: #fff; padding: 64px 0 48px; }
-    .hero .badge { display: inline-block; background: rgba(255,255,255,0.15); color: #e0f2fe; font-size: 0.8rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .hero h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; line-height: 1.25; margin-bottom: 16px; }
-    .hero p { color: #bfdbfe; font-size: 1.05rem; line-height: 1.65; max-width: 640px; margin-bottom: 28px; }
-    .hero .cta-group { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn-primary { display: inline-block; background: #f59e0b; color: #1e3a5f; padding: 14px 28px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; text-decoration: none; }
-    .btn-primary:hover { background: #d97706; }
-    .btn-secondary { display: inline-block; background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.5); padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; }
-    .stats-bar { background: #f0f9ff; border-bottom: 1px solid #bae6fd; padding: 20px 0; }
-    .stats-bar .container { display: flex; gap: 32px; flex-wrap: wrap; }
-    .stat { display: flex; flex-direction: column; }
-    .stat strong { font-size: 1.6rem; font-weight: 700; color: #1e3a5f; }
-    .stat span { font-size: 0.82rem; color: #6b7280; }
-    .section { padding: 64px 0; }
-    .section-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
-    .section-sub { color: #6b7280; margin-bottom: 40px; font-size: 1rem; }
-    /* Clause cards */
-    .clause-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 32px; }
-    .clause-card { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px; }
-    .clause-card .tag { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 12px; }
-    .clause-card h3 { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
-    .clause-card p { font-size: 0.88rem; color: #6b7280; line-height: 1.55; }
-    .clause-card .recover { font-size: 0.9rem; font-weight: 700; color: #16a34a; margin-top: 12px; }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-    .step { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 28px 24px; }
-    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #1e3a5f; color: #fff; border-radius: 50%; font-weight: 700; font-size: 0.95rem; margin-bottom: 16px; }
-    .step h3 { font-size: 1rem; font-weight: 600; color: #111827; margin-bottom: 8px; }
-    .step p { font-size: 0.9rem; color: #6b7280; line-height: 1.6; }
-    .recovery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-    .recovery-card { background: #fff; border: 2px solid #e5e7eb; border-radius: 12px; padding: 24px; text-align: center; }
-    .recovery-card .amount { font-size: 1.8rem; font-weight: 700; color: #16a34a; margin-bottom: 6px; }
-    .recovery-card .label { font-size: 0.85rem; color: #6b7280; }
-    .cta-block { background: #1e3a5f; border-radius: 16px; padding: 48px 40px; color: #fff; text-align: center; }
-    .cta-block h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
-    .cta-block p { color: #bfdbfe; margin-bottom: 28px; font-size: 1rem; }
-    .faq-item { border-bottom: 1px solid #e5e7eb; padding: 20px 0; }
-    .faq-item h3 { font-size: 1rem; font-weight: 600; color: #111827; margin-bottom: 8px; }
-    .faq-item p { font-size: 0.95rem; color: #374151; line-height: 1.65; }
-    .footer { background: #111827; color: #9ca3af; padding: 32px 0; text-align: center; font-size: 0.85rem; }
-    .footer .logo { color: #fff; font-size: 1.2rem; font-weight: 700; text-decoration: none; display: block; margin-bottom: 12px; }
-    .footer .logo span { color: #f59e0b; }
-    .footer p { margin-bottom: 8px; line-height: 1.6; }
-    .footer a { color: #9ca3af; }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
+<body class="service-page">
 
   <nav class="nav">
     <div class="container">
@@ -208,7 +157,7 @@
     </section>
 
     <!-- CÓMO FUNCIONA -->
-    <section class="section" style="background:#f9fafb;padding:64px 0;">
+    <section class="section alt">
       <div class="container">
         <h2 class="section-title">¿Cómo funciona el proceso de reclamación?</h2>
         <p class="section-sub">Tres pasos desde el análisis hasta la recuperación.</p>
@@ -251,12 +200,12 @@
             <div class="label">IRPH (diferencial con Euribor acumulado en 20 años)</div>
           </div>
         </div>
-        <p style="margin-top:24px;color:#6b7280;font-size:0.9rem;">* Cifras orientativas. Cada caso es diferente según el importe de la hipoteca, el banco y las fechas de contratación.</p>
+        <p class="section-note">* Cifras orientativas. Cada caso es diferente según el importe de la hipoteca, el banco y las fechas de contratación.</p>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="section" style="padding-top:0;">
+    <section class="section tight">
       <div class="container">
         <div class="cta-block">
           <h2>¿Tienes o tuviste una hipoteca? Comprueba si puedes reclamar</h2>
@@ -267,7 +216,7 @@
     </section>
 
     <!-- FAQ -->
-    <section class="section" style="padding-top:0;">
+    <section class="section tight">
       <div class="container">
         <h2 class="section-title">Preguntas frecuentes sobre cláusulas bancarias abusivas</h2>
 
