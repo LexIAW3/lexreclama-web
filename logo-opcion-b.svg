@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 52" width="340" height="52">
+  <!-- Opción B: Balanza minimalista + wordmark -->
+  <!-- Símbolo: 3 líneas geométricas representando una balanza en equilibrio (derecho+tech) -->
+
+  <!-- Barra vertical central -->
+  <rect x="18" y="8" width="2.5" height="36" rx="1.2" fill="#2563eb"/>
+  <!-- Barra horizontal superior -->
+  <rect x="4" y="8" width="30" height="2.5" rx="1.2" fill="#2563eb"/>
+  <!-- Plato izquierdo -->
+  <rect x="4" y="24" width="11" height="2.5" rx="1.2" fill="#0a0a0a"/>
+  <!-- Plato derecho -->
+  <rect x="23" y="24" width="11" height="2.5" rx="1.2" fill="#0a0a0a"/>
+  <!-- Base -->
+  <rect x="11" y="44" width="16" height="2.5" rx="1.2" fill="#0a0a0a"/>
+
+  <!-- Wordmark -->
+  <text
+    x="52" y="38"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="30"
+    font-weight="700"
+    fill="#0a0a0a"
+    letter-spacing="-1">LexReclama</text>
+</svg>

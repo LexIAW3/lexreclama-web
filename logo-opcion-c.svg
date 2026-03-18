@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 52" width="310" height="52">
+  <!-- Opción C: Monograma "LR" geométrico como sello + wordmark completo -->
+  <!-- Idea: dos letras superpuestas en negativo sobre fondo oscuro — marca de sello/estampilla legal -->
+
+  <!-- Fondo del sello — cuadrado redondeado con borde negro -->
+  <rect x="0" y="4" width="44" height="44" rx="6" fill="#0a0a0a"/>
+  <!-- "L" en blanco -->
+  <text
+    x="5" y="35"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="26"
+    font-weight="800"
+    fill="#ffffff"
+    letter-spacing="-2">L</text>
+  <!-- "R" en azul -->
+  <text
+    x="20" y="35"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="26"
+    font-weight="800"
+    fill="#2563eb"
+    letter-spacing="-2">R</text>
+
+  <!-- Wordmark -->
+  <text
+    x="58" y="36"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="26"
+    font-weight="700"
+    fill="#0a0a0a"
+    letter-spacing="-0.8">LexReclama</text>
+</svg>

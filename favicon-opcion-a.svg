@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Favicon A: "LR" en blanco sobre fondo negro — visible en cualquier fondo (claro u oscuro) -->
+  <rect width="32" height="32" rx="7" fill="#0a0a0a"/>
+  <text
+    x="2" y="22"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="14"
+    font-weight="800"
+    fill="#ffffff"
+    letter-spacing="-1">L</text>
+  <text
+    x="14" y="22"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="14"
+    font-weight="800"
+    fill="#2563eb"
+    letter-spacing="-1">R</text>
+</svg>

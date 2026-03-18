@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>LexReclama — Opciones de Logo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Inter', sans-serif; background: #f8f9fa; color: #0a0a0a; }
+  .page { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+  h1 { font-size: 14px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 40px; }
+  .option { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 40px; margin-bottom: 24px; }
+  .option-label { font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .option-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .option-desc { font-size: 14px; color: #6b7280; margin-bottom: 32px; line-height: 1.5; }
+  .preview-row { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .preview-box { border-radius: 12px; padding: 32px 40px; display: flex; align-items: center; justify-content: center; flex: 1; min-width: 200px; }
+  .preview-box.light { background: #ffffff; border: 1px solid #e5e7eb; }
+  .preview-box.dark { background: #0a0a0a; border: 1px solid #222; }
+  .preview-box.navy { background: #0f172a; border: 1px solid #1e293b; }
+  .preview-label { font-size: 11px; color: #9ca3af; margin-top: 8px; text-align: center; }
+  .preview-wrap { text-align: center; flex: 1; }
+  .favicon-row { display: flex; gap: 24px; margin-top: 32px; }
+  .favicon-item { text-align: center; }
+  .favicon-item img { width: 32px; height: 32px; }
+  .favicon-bg { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 8px; }
+  .separator { border: none; border-top: 1px solid #e5e7eb; margin: 40px 0; }
+  .note { font-size: 13px; color: #6b7280; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 16px; margin-top: 24px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>LexReclama — Opciones de Identidad Visual</h1>
+
+  <!-- Opción A -->
+  <div class="option">
+    <div class="option-label">Opción A</div>
+    <div class="option-name">Wordmark cromático</div>
+    <div class="option-desc">
+      Sin icono. La fuerza está en el contraste tipográfico: "Lex" en negro, "Reclama" en azul.
+      Estilo Stripe / Linear. El color crea jerarquía sin necesitar símbolo adicional.
+      Máximo impacto en cualquier tamaño.
+    </div>
+    <div class="preview-row">
+      <div class="preview-wrap">
+        <div class="preview-box light">
+          <img src="logo-opcion-a.svg" style="height:44px">
+        </div>
+        <div class="preview-label">Fondo claro</div>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-box dark">
+          <img src="logo-opcion-a.svg" style="height:44px; filter: invert(1);">
+        </div>
+        <div class="preview-label">Fondo oscuro</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opción B -->
+  <div class="option">
+    <div class="option-label">Opción B</div>
+    <div class="option-name">Balanza + wordmark</div>
+    <div class="option-desc">
+      Símbolo abstracto de balanza (3 líneas geométricas) que evoca justicia y equilibrio
+      sin ser literal ni anticuado. Azul + negro. Conecta lo legal con lo tecnológico.
+    </div>
+    <div class="preview-row">
+      <div class="preview-wrap">
+        <div class="preview-box light">
+          <img src="logo-opcion-b.svg" style="height:52px">
+        </div>
+        <div class="preview-label">Fondo claro</div>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-box navy">
+          <img src="logo-opcion-b.svg" style="height:52px; filter: invert(1) hue-rotate(180deg);">
+        </div>
+        <div class="preview-label">Fondo oscuro</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opción C -->
+  <div class="option">
+    <div class="option-label">Opción C</div>
+    <div class="option-name">Sello LR + wordmark</div>
+    <div class="option-desc">
+      Monograma "LR" en sello negro — dos letras, dos colores (blanco y azul).
+      Da sensación de marca registrada, premium, como un sello de garantía.
+      Funciona muy bien en pequeño (favicon, icono de app).
+    </div>
+    <div class="preview-row">
+      <div class="preview-wrap">
+        <div class="preview-box light">
+          <img src="logo-opcion-c.svg" style="height:52px">
+        </div>
+        <div class="preview-label">Fondo claro</div>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-box dark">
+          <img src="logo-opcion-c.svg" style="height:52px; filter: brightness(2);">
+        </div>
+        <div class="preview-label">Fondo oscuro</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="separator">
+
+  <!-- Favicons -->
+  <div class="option">
+    <div class="option-label">Favicons</div>
+    <div class="option-name">Opciones de favicon (32×32)</div>
+    <div class="option-desc">Visible en tabs del navegador y marcadores. Probado en fondos claro, oscuro y gris.</div>
+    <div class="preview-row">
+      <div style="text-align:center">
+        <div class="preview-box light" style="padding:16px; gap:16px; display:flex; justify-content:center; align-items:center;">
+          <div>
+            <img src="favicon-opcion-a.svg" width="32" height="32">
+            <div class="preview-label" style="margin-top:6px">Opción A<br><small>LR negro+azul</small></div>
+          </div>
+          <div>
+            <img src="favicon-opcion-b.svg" width="32" height="32">
+            <div class="preview-label" style="margin-top:6px">Opción B<br><small>L azul+punto</small></div>
+          </div>
+          <div>
+            <img src="favicon.svg" width="32" height="32">
+            <div class="preview-label" style="margin-top:6px">Actual<br><small>L azul</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Mi recomendación:</strong> Opción A para máxima modernidad (Stripe-style),
+    Opción C si se quiere un icono de marca reutilizable. Para el favicon, Opción A (LR negro)
+    funciona mejor en todos los fondos. ¿Cuál línea prefieres?
+  </div>
+</div>
+</body>
+</html>

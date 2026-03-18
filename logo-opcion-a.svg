@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 48" width="320" height="48">
+  <!-- Opción A: Wordmark puro con acento cromático — "Lex" negro + "Reclama" azul -->
+  <!-- Inspiración: Stripe, Linear — sin icono, la tipografía ES la marca -->
+  <text
+    x="0" y="38"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="36"
+    font-weight="800"
+    fill="#0a0a0a"
+    letter-spacing="-1.5">Lex</text>
+  <text
+    x="76" y="38"
+    font-family="'Inter','Helvetica Neue',Helvetica,Arial,sans-serif"
+    font-size="36"
+    font-weight="800"
+    fill="#2563eb"
+    letter-spacing="-1.5">Reclama</text>
+</svg>
