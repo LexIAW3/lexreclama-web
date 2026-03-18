@@ -88,6 +88,9 @@
     }
   ]
   </script>
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
@@ -97,16 +100,16 @@
 <body class="service-page">
 
   <!-- NAV -->
-  <nav class="nav">
-    <div class="container">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
-      <ul class="nav-links">
-        <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <ul class="nav-links" role="list">
+        <li><a href="/reclamacion-deudas/" aria-current="page">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
-        <li><a href="/recurrir-multas/">Multas DGT</a></li>
-        <li><a href="/blog/recurrir-multa-dgt/">Blog</a></li>
-        <li><a href="/#contacto">Contacto</a></li>
+        <li><a href="/recurrir-multas/">Recurrir multa</a></li>
+        <li><a href="/blog/">Blog jurídico</a></li>
       </ul>
+      <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
     </div>
   </nav>
 
@@ -117,8 +120,8 @@
       <h1>Reclamación de deudas:<br>recuperamos lo que te deben</h1>
       <p>¿Tienes una factura impagada, un préstamo sin devolver o cuotas de comunidad pendientes? Con el procedimiento monitorio podemos recuperar tu dinero en 30-90 días. Solo cobramos si ganamos.</p>
       <div class="cta-group">
-        <a href="/#contacto" class="btn-primary">Consulta gratuita — cuéntanos tu caso</a>
-        <a href="/blog/procedimiento-monitorio/" class="btn-secondary">¿Cómo funciona el monitorio?</a>
+        <a href="/#contacto" class="btn btn-primary">Consulta gratuita — cuéntanos tu caso</a>
+        <a href="/blog/procedimiento-monitorio/" class="btn btn-secondary">¿Cómo funciona el monitorio?</a>
       </div>
     </div>
   </section>
@@ -189,7 +192,7 @@
         <div class="cta-block">
           <h2>¿Te deben dinero? Actúa antes de que prescriba</h2>
           <p>Las deudas prescriben a los 5 años. Cuanto antes actúes, más posibilidades de cobrar. Primera consulta gratuita y sin compromiso.</p>
-          <a href="/#contacto" class="btn-primary">Analizar mi caso gratuitamente</a>
+          <a href="/#contacto" class="btn btn-primary">Analizar mi caso gratuitamente</a>
         </div>
       </div>
     </section>
@@ -231,10 +234,16 @@
 
   <!-- FOOTER -->
   <footer class="footer">
-    <div class="container">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
-      <p>LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
-      <p>© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
+    <div class="container footer-inner">
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <div class="footer-links">
+        <a href="/aviso-legal">Aviso legal</a>
+        <a href="/politica-privacidad">Política de privacidad</a>
+        <a href="/politica-cookies">Política de cookies</a>
+        <a href="/condiciones">Condiciones generales</a>
+      </div>
+      <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
+      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
     </div>
   </footer>
 

@@ -9,51 +9,135 @@
   <link rel="canonical" href="https://www.lexreclama.es/aviso-legal/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; color: #1f2937; background: #fff; line-height: 1.7; }
-    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
-    .nav { background: #1e3a5f; padding: 16px 0; }
-    .nav .container { display: flex; justify-content: space-between; align-items: center; }
-    .nav .logo { color: #fff; font-size: 1.4rem; font-weight: 700; text-decoration: none; }
-    .nav .logo span { color: #f59e0b; }
-    .nav-links { display: flex; gap: 24px; list-style: none; }
-    .nav-links a { color: #cbd5e1; font-size: 0.9rem; text-decoration: none; }
-    .nav-links a:hover { color: #fff; }
-    .page-header { background: #1e3a5f; color: #fff; padding: 48px 0 40px; }
-    .page-header h1 { font-size: 2rem; font-weight: 700; }
-    .page-header p { color: #93c5fd; margin-top: 8px; font-size: 0.95rem; }
-    .content { padding: 48px 0 64px; }
-    .content h2 { font-size: 1.25rem; font-weight: 600; color: #1e3a5f; margin: 36px 0 12px; }
-    .content h2:first-child { margin-top: 0; }
-    .content p { margin-bottom: 14px; color: #374151; }
-    .content ul { padding-left: 20px; margin-bottom: 14px; color: #374151; }
-    .content ul li { margin-bottom: 6px; }
-    .content a { color: #2563eb; }
-    .last-update { font-size: 0.85rem; color: #9ca3af; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e5e7eb; }
-    .footer { background: #111827; color: #9ca3af; padding: 32px 0; text-align: center; font-size: 0.85rem; }
-    .footer .logo { color: #fff; font-size: 1.2rem; font-weight: 700; text-decoration: none; display: block; margin-bottom: 12px; }
-    .footer .logo span { color: #f59e0b; }
-    .footer p { margin-bottom: 8px; line-height: 1.6; }
-    .footer a { color: #9ca3af; }
-    .footer-links { margin: 12px 0; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .footer-links a { color: #6b7280; font-size: 0.82rem; text-decoration: none; }
-    .footer-links a:hover { color: #9ca3af; }
-    @media (max-width: 640px) { .nav-links { display: none; } .page-header h1 { font-size: 1.5rem; } }
+    .legal-page {
+      background: #fff;
+      color: #1f2937;
+      line-height: 1.7;
+    }
+
+    .legal-page .page-header {
+      background: #1e3a5f;
+      color: #fff;
+      padding: 48px 0 40px;
+    }
+
+    .legal-page .page-header .container,
+    .legal-page .content .container {
+      width: min(860px, 100% - 40px);
+    }
+
+    .legal-page .page-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .legal-page .page-header p {
+      color: #93c5fd;
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    .legal-page .content {
+      padding: 48px 0 64px;
+    }
+
+    .legal-page .content h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1e3a5f;
+      margin: 36px 0 12px;
+    }
+
+    .legal-page .content h2:first-child {
+      margin-top: 0;
+    }
+
+    .legal-page .content p {
+      margin-bottom: 14px;
+      color: #374151;
+    }
+
+    .legal-page .content ul {
+      padding-left: 20px;
+      margin-bottom: 14px;
+      color: #374151;
+    }
+
+    .legal-page .content ul li {
+      margin-bottom: 6px;
+    }
+
+    .legal-page .content a {
+      color: #2563eb;
+    }
+
+    .legal-page table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+
+    .legal-page th {
+      background: #1e3a5f;
+      color: #fff;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .legal-page td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #374151;
+    }
+
+    .legal-page tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    .legal-page code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: monospace;
+    }
+
+    .legal-page .last-update {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 640px) {
+      .legal-page .page-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .legal-page table {
+        font-size: 0.8rem;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="legal-page">
 
-  <nav class="nav">
-    <div class="container">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
-      <ul class="nav-links">
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
-        <li><a href="/recurrir-multas/">Multas DGT</a></li>
-        <li><a href="/#contacto">Contacto</a></li>
+        <li><a href="/recurrir-multas/">Recurrir multa</a></li>
+        <li><a href="/blog/">Blog jurídico</a></li>
       </ul>
+      <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
     </div>
   </nav>
 
@@ -103,16 +187,16 @@
   </div>
 
   <footer class="footer">
-    <div class="container">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
-      <p>LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
+    <div class="container footer-inner">
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
       <div class="footer-links">
-        <a href="/aviso-legal/">Aviso legal</a>
-        <a href="/politica-privacidad/">Política de privacidad</a>
-        <a href="/politica-cookies/">Política de cookies</a>
-        <a href="/condiciones/">Condiciones generales</a>
+        <a href="/aviso-legal">Aviso legal</a>
+        <a href="/politica-privacidad">Política de privacidad</a>
+        <a href="/politica-cookies">Política de cookies</a>
+        <a href="/condiciones">Condiciones generales</a>
       </div>
-      <p>© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
+      <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
+      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
     </div>
   </footer>
 

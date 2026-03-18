@@ -176,6 +176,8 @@ h3 {
 .nav-inner,
 .nav .container {
   min-height: 68px;
+  width: min(1140px, 100% - 40px);
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1072,7 +1074,8 @@ textarea {
 }
 
 @media (max-width: 760px) {
-  .container {
+  .container,
+  .nav-inner {
     width: min(1140px, 100% - 28px);
   }
 
