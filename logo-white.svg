@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 296 44" width="296" height="44">
+  <!-- Icon mark: blue square with "L" -->
+  <rect x="0" y="2" width="38" height="38" rx="8" fill="#2563eb"/>
+  <text
+    x="8" y="30"
+    font-family="-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="22"
+    font-weight="700"
+    fill="#ffffff">L</text>
+  <!-- Wordmark in white -->
+  <text
+    x="50" y="33"
+    font-family="-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Helvetica,Arial,sans-serif"
+    font-size="28"
+    font-weight="700"
+    fill="#ffffff"
+    letter-spacing="-0.8">LexReclama</text>
+</svg>
