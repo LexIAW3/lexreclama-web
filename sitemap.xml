@@ -122,6 +122,12 @@
       <image:caption>Tabla de costes del proceso monitorio en España: tasas y honorarios</image:caption>
     </image:image>
   </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/reclamar-gastos-hipoteca/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
   <!-- Páginas legales (noindex — excluidas de indexación) -->
   <url>
     <loc>https://www.lexreclama.es/aviso-legal/</loc>
