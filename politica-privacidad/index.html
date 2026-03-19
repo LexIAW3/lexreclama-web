@@ -2,15 +2,35 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon.svg" sizes="any" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Política de Privacidad | LexReclama</title>
   <meta name="description" content="Política de privacidad de LexReclama. Cómo tratamos sus datos personales conforme al RGPD y la LOPD-GDD." />
-  <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="política de privacidad LexReclama, RGPD, protección de datos" />
+<meta name="robots" content="noindex, nofollow" />
   <link rel="canonical" href="https://www.lexreclama.es/politica-privacidad/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var key = 'lex_theme_preference_v1';
+        var storedTheme = localStorage.getItem(key);
+        var systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = (storedTheme === 'light' || storedTheme === 'dark')
+          ? storedTheme
+          : (systemPrefersLight ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="/styles.css" />
   <style>
     .legal-page {
@@ -135,9 +155,39 @@
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
-        <li><a href="/blog/">Blog jurídico</a></li>
+        <li><a href="/blog/">Blog</a></li>
       </ul>
-      <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
+      <div class="nav-actions">
+
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+
+          <span class="icon-sun" aria-hidden="true">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+
+              <circle cx="12" cy="12" r="4"></circle>
+
+              <path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"></path>
+
+            </svg>
+
+          </span>
+
+          <span class="icon-moon" aria-hidden="true">
+
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7.1 7.1 0 0 0 9.8 9.8z"></path>
+
+            </svg>
+
+          </span>
+
+        </button>
+
+        <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
+
+      </div>
     </div>
   </nav>
 
@@ -156,8 +206,8 @@
         <li><strong>Identidad:</strong> LexReclama</li>
         <li><strong>CIF/NIF:</strong> [CIF]</li>
         <li><strong>Domicilio:</strong> [DIRECCIÓN]</li>
-        <li><strong>Email de contacto:</strong> <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></li>
-        <li><strong>Delegado de Protección de Datos (DPO):</strong> <a href="mailto:privacidad@lexreclama.es">privacidad@lexreclama.es</a></li>
+        <li><strong>Email de contacto:</strong> <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></li>
+        <li><strong>Delegado de Protección de Datos (DPO):</strong> <a href="mailto:dpo@lexreclama.es">dpo@lexreclama.es</a></li>
       </ul>
 
       <h2>2. Datos personales tratados</h2>
@@ -198,14 +248,14 @@
       <p>En caso de transferencias fuera del Espacio Económico Europeo, se adoptarán las salvaguardas adecuadas (cláusulas contractuales tipo de la Comisión Europea).</p>
 
       <h2>6. Sus derechos (ARCO-POL)</h2>
-      <p>Puede ejercer los derechos de <strong>Acceso, Rectificación, Cancelación/Supresión, Oposición, Portabilidad, Limitación del tratamiento y a no ser objeto de decisiones automatizadas</strong>, enviando solicitud escrita con copia del DNI a <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a> o a [DIRECCIÓN]. Plazo de respuesta: <strong>30 días</strong> (prorrogable 2 meses adicionales en casos complejos).</p>
+      <p>Puede ejercer los derechos de <strong>Acceso, Rectificación, Cancelación/Supresión, Oposición, Portabilidad, Limitación del tratamiento y a no ser objeto de decisiones automatizadas</strong>, enviando solicitud escrita con copia del DNI a <a href="mailto:info@lexreclama.es">info@lexreclama.es</a> o a [DIRECCIÓN]. Plazo de respuesta: <strong>30 días</strong> (prorrogable 2 meses adicionales en casos complejos).</p>
       <p>Puede presentar reclamación ante la <strong>Agencia Española de Protección de Datos (AEPD)</strong> — <a href="https://www.aepd.es" target="_blank" rel="noopener">www.aepd.es</a></p>
 
       <h2>7. Medidas de seguridad</h2>
       <p>LexReclama ha adoptado las medidas técnicas y organizativas necesarias para garantizar la seguridad e integridad de los datos personales y evitar su alteración, pérdida, tratamiento o acceso no autorizado, conforme al artículo 32 RGPD.</p>
 
       <h2>8. Delegado de Protección de Datos (DPO)</h2>
-      <p>Dado que el Despacho trata de forma habitual datos relativos a procedimientos judiciales y datos en el ejercicio de funciones de asesoramiento jurídico, se ha designado un Delegado de Protección de Datos contactable en: <a href="mailto:privacidad@lexreclama.es">privacidad@lexreclama.es</a></p>
+      <p>Dado que el Despacho trata de forma habitual datos relativos a procedimientos judiciales y datos en el ejercicio de funciones de asesoramiento jurídico, se ha designado un Delegado de Protección de Datos contactable en: <a href="mailto:dpo@lexreclama.es">dpo@lexreclama.es</a></p>
 
       <p class="last-update">Última actualización: marzo de 2026</p>
 
@@ -222,9 +272,18 @@
         <a href="/condiciones">Condiciones generales</a>
       </div>
       <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
-      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
+        </a>
+      </div>
+      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
     </div>
   </footer>
 
+  <script src="/app.js"></script>
 </body>
 </html>

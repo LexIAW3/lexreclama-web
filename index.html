@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Abogados especialistas en reclamaciones bancarias y multas | LexReclama</title>
   <meta name="description" content="LexReclama: reclamamos deudas impagadas, cláusula suelo, gastos hipotecarios e IRPH. También multas DGT y sanciones. Consulta gratuita. Cobramos solo si ganamos." />
-  <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="abogados reclamaciones, cláusula suelo, gastos hipotecarios, IRPH, multa DGT, procedimiento monitorio, reclamación deuda" />
+<meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.lexreclama.es/" />
 
   <!-- Favicon -->
@@ -18,9 +19,12 @@
   <meta property="og:title"       content="Abogados especialistas en reclamaciones bancarias y multas | LexReclama" />
   <meta property="og:description" content="LexReclama: reclamamos deudas impagadas, cláusula suelo, gastos hipotecarios e IRPH. También multas DGT y sanciones. Consulta gratuita. Cobramos solo si ganamos." />
   <meta property="og:locale"      content="es_ES" />
-  <meta property="og:image"       content="https://www.lexreclama.es/og-image.png" />
+    <meta property="og:site_name" content="LexReclama" />
+<meta property="og:image"       content="https://www.lexreclama.es/og-image.png" />
   <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:image"      content="https://www.lexreclama.es/og-image.png" />
+    <meta name="twitter:title" content="Abogados especialistas en reclamaciones bancarias y multas | LexReclama" />
+  <meta name="twitter:description" content="Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas. Cobramos solo si ganamos." />
+<meta name="twitter:image"      content="https://www.lexreclama.es/og-image.png" />
 
   <!-- Schema.org: LegalService + LocalBusiness -->
   <script type="application/ld+json">
@@ -30,7 +34,7 @@
     "name": "LexReclama Abogados",
     "description": "Especialistas en reclamación de deudas, cláusulas bancarias abusivas y multas. Primera consulta gratuita. Sin pago por adelantado.",
     "url": "https://www.lexreclama.es",
-    "email": "hola@lexreclama.es",
+    "email": "info@lexreclama.es",
     "telephone": "+34-900-000-000",
     "address": {
       "@type": "PostalAddress",
@@ -110,6 +114,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      try {
+        var key = 'lex_theme_preference_v1';
+        var storedTheme = localStorage.getItem(key);
+        var systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        var theme = (storedTheme === 'light' || storedTheme === 'dark')
+          ? storedTheme
+          : (systemPrefersLight ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (error) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="styles.css" />
 
   <!-- GA4_SNIPPET -->
@@ -124,25 +143,82 @@
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
-        <li><a href="/blog/">Blog jurídico</a></li>
+        <li><a href="/blog/">Blog</a></li>
       </ul>
-      <a href="#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
+      <div class="nav-actions">
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
+          <span></span><span></span><span></span>
+        </button>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+          <span class="icon-sun" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"></path>
+            </svg>
+          </span>
+          <span class="icon-moon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7.1 7.1 0 0 0 9.8 9.8z"></path>
+            </svg>
+          </span>
+        </button>
+        <a href="#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
+      </div>
     </div>
   </nav>
+
+  <!-- MOBILE NAV -->
+  <div class="nav-mobile" id="nav-mobile" role="navigation" aria-label="Menú móvil">
+    <div class="nav-mobile-inner">
+      <a href="/reclamacion-deudas/">Reclamar deuda</a>
+      <a href="/clausulas-bancarias/">Cláusulas bancarias</a>
+      <a href="/recurrir-multas/">Recurrir multa</a>
+      <a href="/blog/">Blog</a>
+      <a href="#contacto" class="btn btn-primary">Consulta gratuita</a>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
     <div class="container">
       <div class="hero-badge" data-animate>Despacho de abogados especializado</div>
-      <h1 data-animate data-delay="1">Recupera lo que es tuyo —<br /><span class="h1-sub">abogados especialistas en reclamaciones</span></h1>
-      <p class="hero-sub" data-animate data-delay="2">Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas. Sin pago por adelantado — cobramos solo si ganamos.</p>
+      <h1 data-animate data-delay="1">Recupera lo que<br />es <span class="text-gradient">tuyo.</span><span class="h1-sub">Abogados especialistas en reclamaciones · Sin pago por adelantado</span></h1>
+      <p class="hero-sub" data-animate data-delay="2">Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas. Cobramos solo si ganamos — sin riesgo para ti.</p>
       <div class="hero-actions" data-animate data-delay="3">
         <a href="#calculadora" class="btn btn-primary">Calcula cuánto puedes recuperar</a>
-        <a href="#como-funciona" class="btn btn-ghost">Cómo funciona</a>
+        <a href="#como-funciona" class="btn btn-ghost">Cómo funciona →</a>
       </div>
       <p class="hero-note" data-animate data-delay="4">Consulta inicial gratuita · Sin compromiso · Respuesta en 24h</p>
     </div>
   </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="container">
+      <div class="trust-bar-inner" data-animate>
+        <div class="trust-bar-item trust-bar-rating">
+          <span class="trust-bar-stars">★★★★★</span>
+          <span class="trust-bar-score">4.9/5</span>
+          <span style="color:var(--muted-2)">en Google</span>
+        </div>
+        <div class="trust-bar-divider"></div>
+        <div class="trust-bar-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          +500 casos resueltos
+        </div>
+        <div class="trust-bar-divider"></div>
+        <div class="trust-bar-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Colegiados en el ICAM
+        </div>
+        <div class="trust-bar-divider"></div>
+        <div class="trust-bar-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Respuesta en 24h
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- STATS -->
   <section class="stats">
@@ -171,6 +247,7 @@
   <!-- AREAS -->
   <section class="areas" id="como-funciona">
     <div class="container">
+      <span class="eyebrow" data-animate>Áreas de práctica</span>
       <h2 class="section-title" data-animate>Servicios de reclamación jurídica</h2>
       <p class="section-sub" data-animate data-delay="1">Tres especialidades, un mismo objetivo: que recuperes tu dinero.</p>
       <div class="areas-grid">
@@ -223,6 +300,7 @@
   <section class="calculadora" id="calculadora">
     <div class="container">
       <div class="calc-header">
+        <span class="eyebrow" data-animate>Calculadora</span>
         <h2 class="section-title" data-animate>Calcula tu recuperación</h2>
         <p class="section-sub" data-animate data-delay="1">Estimación orientativa en segundos. Sin datos personales.</p>
       </div>
@@ -336,6 +414,7 @@
   <!-- PROCESO -->
   <section class="proceso">
     <div class="container">
+      <span class="eyebrow" data-animate>Proceso</span>
       <h2 class="section-title" data-animate>Cómo funciona nuestra reclamación</h2>
       <div class="steps">
         <div class="step" data-animate>
@@ -359,23 +438,54 @@
     </div>
   </section>
 
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <div class="container">
+      <div class="cta-banner-inner" data-animate>
+        <div class="cta-banner-eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Sin coste inicial
+        </div>
+        <h2>¿Tienes dinero por reclamar?<br /><span class="text-gradient">Averígualo en 2 minutos.</span></h2>
+        <p>Analizamos tu caso sin compromiso. Si no podemos ayudarte, te lo decimos desde el principio. Solo cobramos cuando tú cobras.</p>
+        <div class="cta-banner-actions">
+          <a href="#contacto" class="btn btn-primary">Consulta gratuita ahora</a>
+          <a href="#calculadora" class="btn btn-ghost">Ver estimación →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- TESTIMONIOS -->
   <section class="testimonios">
     <div class="container">
+      <span class="eyebrow" data-animate>Casos de éxito</span>
       <h2 class="section-title" data-animate>Clientes que ya recuperaron su dinero</h2>
       <p class="section-sub" data-animate data-delay="1">Historias reales de reclamaciones resueltas con éxito.</p>
       <div class="testimonios-grid">
         <article class="testimonio-card" data-animate>
-          <p class="testimonio-copy">Recuperamos 18.400 € de gastos hipotecarios en menos de cinco meses. Nos guiaron en todo el proceso.</p>
-          <p class="testimonio-author">María R. · Valencia</p>
+          <div class="stars">★★★★★</div>
+          <p class="testimonio-copy">Recuperamos 18.400 € de gastos hipotecarios en menos de cinco meses. Nos guiaron en todo el proceso sin complicaciones.</p>
+          <div class="testimonio-footer">
+            <span class="testimonio-avatar">MR</span>
+            <span class="testimonio-author">María R. · Valencia</span>
+          </div>
         </article>
         <article class="testimonio-card" data-animate data-delay="1">
+          <div class="stars">★★★★★</div>
           <p class="testimonio-copy">Tenía una deuda comercial bloqueada desde hacía un año. Con LexReclama cobramos en menos de 60 días.</p>
-          <p class="testimonio-author">Javier M. · Madrid</p>
+          <div class="testimonio-footer">
+            <span class="testimonio-avatar">JM</span>
+            <span class="testimonio-author">Javier M. · Madrid</span>
+          </div>
         </article>
         <article class="testimonio-card" data-animate data-delay="2">
+          <div class="stars">★★★★★</div>
           <p class="testimonio-copy">Nos anularon una multa de 600 € por defecto de notificación. Resolvieron rápido y con total claridad.</p>
-          <p class="testimonio-author">Laura G. · Sevilla</p>
+          <div class="testimonio-footer">
+            <span class="testimonio-avatar">LG</span>
+            <span class="testimonio-author">Laura G. · Sevilla</span>
+          </div>
         </article>
       </div>
     </div>
@@ -384,7 +494,8 @@
   <!-- GUÍAS Y RECURSOS (SEO: blog internal links) -->
   <section class="recursos">
     <div class="container">
-      <h2 class="section-title" data-animate>Guías jurídicas gratuitas</h2>
+      <span class="eyebrow" data-animate>Guías jurídicas</span>
+      <h2 class="section-title" data-animate>Recursos gratuitos para reclamar</h2>
       <p class="section-sub" data-animate data-delay="1">Todo lo que necesitas saber para reclamar, explicado sin tecnicismos.</p>
       <div class="recursos-grid">
         <a href="/blog/procedimiento-monitorio/" class="recurso-card" data-animate>
@@ -417,6 +528,7 @@
     <div class="container">
       <div class="contacto-inner">
         <div class="contacto-left" data-animate>
+          <span class="eyebrow">Consulta gratuita</span>
           <h2>Consulta gratuita con nuestros abogados</h2>
           <p>Consulta inicial gratuita. Te respondemos en menos de 24 horas.</p>
           <div class="trust-items">
@@ -485,7 +597,7 @@
           <div class="data-info">
             <p><strong>Información básica sobre protección de datos</strong></p>
             <ul>
-              <li><strong>Responsable:</strong> LexReclama — hola@lexreclama.es</li>
+              <li><strong>Responsable:</strong> LexReclama — info@lexreclama.es</li>
               <li><strong>Finalidad:</strong> atender su consulta y gestionar la relación profesional</li>
               <li><strong>Legitimación:</strong> consentimiento del interesado y ejecución de medidas precontractuales</li>
               <li><strong>Derechos:</strong> acceso, rectificación, supresión, oposición, limitación y portabilidad</li>
@@ -508,7 +620,7 @@
 
           <div id="form-error" class="form-error hidden">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span>Error al enviar. Escríbenos directamente a <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></span>
+            <span>Error al enviar. Escríbenos directamente a <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></span>
           </div>
         </form>
       </div>
@@ -518,15 +630,27 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
-      <div class="footer-links">
-        <a href="/aviso-legal">Aviso legal</a>
-        <a href="/politica-privacidad">Política de privacidad</a>
-        <a href="/politica-cookies">Política de cookies</a>
-        <a href="/condiciones">Condiciones generales</a>
+      <div class="footer-left">
+        <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+        <p class="footer-legal">Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados.<br />Los resultados pasados no garantizan resultados futuros. La estimación de la calculadora es orientativa.</p>
+        <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
       </div>
-      <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros. La estimación de la calculadora es orientativa.</p>
-      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="/aviso-legal">Aviso legal</a>
+          <a href="/politica-privacidad">Privacidad</a>
+          <a href="/politica-cookies">Cookies</a>
+          <a href="/condiciones">Condiciones</a>
+        </div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
   </footer>
 
@@ -540,7 +664,7 @@
 
   <!-- WHATSAPP_BUTTON -->
 
-  <script src="app.js"></script>
+  <script src="/app.js"></script>
 
   <!-- Animation observer + nav scroll effect -->
   <script>
@@ -569,6 +693,33 @@
         window.addEventListener('scroll', function () {
           nav.classList.toggle('scrolled', window.scrollY > 20);
         }, { passive: true });
+      }
+
+      // Mobile nav hamburger toggle
+      var hamburger = document.getElementById('nav-hamburger');
+      var mobileNav = document.getElementById('nav-mobile');
+      if (hamburger && mobileNav) {
+        hamburger.addEventListener('click', function () {
+          var isOpen = mobileNav.classList.toggle('open');
+          hamburger.classList.toggle('open', isOpen);
+          hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        // Close on any link click inside mobile nav
+        mobileNav.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            mobileNav.classList.remove('open');
+            hamburger.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+          });
+        });
+        // Close on outside click
+        document.addEventListener('click', function (e) {
+          if (!nav.contains(e.target) && !mobileNav.contains(e.target)) {
+            mobileNav.classList.remove('open');
+            hamburger.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+          }
+        });
       }
     })();
   </script>
