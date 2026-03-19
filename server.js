@@ -853,7 +853,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && (normalizedPath === '/blog/' || normalizedPath in PILLAR_PAGES)) {
     // Prefer static HTML file if it exists; fall back to generated placeholder
     const staticCandidate = path.join(STATIC_DIR, normalizedPath, 'index.html');
-    if (normalizedPath !== '/blog/' && fs.existsSync(staticCandidate)) {
+    if (fs.existsSync(staticCandidate)) {
       const data = fs.readFileSync(staticCandidate, 'utf8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
       res.end(injectRuntimeSnippets(data));
