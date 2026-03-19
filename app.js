@@ -382,9 +382,28 @@ async function handleCheckoutReturn() {
 }
 
 /* ─── INIT ────────────────────────────────────────────────── */
+function initScrollAnimations() {
+  const animatedEls = document.querySelectorAll('[data-animate]');
+  if (!animatedEls.length) return;
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    animatedEls.forEach((el) => observer.observe(el));
+  } else {
+    animatedEls.forEach((el) => el.classList.add('is-visible'));
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initThemeToggle();
   initNavScrollEffect();
+  initScrollAnimations();
   toggleBancoFields();
   initCookieBanner();
   handleCheckoutReturn();
