@@ -3,6 +3,7 @@ const SUBMIT_ENDPOINT = '/submit-lead';
 const CHECKOUT_SESSION_ENDPOINT = '/create-checkout-session';
 const CHECKOUT_CONFIRM_ENDPOINT = '/confirm-checkout';
 const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
+const THEME_PREFERENCE_KEY = 'lex_theme_preference_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
 
 function trackGtagEvent(name, params = {}) {
@@ -19,6 +20,58 @@ function trackVirtualPageView() {
   });
 }
 
+function getSystemThemePreference() {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return 'dark';
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme === 'light' ? 'light' : 'dark');
+}
+
+function updateThemeToggleLabel(button, theme) {
+  if (!button) return;
+  const nextTheme = theme === 'light' ? 'dark' : 'light';
+  const label = nextTheme === 'light' ? 'Activar modo claro' : 'Activar modo oscuro';
+  button.setAttribute('aria-label', label);
+  button.setAttribute('title', label);
+}
+
+function initThemeToggle() {
+  const button = document.getElementById('theme-toggle');
+  if (!button) return;
+
+  const storedTheme = localStorage.getItem(THEME_PREFERENCE_KEY);
+  const hasStoredTheme = storedTheme === 'light' || storedTheme === 'dark';
+  const initialTheme = hasStoredTheme ? storedTheme : getSystemThemePreference();
+  applyTheme(initialTheme);
+  updateThemeToggleLabel(button, initialTheme);
+
+  button.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+    applyTheme(nextTheme);
+    localStorage.setItem(THEME_PREFERENCE_KEY, nextTheme);
+    updateThemeToggleLabel(button, nextTheme);
+  });
+
+  if (!hasStoredTheme && window.matchMedia) {
+    const media = window.matchMedia('(prefers-color-scheme: light)');
+    const syncWithSystem = event => {
+      const latestStored = localStorage.getItem(THEME_PREFERENCE_KEY);
+      if (latestStored === 'light' || latestStored === 'dark') return;
+      const nextTheme = event.matches ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      updateThemeToggleLabel(button, nextTheme);
+    };
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', syncWithSystem);
+    } else if (typeof media.addListener === 'function') {
+      media.addListener(syncWithSystem);
+    }
+  }
+}
+
 /* ─── CALCULATOR TABS ─────────────────────────────────────── */
 document.querySelectorAll('.calc-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -33,7 +86,9 @@ document.querySelectorAll('.calc-tab').forEach(tab => {
 
 /* ─── BANCO FIELD TOGGLE ──────────────────────────────────── */
 function toggleBancoFields() {
-  const tipo = document.getElementById('banco-tipo').value;
+  const tipoField = document.getElementById('banco-tipo');
+  if (!tipoField) return;
+  const tipo = tipoField.value;
   document.querySelectorAll('.banco-field').forEach(f => f.classList.add('hidden'));
   document.getElementById('campo-hipoteca').classList.remove('hidden');
 
@@ -45,6 +100,14 @@ function toggleBancoFields() {
     document.getElementById('campo-comision').classList.remove('hidden');
     document.getElementById('campo-hipoteca').classList.add('hidden');
   }
+}
+
+function initNavScrollEffect() {
+  const nav = document.getElementById('main-nav');
+  if (!nav) return;
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 20);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 /* ─── CALCULATORS ─────────────────────────────────────────── */
@@ -320,6 +383,8 @@ async function handleCheckoutReturn() {
 
 /* ─── INIT ────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeToggle();
+  initNavScrollEffect();
   toggleBancoFields();
   initCookieBanner();
   handleCheckoutReturn();
