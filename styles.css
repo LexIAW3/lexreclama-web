@@ -306,7 +306,7 @@ h3 { font-size: 1.04rem; letter-spacing: -0.015em; line-height: 1.42; }
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--border);
   background: var(--nav-bg);
   backdrop-filter: blur(22px) saturate(1.6);
   -webkit-backdrop-filter: blur(22px) saturate(1.6);
@@ -505,7 +505,7 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 .home-page .hero::after {
   content: '';
   position: absolute;
-  top: -180px;
+  top: -60px;
   left: 50%;
   transform: translateX(-50%);
   width: 900px;
