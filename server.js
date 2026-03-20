@@ -25,12 +25,21 @@ const GESTOR_AGENT_ID = '603134d1-2f20-4c99-9bec-92547dc99b43';
 const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
 const PRIMARY_HOST = 'lexreclama.es';
 const SECONDARY_HOST = 'lexreclama.com';
+const MAX_RECENT_LEADS = 25;
+const recentLeads = [];
+const STRIPE_API = 'https://api.stripe.com/v1';
+const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
+const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
+const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
+const pendingCheckoutLeads = new Map();
+const completedCheckoutLeads = new Map();
+const recentLeadSubmissions = new Map();
+const recentCheckoutCreations = new Map();
+const idempotencyInFlight = new Map();
 const BLOG_REDIRECTS = {
   '/blog/cuanto-cuesta-monitorio/': '/blog/coste-monitorio/',
   '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
 };
-const MAX_RECENT_LEADS = 25;
-const recentLeads = [];
 
 /* ─── RATE LIMITER ──────────────────────────────────────────── */
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
@@ -45,11 +54,52 @@ function isRateLimited(ip) {
   rateLimitMap.set(ip, hits);
   return hits.length > RATE_LIMIT_MAX;
 }
-const STRIPE_API = 'https://api.stripe.com/v1';
-const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
-const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000; // keep dedup window for 24h
-const pendingCheckoutLeads = new Map();
-const completedCheckoutLeads = new Map();
+
+function sweepIdempotencyMaps() {
+  const now = Date.now();
+  for (const [key, entry] of recentLeadSubmissions) {
+    if (now - entry.createdAtMs > IDEMPOTENCY_WINDOW_MS) {
+      recentLeadSubmissions.delete(key);
+    }
+  }
+  for (const [key, entry] of recentCheckoutCreations) {
+    if (now - entry.createdAtMs > IDEMPOTENCY_WINDOW_MS) {
+      recentCheckoutCreations.delete(key);
+    }
+  }
+}
+
+async function resolveIdempotentRequest({ scope, key, store, execute }) {
+  if (!key) {
+    return { value: await execute(), deduplicated: false };
+  }
+
+  sweepIdempotencyMaps();
+  const cached = store.get(key);
+  if (cached) {
+    return { value: cached.payload, deduplicated: true };
+  }
+
+  const inFlightKey = `${scope}:${key}`;
+  if (idempotencyInFlight.has(inFlightKey)) {
+    const value = await idempotencyInFlight.get(inFlightKey);
+    return { value, deduplicated: true };
+  }
+
+  const pending = (async () => {
+    const value = await execute();
+    store.set(key, { createdAtMs: Date.now(), payload: value });
+    return value;
+  })();
+
+  idempotencyInFlight.set(inFlightKey, pending);
+  try {
+    const value = await pending;
+    return { value, deduplicated: false };
+  } finally {
+    idempotencyInFlight.delete(inFlightKey);
+  }
+}
 const PAID_CLAIM_TYPES = {
   deuda: {
     label: 'Reclamación de deuda impagada',
@@ -565,9 +615,22 @@ async function handleSubmitLead(req, res) {
   }
 
   try {
-    const data = await createIssueForLead(leadData.value, { paid: false });
+    const result = await resolveIdempotentRequest({
+      scope: 'submit-lead',
+      key: leadData.value.idempotencyKey,
+      store: recentLeadSubmissions,
+      execute: async () => {
+        const created = await createIssueForLead(leadData.value, { paid: false });
+        return { issueId: created.id, identifier: created.identifier };
+      },
+    });
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, issueId: data.id, identifier: data.identifier }));
+    res.end(JSON.stringify({
+      ok: true,
+      issueId: result.value.issueId,
+      identifier: result.value.identifier,
+      deduplicated: result.deduplicated,
+    }));
   } catch (err) {
     console.error('Lead submission error:', err.message);
     res.writeHead(500);
@@ -589,9 +652,13 @@ function normalizeLeadPayload(body) {
   const comercialAceptada = body?.comercialAceptada === true;
   const consentimientoTimestamp = String(body?.consentimientoTimestamp || '').trim();
   const versionPolitica = String(body?.versionPolitica || '').trim();
+  const idempotencyKey = String(body?.idempotencyKey || '').trim();
 
   if (!nombre || !email || !tipo || !privacidadAceptada || !consentimientoTimestamp || !versionPolitica) {
     return { ok: false, error: 'Campos requeridos: nombre, email, tipo y consentimiento RGPD' };
+  }
+  if (idempotencyKey && idempotencyKey.length > 128) {
+    return { ok: false, error: 'idempotencyKey inválida' };
   }
 
   const tipoLabel = {
@@ -614,6 +681,7 @@ function normalizeLeadPayload(body) {
       comercialAceptada,
       consentimientoTimestamp,
       versionPolitica,
+      idempotencyKey,
     },
   };
 }
@@ -773,21 +841,34 @@ async function handleCreateCheckoutSession(req, res) {
   }
 
   sweepPendingCheckoutLeads();
-  const leadToken = crypto.randomUUID();
 
   try {
-    const stripeSession = await createStripeCheckoutSession(req, leadToken, leadData.value);
-    pendingCheckoutLeads.set(leadToken, {
-      leadData: leadData.value,
-      createdAtMs: Date.now(),
-      stripeSessionId: stripeSession.id,
+    const result = await resolveIdempotentRequest({
+      scope: 'create-checkout-session',
+      key: leadData.value.idempotencyKey,
+      store: recentCheckoutCreations,
+      execute: async () => {
+        const leadToken = crypto.randomUUID();
+        const stripeSession = await createStripeCheckoutSession(req, leadToken, leadData.value);
+        pendingCheckoutLeads.set(leadToken, {
+          leadData: leadData.value,
+          createdAtMs: Date.now(),
+          stripeSessionId: stripeSession.id,
+        });
+        return {
+          leadToken,
+          checkoutUrl: stripeSession.url,
+          checkoutSessionId: stripeSession.id,
+        };
+      },
     });
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       ok: true,
-      leadToken,
-      checkoutUrl: stripeSession.url,
-      checkoutSessionId: stripeSession.id,
+      leadToken: result.value.leadToken,
+      checkoutUrl: result.value.checkoutUrl,
+      checkoutSessionId: result.value.checkoutSessionId,
+      deduplicated: result.deduplicated,
     }));
   } catch (err) {
     console.error('Stripe checkout session error:', err.message);

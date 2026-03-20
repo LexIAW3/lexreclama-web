@@ -5,6 +5,10 @@ const CHECKOUT_CONFIRM_ENDPOINT = '/confirm-checkout';
 const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
 const CONTACT_PHONE_DISPLAY = '+34 900 000 000';
+const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
+
+let leadSubmissionInFlight = false;
+let currentLeadIdempotency = null;
 
 function trackGtagEvent(name, params = {}) {
   if (typeof window.gtag !== 'function') return;
@@ -380,8 +384,31 @@ function requiresUpfrontPayment(tipo) {
   return tipo === 'deuda' || tipo === 'multa';
 }
 
+function generateIdempotencyKey() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return window.crypto.randomUUID();
+  }
+  const randomChunk = Math.random().toString(36).slice(2, 12);
+  return `legacy-${Date.now()}-${randomChunk}`;
+}
+
+function getLeadIdempotencyKey() {
+  const now = Date.now();
+  if (currentLeadIdempotency && (now - currentLeadIdempotency.createdAtMs) < IDEMPOTENCY_WINDOW_MS) {
+    return currentLeadIdempotency.key;
+  }
+  const key = generateIdempotencyKey();
+  currentLeadIdempotency = {
+    key,
+    createdAtMs: now,
+  };
+  return key;
+}
+
 async function submitLead(event) {
   event.preventDefault();
+  if (leadSubmissionInFlight) return;
+  leadSubmissionInFlight = true;
 
   const form = document.getElementById('lead-form');
   const submitBtn = document.getElementById('submit-btn');
@@ -401,6 +428,7 @@ async function submitLead(event) {
     comercialAceptada: document.getElementById('comercial').checked,
     consentimientoTimestamp: new Date().toISOString(),
     versionPolitica: PRIVACY_POLICY_VERSION,
+    idempotencyKey: getLeadIdempotencyKey(),
   };
 
   const tipoLabel = {
@@ -435,6 +463,7 @@ async function submitLead(event) {
     console.error('Lead submission error:', err);
     errorEl.classList.remove('hidden');
   } finally {
+    leadSubmissionInFlight = false;
     submitBtn.disabled = false;
     submitText.classList.remove('hidden');
     submitLoading.classList.add('hidden');
