@@ -31,6 +31,20 @@ const BLOG_REDIRECTS = {
 };
 const MAX_RECENT_LEADS = 25;
 const recentLeads = [];
+
+/* ─── RATE LIMITER ──────────────────────────────────────────── */
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX = 10;
+const rateLimitMap = new Map();
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const hits = (rateLimitMap.get(ip) || []).filter((t) => t > windowStart);
+  hits.push(now);
+  rateLimitMap.set(ip, hits);
+  return hits.length > RATE_LIMIT_MAX;
+}
 const STRIPE_API = 'https://api.stripe.com/v1';
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000; // keep dedup window for 24h
@@ -121,7 +135,7 @@ function formatSlug(slug) {
     .join(' ');
 }
 
-function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml, canonicalPath = '/' }) {
+function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml, canonicalPath = '/', noindex = false }) {
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -129,7 +143,7 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="${escapeHtml(metaDescription)}" />
   <link rel="canonical" href="${SITE_URL}${canonicalPath}" />
-  <meta name="robots" content="index,follow" />
+  <meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}" />
   <title>${escapeHtml(pageTitle)} | LexReclama</title>
   <link rel="stylesheet" href="/styles.css" />
   ${renderGa4Snippet()}
@@ -263,6 +277,7 @@ function renderPillarPage(pathname) {
     intro: page.subtitle,
     bodyHtml: `<p>${escapeHtml(page.placeholder)}</p>`,
     canonicalPath: pathname,
+    noindex: true,
   });
 }
 
@@ -855,6 +870,9 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
   res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
   if ((req.method === 'GET' || req.method === 'HEAD') && (host === SECONDARY_HOST || host === `www.${SECONDARY_HOST}`)) {
     const target = `https://${PRIMARY_HOST}${url.pathname}${url.search}`;
@@ -870,17 +888,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Lead submission endpoint
-  if (req.method === 'POST' && url.pathname === '/submit-lead') {
-    await handleSubmitLead(req, res);
-    return;
-  }
-  if (req.method === 'POST' && url.pathname === '/create-checkout-session') {
-    await handleCreateCheckoutSession(req, res);
-    return;
-  }
-  if (req.method === 'POST' && url.pathname === '/confirm-checkout') {
-    await handleConfirmCheckout(req, res);
-    return;
+  if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout')) {
+    const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    if (isRateLimited(clientIp)) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes. Inténtalo en un minuto.' }));
+      return;
+    }
+    if (url.pathname === '/submit-lead') { await handleSubmitLead(req, res); return; }
+    if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
+    if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
   }
   if (req.method === 'GET' && handleLegalPage(req, res, url.pathname)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
