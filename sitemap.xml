@@ -219,6 +219,47 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
+  <!-- SEO Sprint 5 y 6 — artículos añadidos 2026-03-20 -->
+  <url>
+    <loc>https://www.lexreclama.es/blog/prescripcion-deudas/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/procedimiento-monitorio-juicio.svg</image:loc>
+      <image:title>Prescripción de deudas en España: plazos y qué hacer si te reclaman una deuda prescrita 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/reclamar-credito-revolving/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/carta-reclamacion-deuda-empresa.svg</image:loc>
+      <image:title>Reclamar crédito revolving: cómo recuperar los intereses abusivos en 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/recurrir-sancion-administrativa/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-sede-electronica.svg</image:loc>
+      <image:title>Recurrir una sanción administrativa: guía completa 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/recurso-alzada/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-sede-electronica.svg</image:loc>
+      <image:title>Recurso de alzada: qué es, plazos, cómo presentarlo y ante quién 2026</image:title>
+    </image:image>
+  </url>
   <!-- Páginas legales (noindex — excluidas de indexación) -->
   <url>
     <loc>https://www.lexreclama.es/aviso-legal/</loc>
