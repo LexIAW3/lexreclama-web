@@ -771,6 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFormValidation();
   toggleBancoFields();
   initCookieBanner();
+  initWhatsappFloat();
   handleCheckoutReturn();
   trackVirtualPageView();
   window.addEventListener('popstate', trackVirtualPageView);
@@ -828,8 +829,6 @@ function initWhatsappFloat() {
     desktopMedia.addListener(updateVisibility);
   }
 }
-
-document.addEventListener('DOMContentLoaded', initWhatsappFloat);
 
 /* ─── SCROLL PROGRESS ────────────────────────────────────── */
 function initScrollProgress() {

@@ -33,6 +33,7 @@ const MAX_RECENT_LEADS = 25;
 const recentLeads = [];
 const STRIPE_API = 'https://api.stripe.com/v1';
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
+const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000; // keep dedup window for 24h
 const pendingCheckoutLeads = new Map();
 const completedCheckoutLeads = new Map();
 const PAID_CLAIM_TYPES = {
@@ -59,6 +60,7 @@ const MIME = {
   '.svg':  'image/svg+xml',
   '.png':  'image/png',
   '.jpg':  'image/jpeg',
+  '.webp': 'image/webp',
 };
 
 const PILLAR_PAGES = {
@@ -119,14 +121,14 @@ function formatSlug(slug) {
     .join(' ');
 }
 
-function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml }) {
+function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml, canonicalPath = '/' }) {
   return `<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="${escapeHtml(metaDescription)}" />
-  <link rel="canonical" href="${SITE_URL}" />
+  <link rel="canonical" href="${SITE_URL}${canonicalPath}" />
   <meta name="robots" content="index,follow" />
   <title>${escapeHtml(pageTitle)} | LexReclama</title>
   <link rel="stylesheet" href="/styles.css" />
@@ -247,6 +249,7 @@ function renderBlogIndex() {
     heading: 'Blog de reclamaciones legales',
     intro: 'Hub de contenido',
     bodyHtml: `<p>Articulos disponibles:</p>${items}`,
+    canonicalPath: '/blog/',
   });
 }
 
@@ -259,6 +262,7 @@ function renderPillarPage(pathname) {
     heading: page.title,
     intro: page.subtitle,
     bodyHtml: `<p>${escapeHtml(page.placeholder)}</p>`,
+    canonicalPath: pathname,
   });
 }
 
@@ -284,10 +288,21 @@ function buildSitemapXml() {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
 }
 
+const MAX_BODY_BYTES = 50 * 1024; // 50 KB
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
-    req.on('data', c => chunks.push(c));
+    let received = 0;
+    req.on('data', (c) => {
+      received += c.length;
+      if (received > MAX_BODY_BYTES) {
+        req.destroy();
+        reject(Object.assign(new Error('Payload too large'), { statusCode: 413 }));
+        return;
+      }
+      chunks.push(c);
+    });
     req.on('end', () => resolve(Buffer.concat(chunks).toString()));
     req.on('error', reject);
   });
@@ -516,7 +531,10 @@ async function handleAdmin(req, res) {
 async function handleSubmitLead(req, res) {
   let body;
   try { body = JSON.parse(await readBody(req)); }
-  catch { res.writeHead(400); res.end(JSON.stringify({ error: 'Invalid JSON' })); return; }
+  catch (e) {
+    const status = e.statusCode || 400;
+    res.writeHead(status); res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' })); return;
+  }
 
   const leadData = normalizeLeadPayload(body);
   if (!leadData.ok) {
@@ -711,12 +729,20 @@ function sweepPendingCheckoutLeads() {
       pendingCheckoutLeads.delete(leadToken);
     }
   }
+  for (const [leadToken, completed] of completedCheckoutLeads) {
+    if (now - completed.completedAtMs > COMPLETED_CHECKOUT_TTL_MS) {
+      completedCheckoutLeads.delete(leadToken);
+    }
+  }
 }
 
 async function handleCreateCheckoutSession(req, res) {
   let body;
   try { body = JSON.parse(await readBody(req)); }
-  catch { res.writeHead(400); res.end(JSON.stringify({ error: 'Invalid JSON' })); return; }
+  catch (e) {
+    const status = e.statusCode || 400;
+    res.writeHead(status); res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' })); return;
+  }
 
   const leadData = normalizeLeadPayload(body);
   if (!leadData.ok) {
@@ -758,7 +784,10 @@ async function handleCreateCheckoutSession(req, res) {
 async function handleConfirmCheckout(req, res) {
   let body;
   try { body = JSON.parse(await readBody(req)); }
-  catch { res.writeHead(400); res.end(JSON.stringify({ error: 'Invalid JSON' })); return; }
+  catch (e) {
+    const status = e.statusCode || 400;
+    res.writeHead(status); res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' })); return;
+  }
 
   const leadToken = String(body?.leadToken || '').trim();
   const sessionId = String(body?.sessionId || '').trim();
@@ -771,7 +800,7 @@ async function handleConfirmCheckout(req, res) {
   const completed = completedCheckoutLeads.get(leadToken);
   if (completed) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, ...completed, deduplicated: true }));
+    res.end(JSON.stringify({ ok: true, issueId: completed.issueId, identifier: completed.identifier, deduplicated: true }));
     return;
   }
 
@@ -804,12 +833,12 @@ async function handleConfirmCheckout(req, res) {
       checkoutSessionId: stripeSession.id,
     });
 
-    const payload = { issueId: issue.id, identifier: issue.identifier };
+    const payload = { issueId: issue.id, identifier: issue.identifier, completedAtMs: Date.now() };
     completedCheckoutLeads.set(leadToken, payload);
     pendingCheckoutLeads.delete(leadToken);
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, ...payload }));
+    res.end(JSON.stringify({ ok: true, issueId: payload.issueId, identifier: payload.identifier }));
   } catch (err) {
     console.error('Confirm checkout error:', err.message);
     res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -821,7 +850,10 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const normalizedPath = normalizePathname(url.pathname);
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS only for safe read-only requests; POST endpoints are same-origin only
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   if ((req.method === 'GET' || req.method === 'HEAD') && (host === SECONDARY_HOST || host === `www.${SECONDARY_HOST}`)) {
@@ -853,7 +885,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && handleLegalPage(req, res, url.pathname)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-    res.end(`User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+    res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${SITE_URL}/sitemap.xml\n`);
     return;
   }
   if (req.method === 'GET' && url.pathname === '/sitemap.xml') {

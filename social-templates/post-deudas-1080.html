@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080"/>
+<title>LexReclama — Post Reclamación Deudas 1080×1080</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0B1C38;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .frame {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    background: linear-gradient(145deg, #0D1F3C 0%, #0a1628 60%, #071020 100%);
+    overflow: hidden;
+  }
+
+  /* Background mesh */
+  .frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(37,99,235,0.20) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(212,175,55,0.10) 0%, transparent 55%);
+    z-index: 0;
+  }
+
+  /* Noise grain */
+  .frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    z-index: 0;
+    opacity: 0.55;
+  }
+
+  /* Gold top bar */
+  .gold-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #D4AF37 0%, #f0d060 45%, #D4AF37 100%);
+    z-index: 10;
+  }
+
+  /* Content */
+  .content {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 72px 80px 64px;
+  }
+
+  /* Brand */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: auto;
+  }
+
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    background: #2563eb;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-name {
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Eyebrow */
+  .eyebrow {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #D4AF37;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 28px;
+    height: 2px;
+    background: #D4AF37;
+    flex-shrink: 0;
+  }
+
+  /* Main headline */
+  .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 148px;
+    line-height: 0.88;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+    margin-bottom: 32px;
+  }
+
+  .headline .accent {
+    color: #2563eb;
+    display: block;
+  }
+
+  /* Sub */
+  .sub {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.58);
+    line-height: 1.5;
+    max-width: 580px;
+    margin-bottom: 56px;
+  }
+
+  .sub strong {
+    color: rgba(255,255,255,0.85);
+    font-weight: 700;
+  }
+
+  /* Stats row */
+  .stats {
+    display: flex;
+    gap: 0;
+    margin-bottom: 56px;
+  }
+
+  .stat {
+    flex: 1;
+    padding: 28px 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+  }
+
+  .stat:first-child { border-radius: 12px 0 0 12px; }
+  .stat:last-child { border-radius: 0 12px 12px 0; }
+  .stat:not(:last-child) { border-right: none; }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    color: #D4AF37;
+    letter-spacing: 0.02em;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* CTA pill */
+  .cta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 18px 36px;
+    border-radius: 100px;
+    text-decoration: none;
+  }
+
+  .cta-pill::after {
+    content: '→';
+    font-size: 20px;
+  }
+
+  /* Bottom row */
+  .bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+
+  .url {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.30);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Vertical accent line */
+  .accent-line {
+    position: absolute;
+    right: 80px;
+    top: 72px;
+    bottom: 72px;
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, rgba(37,99,235,0.5) 30%, rgba(37,99,235,0.5) 70%, transparent 100%);
+    z-index: 5;
+  }
+
+  /* Decorative circle */
+  .deco-circle {
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    border: 1px solid rgba(37,99,235,0.12);
+    z-index: 2;
+  }
+
+  .deco-circle-2 {
+    position: absolute;
+    right: -220px;
+    top: -220px;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    border: 1px solid rgba(37,99,235,0.07);
+    z-index: 2;
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="gold-bar"></div>
+  <div class="deco-circle"></div>
+  <div class="deco-circle-2"></div>
+  <div class="accent-line"></div>
+
+  <div class="content">
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+          <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+          <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+          <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+        </svg>
+      </div>
+      <span class="brand-name">LexReclama</span>
+    </div>
+
+    <!-- Eyebrow -->
+    <div class="eyebrow">Reclamación de deudas</div>
+
+    <!-- Headline -->
+    <div class="headline">
+      Recupera<br/>
+      <span class="accent">Tu Dinero</span>
+    </div>
+
+    <!-- Sub -->
+    <p class="sub">
+      Deudas impagadas reclamadas por <strong>procedimiento monitorio.</strong>
+      Sin pago por adelantado. Solo cobramos si ganamos.
+    </p>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">0 €</div>
+        <div class="stat-label">Si no recuperamos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">30–90d</div>
+        <div class="stat-label">Resolución media</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Gestión online</div>
+      </div>
+    </div>
+
+    <!-- Bottom row -->
+    <div class="bottom">
+      <span class="cta-pill">Consulta gratuita</span>
+      <span class="url">lexreclama.es</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
