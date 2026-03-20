@@ -55,105 +55,53 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    (function () {
-      try {
-        var key = 'lex_theme_preference_v1';
-        var storedTheme = localStorage.getItem(key);
-        var systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        var theme = (storedTheme === 'light' || storedTheme === 'dark')
-          ? storedTheme
-          : (systemPrefersLight ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (error) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    })();
-  </script>
+  <script>document.documentElement.setAttribute('data-theme', 'light');</script>
 
   <link rel="stylesheet" href="/styles.css" />
-  <style>
-    .blog-index { padding: 48px 0 96px; }
-    .blog-categories { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-    .blog-cat-pill {
-      padding: 5px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600;
-      border: 1px solid var(--border); color: var(--muted); cursor: pointer;
-      background: transparent; transition: all 0.15s;
-    }
-    .blog-cat-pill.active, .blog-cat-pill:hover { border-color: var(--accent); color: var(--accent); }
-    .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .blog-card {
-      display: flex; flex-direction: column; gap: 12px;
-      padding: 28px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); text-decoration: none; color: inherit;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-    .blog-card:hover { border-color: var(--accent); transform: translateY(-3px); }
-    .blog-card-tag {
-      font-size: 0.74rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.06em; color: var(--accent-2);
-    }
-    .blog-card h2 {
-      font-size: 1rem; font-weight: 700; line-height: 1.4; color: var(--text);
-      font-family: var(--font-display);
-    }
-    .blog-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; flex: 1; }
-    .blog-card-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 0.8rem; color: var(--muted-2); margin-top: auto; padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    .blog-card-cta { font-weight: 600; color: var(--accent); }
-    @media (max-width: 900px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px) { .blog-grid { grid-template-columns: 1fr; } }
-  </style>
 </head>
 <body class="service-page">
 
   <!-- NAV -->
   <nav class="nav" id="main-nav">
-    <div class="container">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+            <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+            <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+          </svg>
+        </span>
+        <span class="logo-text">LexReclama</span>
+      </a>
       <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
         <li><a href="/blog/" aria-current="page">Blog</a></li>
+        <li><a href="/contacto/">Contacto</a></li>
       </ul>
       <div class="nav-actions">
-
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
-
-          <span class="icon-sun" aria-hidden="true">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-
-              <circle cx="12" cy="12" r="4"></circle>
-
-              <path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"></path>
-
-            </svg>
-
-          </span>
-
-          <span class="icon-moon" aria-hidden="true">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M21 12.8A9 9 0 1 1 11.2 3a7.1 7.1 0 0 0 9.8 9.8z"></path>
-
-            </svg>
-
-          </span>
-
-        </button>
-
         <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
-
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </nav>
+
+  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-label="Menú de navegación" hidden>
+    <ul role="list">
+      <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
+      <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
+      <li><a href="/recurrir-multas/">Recurrir multa</a></li>
+      <li><a href="/blog/" aria-current="page">Blog</a></li>
+      <li><a href="/contacto/">Contacto</a></li>
+    </ul>
+    <a href="/#contacto" class="btn btn-primary btn-full">Consulta gratuita</a>
+  </div>
 
   <!-- BLOG HERO -->
   <section class="hero">
@@ -172,10 +120,10 @@
         <!-- Reclamación de deudas -->
         <a href="/blog/procedimiento-monitorio/" class="blog-card">
           <span class="blog-card-tag">Reclamación de deudas</span>
-          <h2>Juicio monitorio en 2026: qué es, plazos y cómo reclamar tu deuda</h2>
-          <p>La vía judicial más rápida para recuperar deudas documentadas. Requisitos, plazos de 20 días, costes y cuándo necesitas abogado.</p>
+          <h2>¿Qué es el procedimiento monitorio? Guía completa 2026</h2>
+          <p>Cómo funciona el procedimiento monitorio en España: requisitos, plazos, pasos y cuándo necesitas abogado para reclamar tu deuda.</p>
           <div class="blog-card-footer">
-            <span>18 mar 2026</span>
+            <span>19 mar 2026</span>
             <span class="blog-card-cta">Leer →</span>
           </div>
         </a>
@@ -200,13 +148,113 @@
           </div>
         </a>
 
+        <a href="/blog/cuanto-cuesta-monitorio/" class="blog-card">
+          <span class="blog-card-tag">Reclamación de deudas</span>
+          <h2>¿Cuánto cuesta un monitorio? Tasas judiciales, abogado y costes reales</h2>
+          <p>Análisis detallado de tasas, procurador, abogado y posibles costas para calcular el coste real de reclamar una deuda por monitorio.</p>
+          <div class="blog-card-footer">
+            <span>19 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/monitorio-sin-abogado/" class="blog-card">
+          <span class="blog-card-tag">Reclamación de deudas</span>
+          <h2>Monitorio sin abogado: cuándo puedes reclamar por tu cuenta y límites</h2>
+          <p>Cuándo es viable presentar un monitorio sin abogado, qué documentos necesitas y en qué casos conviene escalar con asistencia legal.</p>
+          <div class="blog-card-footer">
+            <span>19 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/contratar-abogado-monitorio/" class="blog-card">
+          <span class="blog-card-tag">Reclamación de deudas</span>
+          <h2>Contratar abogado monitorio online: precio y proceso completo en 2026</h2>
+          <p>¿Cuánto cuesta contratar un abogado para el juicio monitorio? Precios desde 199 €, gestión 100% online en menos de 48h y sin ir al juzgado.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
         <!-- Cláusulas bancarias -->
+        <a href="/blog/clausula-suelo/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>Cláusula suelo: qué es, si es ilegal y cómo reclamarla en 2026</h2>
+          <p>¿Tu hipoteca tenía cláusula suelo? Descubre qué es, por qué los tribunales la declararon abusiva, cuánto puedes recuperar y cómo reclamarla aunque hayan pasado años.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/irph-hipoteca/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>IRPH hipoteca: qué es, si es ilegal y cómo reclamar en 2026</h2>
+          <p>Más de un millón de hipotecas usan el IRPH, un índice históricamente 1-2,5 puntos más caro que el Euríbor. Si el banco no te lo explicó bien, puedes reclamar la diferencia.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/gastos-hipotecarios/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>Gastos hipotecarios: cómo reclamarlos al banco en 2026</h2>
+          <p>Notaría, gestoría, registro... ¿Los pagaste tú al firmar la hipoteca? Descubre qué gastos puedes recuperar, cuánto dinero supone y cómo proceder.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
         <a href="/blog/reclamar-gastos-hipoteca/" class="blog-card">
           <span class="blog-card-tag">Cláusulas bancarias</span>
           <h2>Reclamar gastos hipoteca en 2026: guía paso a paso para recuperar tu dinero</h2>
           <p>Cómo reclamar al banco los gastos de notaría, registro, gestoría y tasación. Cuánto puedes recuperar y qué plazos tienes según el Tribunal Supremo.</p>
           <div class="blog-card-footer">
             <span>19 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/reclamar-credito-revolving/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>Reclamar crédito revolving: cómo recuperar los intereses abusivos en 2026</h2>
+          <p>TAE superior al 20%: el Tribunal Supremo los declara usurarios. Aprende a calcular cuánto puedes recuperar y cómo iniciar la reclamación al banco.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/comision-apertura-hipoteca/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>Comisión de apertura hipoteca: qué es, si es ilegal y cómo reclamarla en 2026</h2>
+          <p>El Tribunal Supremo (STS 23 enero 2019) la declaró abusiva si el banco no justifica un servicio real. BBVA, Santander, CaixaBank y Sabadell entre los más afectados.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/reclamar-seguro-vida-hipoteca/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>Reclamar seguro de vida vinculado a la hipoteca: guía completa 2026</h2>
+          <p>¿El banco te impuso su seguro de vida para darte la hipoteca? Puedes cancelarlo, cambiarlo y recuperar las primas pagadas de más. Guía legal completa.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/demanda-tarjeta-revolving/" class="blog-card">
+          <span class="blog-card-tag">Cláusulas bancarias</span>
+          <h2>Demanda tarjeta revolving: proceso judicial, plazos y qué esperar en 2026</h2>
+          <p>¿WiZink, Cofidis o Cetelem rechazaron tu reclamación? Guía completa del juicio por tarjeta revolving usuraria: documentos, fases, duración y tasa de éxito.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
             <span class="blog-card-cta">Leer →</span>
           </div>
         </a>
@@ -242,12 +290,52 @@
           </div>
         </a>
 
+        <a href="/blog/cuanto-cuesta-recurrir-multa-trafico/" class="blog-card">
+          <span class="blog-card-tag">Multas DGT</span>
+          <h2>Cuánto cuesta recurrir una multa de tráfico: precios y comparativa 2026</h2>
+          <p>Desde 49 € con LexReclama frente a los 200–500 € de un despacho presencial. Calcula si te compensa recurrir con nuestra guía de precios y ejemplos.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/recurrir-sancion-administrativa/" class="blog-card">
+          <span class="blog-card-tag">Multas DGT</span>
+          <h2>Recurrir una sanción administrativa: guía completa de plazos y recursos 2026</h2>
+          <p>Reposición, alzada o contencioso: conoce las diferencias, los plazos exactos y las causas más frecuentes para anular sanciones de Hacienda, AEPD, Trabajo o Ayuntamiento.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/prescripcion-deudas/" class="blog-card">
+          <span class="blog-card-tag">Reclamación de deudas</span>
+          <h2>Prescripción de deudas: plazos por tipo y qué hacer si te reclaman una deuda prescrita</h2>
+          <p>¿Cuánto tiempo tiene el banco para reclamarte? Plazos de prescripción por tipo de deuda, cómo se interrumpe y cómo defenderte si intentan cobrarte algo que ya no pueden exigirte.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
+        <a href="/blog/recurso-alzada/" class="blog-card">
+          <span class="blog-card-tag">Multas DGT</span>
+          <h2>Recurso de alzada: qué es, plazo de 1 mes, ante quién presentarlo y cómo redactarlo</h2>
+          <p>Guía completa del recurso de alzada: cuándo es obligatorio para agotar la vía administrativa, diferencia con la reposición, órgano competente por tipo de sanción y contenido del escrito.</p>
+          <div class="blog-card-footer">
+            <span>20 mar 2026</span>
+            <span class="blog-card-cta">Leer →</span>
+          </div>
+        </a>
+
       </div>
 
       <!-- CTA blog -->
-      <div style="margin-top: 64px; padding: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); text-align: center;">
-        <h2 style="font-size: 1.4rem; margin-bottom: 12px;">¿Tienes un caso concreto?</h2>
-        <p style="color: var(--muted); margin-bottom: 24px; max-width: 480px; margin-left: auto; margin-right: auto;">Las guías son un punto de partida. Para saber exactamente qué puedes reclamar en tu caso, la consulta con nuestros abogados es gratuita y sin compromiso.</p>
+      <div class="cta-block">
+        <h2>¿Tienes un caso concreto?</h2>
+        <p>Las guías son un punto de partida. Para saber exactamente qué puedes reclamar en tu caso, la consulta con nuestros abogados es gratuita y sin compromiso.</p>
         <a href="/#contacto" class="btn btn-primary">Consulta gratuita — respuesta en 24h</a>
       </div>
     </div>
@@ -256,33 +344,60 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
-      <div class="footer-links">
-        <a href="/aviso-legal">Aviso legal</a>
-        <a href="/politica-privacidad">Política de privacidad</a>
-        <a href="/politica-cookies">Política de cookies</a>
-        <a href="/condiciones">Condiciones generales</a>
-      </div>
-      <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
-      <div class="footer-social">
-        <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      <div class="footer-left">
+        <a href="/" class="logo">
+          <span class="logo-mark" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+              <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+              <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+            </svg>
+          </span>
+          <span class="logo-text">LexReclama</span>
         </a>
-        <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
-        </a>
+        <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
+        <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
       </div>
-      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="/aviso-legal">Aviso legal</a>
+          <a href="/politica-privacidad">Política de privacidad</a>
+          <a href="/politica-cookies">Política de cookies</a>
+          <a href="/condiciones">Condiciones generales</a>
+        </div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
   </footer>
 
   <script>
-    var nav = document.getElementById('main-nav');
-    if (nav) {
+    // Nav scroll effect
+    (function () {
+      var nav = document.getElementById('main-nav');
+      if (!nav) return;
       window.addEventListener('scroll', function () {
         nav.classList.toggle('scrolled', window.scrollY > 20);
       }, { passive: true });
-    }
+    })();
+
+    // Hamburger menu
+    (function () {
+      var btn = document.getElementById('nav-hamburger');
+      var menu = document.getElementById('nav-mobile');
+      if (!btn || !menu) return;
+      function openMenu() { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); btn.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
+      function closeMenu() { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); btn.classList.remove('is-open'); document.body.style.overflow = ''; }
+      btn.addEventListener('click', function () { menu.hidden ? openMenu() : closeMenu(); });
+      menu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', closeMenu); });
+      document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) { closeMenu(); } });
+    })();
   </script>
   <script src="/app.js"></script>
 </body>

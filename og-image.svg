@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Brand gradient -->
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"  stop-color="#5b72ff"/>
+      <stop offset="100%" stop-color="#38d9ff"/>
+    </linearGradient>
+    <!-- Logo inner glow -->
+    <radialGradient id="logoglow" cx="30%" cy="25%" r="65%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <!-- Hero glow orb -->
+    <radialGradient id="orb1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(91,114,255,0.35)"/>
+      <stop offset="100%" stop-color="rgba(91,114,255,0)"/>
+    </radialGradient>
+    <radialGradient id="orb2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(56,217,255,0.25)"/>
+      <stop offset="100%" stop-color="rgba(56,217,255,0)"/>
+    </radialGradient>
+    <!-- Gradient text clip -->
+    <linearGradient id="textgrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="#5b72ff"/>
+      <stop offset="100%" stop-color="#38d9ff"/>
+    </linearGradient>
+    <!-- Border gradient for card accent -->
+    <linearGradient id="bordergrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"  stop-color="rgba(91,114,255,0.6)"/>
+      <stop offset="50%" stop-color="rgba(56,217,255,0.6)"/>
+      <stop offset="100%" stop-color="rgba(91,114,255,0)"/>
+    </linearGradient>
+    <!-- Clip for gradient text -->
+    <clipPath id="clip-headline">
+      <text x="100" y="334" font-family="'Space Grotesk',system-ui,sans-serif" font-size="90" font-weight="700" letter-spacing="-3">tuyo.</text>
+    </clipPath>
+  </defs>
+
+  <!-- === BACKGROUND === -->
+  <rect width="1200" height="630" fill="#09090e"/>
+
+  <!-- Dot grid pattern -->
+  <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.035)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Atmospheric glow orbs -->
+  <ellipse cx="200" cy="200" rx="420" ry="360" fill="url(#orb1)" opacity="0.7"/>
+  <ellipse cx="1050" cy="450" rx="380" ry="300" fill="url(#orb2)" opacity="0.5"/>
+
+  <!-- Top accent line -->
+  <rect x="0" y="0" width="1200" height="2" fill="url(#bordergrad)"/>
+
+  <!-- === LOGO MARK (top-left) === -->
+  <g transform="translate(100, 66)">
+    <!-- Squircle bg -->
+    <rect width="52" height="52" rx="13" fill="url(#grad)"/>
+    <rect width="52" height="52" rx="13" fill="url(#logoglow)"/>
+    <!-- L mark: vertical bar -->
+    <rect x="11" y="11" width="8" height="28" rx="2" fill="white"/>
+    <!-- L mark: horizontal bar -->
+    <rect x="11" y="33" width="21" height="6" rx="2" fill="white"/>
+    <!-- Accent dot -->
+    <circle cx="40" cy="16" r="3.5" fill="white" opacity="0.75"/>
+  </g>
+
+  <!-- Wordmark next to logo -->
+  <text x="170" y="103" font-family="'Space Grotesk',system-ui,-apple-system,sans-serif"
+    font-size="28" font-weight="600" fill="#eeeef2" letter-spacing="-0.5">LexReclama</text>
+
+  <!-- === MAIN HEADLINE === -->
+  <!-- Line 1: "El derecho que es" -->
+  <text x="100" y="286"
+    font-family="'Space Grotesk',system-ui,-apple-system,sans-serif"
+    font-size="82" font-weight="700" fill="#eeeef2" letter-spacing="-3">El derecho que es</text>
+
+  <!-- Line 2: "tuyo." — gradient fill via rect clipped to text shape -->
+  <!-- Fallback solid color first -->
+  <text x="100" y="386"
+    font-family="'Space Grotesk',system-ui,-apple-system,sans-serif"
+    font-size="82" font-weight="700" letter-spacing="-3" fill="url(#textgrad)">tuyo.</text>
+
+  <!-- === DESCRIPTOR PILL === -->
+  <rect x="100" y="420" width="290" height="38" rx="19" fill="rgba(91,114,255,0.12)" stroke="rgba(91,114,255,0.28)" stroke-width="1"/>
+  <text x="145" y="444"
+    font-family="system-ui,-apple-system,sans-serif"
+    font-size="15" font-weight="600" fill="#b0bcff" letter-spacing="0.04em">DESPACHO DE ABOGADOS</text>
+
+  <!-- === TRUST SIGNALS (bottom strip) === -->
+  <rect x="0" y="562" width="1200" height="68" fill="rgba(255,255,255,0.025)"/>
+  <rect x="0" y="562" width="1200" height="1" fill="rgba(255,255,255,0.07)"/>
+
+  <!-- Trust item 1: Google rating -->
+  <g transform="translate(100, 588)">
+    <!-- Stars SVG -->
+    <text font-family="system-ui" font-size="16" fill="#f59e0b" y="16">★★★★★</text>
+    <text x="100" y="16" font-family="system-ui,sans-serif" font-size="14" font-weight="600" fill="#eeeef2">4.9 en Google</text>
+  </g>
+
+  <!-- Separator -->
+  <rect x="320" y="578" width="1" height="36" fill="rgba(255,255,255,0.1)"/>
+
+  <!-- Trust item 2: Cases -->
+  <g transform="translate(345, 588)">
+    <text x="0" y="16" font-family="system-ui,sans-serif" font-size="20" font-weight="700" fill="#eeeef2">+500</text>
+    <text x="54" y="16" font-family="system-ui,sans-serif" font-size="14" fill="#9292a8">casos ganados</text>
+  </g>
+
+  <!-- Separator -->
+  <rect x="580" y="578" width="1" height="36" fill="rgba(255,255,255,0.1)"/>
+
+  <!-- Trust item 3: Free analysis -->
+  <g transform="translate(606, 588)">
+    <text x="0" y="16" font-family="system-ui,sans-serif" font-size="14" font-weight="600" fill="#00d48a">●</text>
+    <text x="20" y="16" font-family="system-ui,sans-serif" font-size="14" fill="#9292a8">Análisis gratuito · Sin compromiso</text>
+  </g>
+
+  <!-- Separator -->
+  <rect x="900" y="578" width="1" height="36" fill="rgba(255,255,255,0.1)"/>
+
+  <!-- Trust item 4: No win no fee -->
+  <g transform="translate(926, 588)">
+    <text x="0" y="16" font-family="system-ui,sans-serif" font-size="14" fill="#9292a8">Solo cobramos si </text>
+    <text x="143" y="16" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#eeeef2">ganamos</text>
+  </g>
+
+  <!-- === RIGHT SIDE: service pills === -->
+  <g transform="translate(750, 200)">
+    <!-- Service card 1: Reclamación de deudas -->
+    <rect x="0" y="0" width="350" height="80" rx="16"
+      fill="rgba(15,15,21,0.85)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <rect x="0" y="0" width="4" height="80" rx="2" fill="url(#grad)" opacity="0.7"/>
+    <text x="24" y="32" font-family="system-ui,sans-serif" font-size="14" font-weight="700"
+      fill="#eeeef2" letter-spacing="-0.2">Reclamación de deudas</text>
+    <text x="24" y="54" font-family="system-ui,sans-serif" font-size="13" fill="#9292a8">Monitorio · Burofax · Judicial</text>
+
+    <!-- Service card 2: Cláusulas bancarias -->
+    <rect x="0" y="100" width="350" height="80" rx="16"
+      fill="rgba(15,15,21,0.85)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <rect x="0" y="100" width="4" height="80" rx="2" fill="url(#grad)" opacity="0.7"/>
+    <text x="24" y="132" font-family="system-ui,sans-serif" font-size="14" font-weight="700"
+      fill="#eeeef2" letter-spacing="-0.2">Cláusulas bancarias</text>
+    <text x="24" y="154" font-family="system-ui,sans-serif" font-size="13" fill="#9292a8">Suelo · IRPH · Gastos hipotecarios</text>
+
+    <!-- Service card 3: Multas DGT -->
+    <rect x="0" y="200" width="350" height="80" rx="16"
+      fill="rgba(15,15,21,0.85)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <rect x="0" y="200" width="4" height="80" rx="2" fill="url(#grad)" opacity="0.7"/>
+    <text x="24" y="232" font-family="system-ui,sans-serif" font-size="14" font-weight="700"
+      fill="#eeeef2" letter-spacing="-0.2">Recurrir multas DGT</text>
+    <text x="24" y="254" font-family="system-ui,sans-serif" font-size="13" fill="#9292a8">Prescripción · Notificación · Recurso</text>
+  </g>
+
+  <!-- Subtle lexreclama.es domain watermark -->
+  <text x="1100" y="103" font-family="system-ui,sans-serif" font-size="14"
+    fill="rgba(146,146,168,0.6)" text-anchor="end">lexreclama.es</text>
+</svg>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5b72ff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#38d9ff;stop-opacity:0.15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid dots -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.03)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <!-- Accent glow blob -->
+  <ellipse cx="600" cy="315" rx="320" ry="180" fill="url(#acc2)" filter="url(#glow)"/>
+  
+  <!-- Scales of justice -->
+  <!-- Central pole -->
+  <rect x="597" y="160" width="6" height="230" rx="3" fill="url(#acc)"/>
+  <!-- Horizontal beam -->
+  <rect x="380" y="175" width="440" height="6" rx="3" fill="url(#acc)"/>
+  <!-- Left pan (COSTE CERO) -->
+  <line x1="405" y1="181" x2="405" y2="280" stroke="#5b72ff" stroke-width="2"/>
+  <line x1="435" y1="181" x2="435" y2="280" stroke="#5b72ff" stroke-width="2"/>
+  <path d="M385 280 Q420 295 455 280" fill="none" stroke="#5b72ff" stroke-width="2.5"/>
+  <rect x="385" y="285" width="70" height="36" rx="8" fill="rgba(0,212,138,0.15)" stroke="#00d48a" stroke-width="1.5"/>
+  <text x="420" y="303" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">0 €</text>
+  <!-- Right pan (DEUDA) -->
+  <line x1="765" y1="181" x2="765" y2="300" stroke="#38d9ff" stroke-width="2"/>
+  <line x1="795" y1="181" x2="795" y2="300" stroke="#38d9ff" stroke-width="2"/>
+  <path d="M745 300 Q780 316 815 300" fill="none" stroke="#38d9ff" stroke-width="2.5"/>
+  <rect x="745" y="306" width="70" height="36" rx="8" fill="rgba(56,217,255,0.1)" stroke="#38d9ff" stroke-width="1.5"/>
+  <text x="780" y="324" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="700" fill="#38d9ff" text-anchor="middle" dominant-baseline="middle">DEUDA</text>
+  <!-- Top circle -->
+  <circle cx="600" cy="158" r="14" fill="url(#acc)"/>
+  <!-- Process steps below -->
+  <rect x="300" y="415" width="600" height="80" rx="14" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <text x="600" y="455" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Monitorio · Sin abogado obligatorio · Sin tasas judiciales</text>
+  <!-- Euro coins stacked -->
+  <ellipse cx="520" cy="390" rx="22" ry="8" fill="rgba(91,114,255,0.3)" stroke="rgba(91,114,255,0.4)" stroke-width="1"/><ellipse cx="520" cy="382" rx="22" ry="8" fill="rgba(91,114,255,0.4)" stroke="rgba(91,114,255,0.4)" stroke-width="1"/><ellipse cx="520" cy="374" rx="22" ry="8" fill="rgba(91,114,255,0.5)" stroke="rgba(91,114,255,0.4)" stroke-width="1"/><ellipse cx="520" cy="366" rx="22" ry="8" fill="rgba(91,114,255,0.6000000000000001)" stroke="rgba(91,114,255,0.4)" stroke-width="1"/>
+  <!-- Title -->
+  <text x="600" y="548" font-family="'Space Grotesk', sans-serif" font-size="26" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Coste del Proceso Monitorio</text>
+  <text x="600" y="582" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Tasas, honorarios y gastos reales en España</text>
+
+</svg>

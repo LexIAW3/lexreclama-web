@@ -25,6 +25,10 @@ const GESTOR_AGENT_ID = '603134d1-2f20-4c99-9bec-92547dc99b43';
 const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
 const PRIMARY_HOST = 'lexreclama.es';
 const SECONDARY_HOST = 'lexreclama.com';
+const BLOG_REDIRECTS = {
+  '/blog/cuanto-cuesta-monitorio/': '/blog/coste-monitorio/',
+  '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
+};
 const MAX_RECENT_LEADS = 25;
 const recentLeads = [];
 const STRIPE_API = 'https://api.stripe.com/v1';
@@ -261,6 +265,7 @@ function renderPillarPage(pathname) {
 function buildSitemapXml() {
   const staticUrls = [
     '/',
+    '/contacto/',
     '/reclamacion-deudas/',
     '/clausulas-bancarias/',
     '/clausulas-bancarias/gastos-hipotecarios/',
@@ -821,6 +826,12 @@ const server = http.createServer(async (req, res) => {
 
   if ((req.method === 'GET' || req.method === 'HEAD') && (host === SECONDARY_HOST || host === `www.${SECONDARY_HOST}`)) {
     const target = `https://${PRIMARY_HOST}${url.pathname}${url.search}`;
+    res.writeHead(301, { Location: target, 'Cache-Control': 'public, max-age=3600' });
+    res.end();
+    return;
+  }
+  if ((req.method === 'GET' || req.method === 'HEAD') && BLOG_REDIRECTS[normalizedPath]) {
+    const target = `${BLOG_REDIRECTS[normalizedPath]}${url.search}`;
     res.writeHead(301, { Location: target, 'Cache-Control': 'public, max-age=3600' });
     res.end();
     return;

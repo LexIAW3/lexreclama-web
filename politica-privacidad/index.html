@@ -15,181 +15,51 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    (function () {
-      try {
-        var key = 'lex_theme_preference_v1';
-        var storedTheme = localStorage.getItem(key);
-        var systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        var theme = (storedTheme === 'light' || storedTheme === 'dark')
-          ? storedTheme
-          : (systemPrefersLight ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (error) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    })();
-  </script>
+  <script>document.documentElement.setAttribute('data-theme', 'light');</script>
 
   <link rel="stylesheet" href="/styles.css" />
-  <style>
-    .legal-page {
-      background: #fff;
-      color: #1f2937;
-      line-height: 1.7;
-    }
-
-    .legal-page .page-header {
-      background: #1e3a5f;
-      color: #fff;
-      padding: 48px 0 40px;
-    }
-
-    .legal-page .page-header .container,
-    .legal-page .content .container {
-      width: min(860px, 100% - 40px);
-    }
-
-    .legal-page .page-header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .legal-page .page-header p {
-      color: #93c5fd;
-      margin-top: 8px;
-      font-size: 0.95rem;
-    }
-
-    .legal-page .content {
-      padding: 48px 0 64px;
-    }
-
-    .legal-page .content h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1e3a5f;
-      margin: 36px 0 12px;
-    }
-
-    .legal-page .content h2:first-child {
-      margin-top: 0;
-    }
-
-    .legal-page .content p {
-      margin-bottom: 14px;
-      color: #374151;
-    }
-
-    .legal-page .content ul {
-      padding-left: 20px;
-      margin-bottom: 14px;
-      color: #374151;
-    }
-
-    .legal-page .content ul li {
-      margin-bottom: 6px;
-    }
-
-    .legal-page .content a {
-      color: #2563eb;
-    }
-
-    .legal-page table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-    }
-
-    .legal-page th {
-      background: #1e3a5f;
-      color: #fff;
-      padding: 10px 12px;
-      text-align: left;
-    }
-
-    .legal-page td {
-      padding: 9px 12px;
-      border-bottom: 1px solid #e5e7eb;
-      color: #374151;
-    }
-
-    .legal-page tr:nth-child(even) td {
-      background: #f9fafb;
-    }
-
-    .legal-page code {
-      background: #f3f4f6;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      font-family: monospace;
-    }
-
-    .legal-page .last-update {
-      font-size: 0.85rem;
-      color: #9ca3af;
-      margin-top: 48px;
-      padding-top: 24px;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    @media (max-width: 640px) {
-      .legal-page .page-header h1 {
-        font-size: 1.5rem;
-      }
-
-      .legal-page table {
-        font-size: 0.8rem;
-      }
-    }
-  </style>
 </head>
 <body class="legal-page">
 
   <nav class="nav" id="main-nav">
     <div class="nav-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <a href="/" class="logo">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+            <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+            <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+          </svg>
+        </span>
+        <span class="logo-text">LexReclama</span>
+      </a>
       <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
         <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contacto/">Contacto</a></li>
       </ul>
       <div class="nav-actions">
-
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
-
-          <span class="icon-sun" aria-hidden="true">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-
-              <circle cx="12" cy="12" r="4"></circle>
-
-              <path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"></path>
-
-            </svg>
-
-          </span>
-
-          <span class="icon-moon" aria-hidden="true">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M21 12.8A9 9 0 1 1 11.2 3a7.1 7.1 0 0 0 9.8 9.8z"></path>
-
-            </svg>
-
-          </span>
-
-        </button>
-
         <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
+          <span></span><span></span><span></span>
+        </button>
 
       </div>
     </div>
   </nav>
+
+  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-label="Menú de navegación" hidden>
+    <ul role="list">
+      <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
+      <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
+      <li><a href="/recurrir-multas/">Recurrir multa</a></li>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/contacto/">Contacto</a></li>
+    </ul>
+    <a href="/#contacto" class="btn btn-primary" style="width:100%;text-align:center;">Consulta gratuita</a>
+  </div>
 
   <div class="page-header">
     <div class="container">
@@ -264,26 +134,56 @@
 
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
-      <div class="footer-links">
-        <a href="/aviso-legal">Aviso legal</a>
-        <a href="/politica-privacidad">Política de privacidad</a>
-        <a href="/politica-cookies">Política de cookies</a>
-        <a href="/condiciones">Condiciones generales</a>
-      </div>
-      <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
-      <div class="footer-social">
-        <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      <div class="footer-left">
+        <a href="/" class="logo">
+          <span class="logo-mark" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+              <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+              <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+            </svg>
+          </span>
+          <span class="logo-text">LexReclama</span>
         </a>
-        <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
-        </a>
+        <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
+        <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
       </div>
-      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="/aviso-legal">Aviso legal</a>
+          <a href="/politica-privacidad">Política de privacidad</a>
+          <a href="/politica-cookies">Política de cookies</a>
+          <a href="/condiciones">Condiciones generales</a>
+        </div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
   </footer>
 
+  <script>
+    (function () {
+      var nav = document.getElementById('main-nav');
+      if (!nav) return;
+      window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
+    })();
+    (function () {
+      var btn = document.getElementById('nav-hamburger');
+      var menu = document.getElementById('nav-mobile');
+      if (!btn || !menu) return;
+      function openMenu() { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); btn.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
+      function closeMenu() { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); btn.classList.remove('is-open'); document.body.style.overflow = ''; }
+      btn.addEventListener('click', function () { menu.hidden ? openMenu() : closeMenu(); });
+      menu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', closeMenu); });
+      document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) { closeMenu(); } });
+    })();
+  </script>
   <script src="/app.js"></script>
 </body>
 </html>

@@ -48,13 +48,6 @@
       "opens": "09:00",
       "closes": "19:00"
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "500",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
     "knowsAbout": [
       "reclamación de deudas",
       "juicio monitorio",
@@ -114,53 +107,62 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    (function () {
-      try {
-        var key = 'lex_theme_preference_v1';
-        var storedTheme = localStorage.getItem(key);
-        var systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        var theme = (storedTheme === 'light' || storedTheme === 'dark')
-          ? storedTheme
-          : (systemPrefersLight ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (error) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    })();
-  </script>
+  <script>document.documentElement.setAttribute('data-theme', 'light');</script>
   <link rel="stylesheet" href="styles.css" />
 
   <!-- GA4_SNIPPET -->
 </head>
 <body class="home-page">
 
+  <!-- PAGE MESH — persistent gradient orbs give depth to glass cards (aria-hidden, purely decorative) -->
+  <div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
+    <div style="position:absolute;width:800px;height:800px;top:-200px;left:-100px;border-radius:50%;background:radial-gradient(ellipse,rgba(91,114,255,0.12) 0%,transparent 70%);filter:blur(80px);"></div>
+    <div style="position:absolute;width:600px;height:600px;top:-100px;right:-150px;border-radius:50%;background:radial-gradient(ellipse,rgba(56,217,255,0.08) 0%,transparent 70%);filter:blur(70px);"></div>
+    <div style="position:absolute;width:500px;height:700px;top:40%;left:-200px;border-radius:50%;background:radial-gradient(ellipse,rgba(108,60,255,0.08) 0%,transparent 65%);filter:blur(90px);"></div>
+    <div style="position:absolute;width:700px;height:500px;bottom:-100px;right:-200px;border-radius:50%;background:radial-gradient(ellipse,rgba(56,217,255,0.06) 0%,transparent 65%);filter:blur(80px);"></div>
+  </div>
+
+  <!-- SCROLL PROGRESS -->
+  <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- CONTENT (z-index above page-mesh) -->
+  <div style="position:relative;z-index:1;">
+
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar">
+    <div class="topbar-inner">
+      <span class="topbar-badge">Consulta gratuita</span>
+      <span class="topbar-sep" aria-hidden="true">·</span>
+      <span class="topbar-text">Cobramos solo si ganamos — consulta gratuita, sin compromiso</span>
+      <a href="#contacto" class="topbar-cta">Analiza tu caso →</a>
+      <button class="topbar-close" id="topbar-close" aria-label="Cerrar aviso">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <line x1="1.5" y1="1.5" x2="8.5" y2="8.5"/><line x1="8.5" y1="1.5" x2="1.5" y2="8.5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <!-- NAV -->
   <nav class="nav" id="main-nav">
     <div class="nav-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+            <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+            <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+          </svg>
+        </span><span class="logo-text">LexReclama</span></a>
       <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
         <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contacto/">Contacto</a></li>
       </ul>
       <div class="nav-actions">
         <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
           <span></span><span></span><span></span>
-        </button>
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
-          <span class="icon-sun" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="4"></circle>
-              <path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"></path>
-            </svg>
-          </span>
-          <span class="icon-moon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12.8A9 9 0 1 1 11.2 3a7.1 7.1 0 0 0 9.8 9.8z"></path>
-            </svg>
-          </span>
         </button>
         <a href="#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
       </div>
@@ -174,21 +176,121 @@
       <a href="/clausulas-bancarias/">Cláusulas bancarias</a>
       <a href="/recurrir-multas/">Recurrir multa</a>
       <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
       <a href="#contacto" class="btn btn-primary">Consulta gratuita</a>
     </div>
   </div>
 
   <!-- HERO -->
   <section class="hero">
+    <!-- Aurora secundaria inferior -->
+    <div class="aurora-secondary" aria-hidden="true"></div>
+
     <div class="container">
-      <div class="hero-badge" data-animate>Despacho de abogados especializado</div>
-      <h1 data-animate data-delay="1">Recupera lo que<br />es <span class="text-gradient">tuyo.</span><span class="h1-sub">Abogados especialistas en reclamaciones · Sin pago por adelantado</span></h1>
-      <p class="hero-sub" data-animate data-delay="2">Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas. Cobramos solo si ganamos — sin riesgo para ti.</p>
-      <div class="hero-actions" data-animate data-delay="3">
-        <a href="#calculadora" class="btn btn-primary">Calcula cuánto puedes recuperar</a>
-        <a href="#como-funciona" class="btn btn-ghost">Cómo funciona →</a>
+      <div class="hero-layout">
+
+        <!-- LEFT: texto -->
+        <div class="hero-content">
+          <div class="hero-badge" data-animate>
+            <span>Análisis sin compromiso</span>
+            <span class="hero-badge-sep" aria-hidden="true"></span>
+            <span>Proceso 100% online</span>
+          </div>
+          <h1 data-animate data-delay="1">Tu dinero,<br /><span class="text-gradient">de vuelta.</span></h1>
+          <p class="hero-sub" data-animate data-delay="2">Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas — y solo cobramos si ganamos.</p>
+          <div class="hero-actions" data-animate data-delay="3">
+            <a href="#calculadora" class="btn btn-primary btn-lg">Calcula tu recuperación →</a>
+            <a href="#contacto" class="btn btn-ghost btn-lg">Consulta gratuita</a>
+          </div>
+          <div class="hero-chips" data-animate data-delay="4">
+            <span class="hero-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Consulta gratuita
+            </span>
+            <span class="hero-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Sin pago por adelantado
+            </span>
+            <span class="hero-chip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Respuesta en 24 h
+            </span>
+          </div>
+        </div>
+
+        <!-- RIGHT: visual panel -->
+        <div class="hero-visual" aria-hidden="true" data-animate data-delay="2">
+          <div class="hvp">
+            <!-- Card 1: caso activo -->
+            <div class="hvp-card hvp-card--main">
+              <div class="hvp-card-header">
+                <span class="hvp-dot hvp-dot--green"></span>
+                <span class="hvp-label">Caso ilustrativo</span>
+                <span class="hvp-tag">Cláusula suelo</span>
+              </div>
+              <div class="hvp-amount">+€ 18.400</div>
+              <div class="hvp-amount-label">estimación de recuperación</div>
+              <div class="hvp-steps">
+                <div class="hvp-step hvp-step--done">
+                  <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="currentColor" opacity=".15"/><polyline points="4.5 8 7 10.5 11.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>Documentación recibida</span>
+                </div>
+                <div class="hvp-step hvp-step--done">
+                  <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="currentColor" opacity=".15"/><polyline points="4.5 8 7 10.5 11.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>Análisis completado</span>
+                </div>
+                <div class="hvp-step hvp-step--active">
+                  <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+                  <span>Reclamación enviada al banco</span>
+                </div>
+                <div class="hvp-step hvp-step--pending">
+                  <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1" opacity=".4"/></svg>
+                  <span>Resolución y cobro</span>
+                </div>
+              </div>
+              <div class="hvp-footer">
+                <span>M. Rodríguez · Valencia</span>
+                <span class="hvp-days">47 días</span>
+              </div>
+            </div>
+
+            <!-- Card 2: mini highlights -->
+            <div class="hvp-row">
+              <div class="hvp-mini">
+                <div class="hvp-mini-value">Gratis</div>
+                <div class="hvp-mini-label">análisis inicial</div>
+              </div>
+              <div class="hvp-mini-sep"></div>
+              <div class="hvp-mini">
+                <div class="hvp-mini-value">0€</div>
+                <div class="hvp-mini-label">si no recuperamos</div>
+              </div>
+              <div class="hvp-mini-sep"></div>
+              <div class="hvp-mini">
+                <div class="hvp-mini-value">Online</div>
+                <div class="hvp-mini-label">gestión integral</div>
+              </div>
+              <div class="hvp-mini-sep"></div>
+              <div class="hvp-mini">
+                <div class="hvp-mini-value">Ágil</div>
+                <div class="hvp-mini-label">seguimiento claro</div>
+              </div>
+            </div>
+
+            <!-- Floating notification — process update -->
+            <div class="hvp-notif">
+              <div class="hvp-notif-icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" opacity=".35"/>
+                <polyline points="5,8.5 7.2,10.8 11,5.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+              <span><strong>Nuevo expediente</strong> validado para estudio legal<span class="hvp-notif-loc"> · Equipo LexReclama</span></span>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <p class="hero-note" data-animate data-delay="4">Consulta inicial gratuita · Sin compromiso · Respuesta en 24h</p>
     </div>
   </section>
 
@@ -196,15 +298,9 @@
   <div class="trust-bar">
     <div class="container">
       <div class="trust-bar-inner" data-animate>
-        <div class="trust-bar-item trust-bar-rating">
-          <span class="trust-bar-stars">★★★★★</span>
-          <span class="trust-bar-score">4.9/5</span>
-          <span style="color:var(--muted-2)">en Google</span>
-        </div>
-        <div class="trust-bar-divider"></div>
         <div class="trust-bar-item">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          +500 casos resueltos
+          Atención legal especializada
         </div>
         <div class="trust-bar-divider"></div>
         <div class="trust-bar-item">
@@ -214,44 +310,66 @@
         <div class="trust-bar-divider"></div>
         <div class="trust-bar-item">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Respuesta en 24h
+          Seguimiento claro del expediente
         </div>
       </div>
     </div>
   </div>
 
-  <!-- STATS -->
-  <section class="stats">
+
+  <!-- ENTITIES STRIP -->
+  <div class="entities-bar" aria-label="Entidades frente a las que reclamamos">
     <div class="container">
-      <div class="stats-grid">
-        <article class="stat-card" data-animate>
-          <p class="stat-value">+500</p>
-          <p class="stat-label">casos ganados</p>
-        </article>
-        <article class="stat-card" data-animate data-delay="1">
-          <p class="stat-value">95%</p>
-          <p class="stat-label">tasa de éxito</p>
-        </article>
-        <article class="stat-card" data-animate data-delay="2">
-          <p class="stat-value">+2M€</p>
-          <p class="stat-label">recuperados en total</p>
-        </article>
-        <article class="stat-card" data-animate data-delay="3">
-          <p class="stat-value">24h</p>
-          <p class="stat-label">respuesta garantizada</p>
-        </article>
+      <div class="entities-inner">
+        <span class="entities-label">Reclamamos frente a:</span>
+        <div class="entities-list" aria-hidden="true">
+          <span class="entity-pill">BBVA</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">Santander</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">CaixaBank</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">ING</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">Bankinter</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">Sabadell</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">DGT</span>
+          <span class="entity-sep">·</span>
+          <span class="entity-pill">Ayuntamientos</span>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- AREAS -->
   <section class="areas" id="como-funciona">
     <div class="container">
       <span class="eyebrow" data-animate>Áreas de práctica</span>
-      <h2 class="section-title" data-animate>Servicios de reclamación jurídica</h2>
+      <h2 class="section-title" data-animate>Servicios de <span class="text-gradient">reclamación jurídica</span></h2>
       <p class="section-sub" data-animate data-delay="1">Tres especialidades, un mismo objetivo: que recuperes tu dinero.</p>
       <div class="areas-grid">
-        <div class="area-card" data-type="deuda" data-animate>
+        <!-- Featured: bancario — mayor recuperación media, posición prominente -->
+        <div class="area-card" data-type="banco" data-animate>
+          <div class="area-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+          </div>
+          <h3>Cláusulas bancarias abusivas</h3>
+          <p>Reclamamos gastos hipotecarios, cláusula suelo, IRPH y comisiones de apertura que tu banco te cobró indebidamente.</p>
+          <ul class="area-list">
+            <li>Gastos hipotecarios: notaría, registro y gestoría</li>
+            <li>Cláusula suelo: diferencia histórica acumulada</li>
+            <li>IRPH: exceso cobrado respecto al Euribor</li>
+          </ul>
+          <div class="area-recovery" aria-label="Recuperación ilustrativa">
+            <span class="area-recovery-amount">+ € 18.400</span>
+            <span class="area-recovery-label">recuperación media · caso ilustrativo sin coste previo</span>
+          </div>
+          <a href="#contacto" class="area-link" onclick="setClaimType('banco')">Reclamar al banco →</a>
+        </div>
+
+        <div class="area-card" data-type="deuda" data-animate data-delay="1">
           <div class="area-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
           </div>
@@ -263,20 +381,6 @@
             <li>Alta tasa de éxito si hay documentación</li>
           </ul>
           <a href="#contacto" class="area-link" onclick="setClaimType('deuda')">Reclamar deuda →</a>
-        </div>
-
-        <div class="area-card" data-type="banco" data-animate data-delay="1">
-          <div class="area-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-          </div>
-          <h3>Cláusulas bancarias abusivas</h3>
-          <p>Reclamamos gastos hipotecarios, cláusula suelo, IRPH y comisiones de apertura que tu banco te cobró indebidamente.</p>
-          <ul class="area-list">
-            <li>Gastos: notaría, registro y gestoría</li>
-            <li>Cláusula suelo: diferencia histórica</li>
-            <li>IRPH: exceso respecto a Euribor</li>
-          </ul>
-          <a href="#contacto" class="area-link" onclick="setClaimType('banco')">Reclamar al banco →</a>
         </div>
 
         <div class="area-card" data-type="multa" data-animate data-delay="2">
@@ -415,7 +519,7 @@
   <section class="proceso">
     <div class="container">
       <span class="eyebrow" data-animate>Proceso</span>
-      <h2 class="section-title" data-animate>Cómo funciona nuestra reclamación</h2>
+      <h2 class="section-title" data-animate>Cómo funciona <span class="text-gradient">nuestra reclamación</span></h2>
       <div class="steps">
         <div class="step" data-animate>
           <span class="step-num">01</span>
@@ -435,58 +539,109 @@
           <p>Solo cobramos honorarios si recuperamos tu dinero. Sin adelantos, sin riesgo para ti.</p>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- CTA BANNER -->
-  <section class="cta-banner">
-    <div class="container">
-      <div class="cta-banner-inner" data-animate>
-        <div class="cta-banner-eyebrow">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Sin coste inicial
-        </div>
-        <h2>¿Tienes dinero por reclamar?<br /><span class="text-gradient">Averígualo en 2 minutos.</span></h2>
-        <p>Analizamos tu caso sin compromiso. Si no podemos ayudarte, te lo decimos desde el principio. Solo cobramos cuando tú cobras.</p>
-        <div class="cta-banner-actions">
-          <a href="#contacto" class="btn btn-primary">Consulta gratuita ahora</a>
-          <a href="#calculadora" class="btn btn-ghost">Ver estimación →</a>
-        </div>
+      <div class="section-cta" data-animate>
+        <a href="#contacto" class="btn btn-primary btn-lg">Empieza tu consulta gratuita →</a>
+        <span class="section-cta-note">Sin compromiso · Respondemos en 24h · Sin pago por adelantado</span>
       </div>
     </div>
   </section>
 
+
   <!-- TESTIMONIOS -->
   <section class="testimonios">
     <div class="container">
-      <span class="eyebrow" data-animate>Casos de éxito</span>
-      <h2 class="section-title" data-animate>Clientes que ya recuperaron su dinero</h2>
-      <p class="section-sub" data-animate data-delay="1">Historias reales de reclamaciones resueltas con éxito.</p>
-      <div class="testimonios-grid">
-        <article class="testimonio-card" data-animate>
-          <div class="stars">★★★★★</div>
+      <span class="eyebrow" data-animate>Casos de referencia</span>
+      <h2 class="section-title" data-animate>Tipos de casos que gestionamos</h2>
+      <p class="section-sub" data-animate data-delay="1">Casos ilustrativos de reclamaciones habituales. No corresponden a clientes reales de LexReclama.</p>
+
+      <div class="testimonios-grid" data-animate data-delay="2">
+
+        <article class="testimonio-card">
+          <div class="stars" aria-label="5 estrellas"><svg width="72" height="13" viewBox="0 0 72 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.5 1.5L7.7 5.1H11.5L8.4 7.4L9.6 11L6.5 8.7L3.4 11L4.6 7.4L1.5 5.1H5.3L6.5 1.5Z" fill="#FFBB00"/><path d="M20.5 1.5L21.7 5.1H25.5L22.4 7.4L23.6 11L20.5 8.7L17.4 11L18.6 7.4L15.5 5.1H19.3L20.5 1.5Z" fill="#FFBB00"/><path d="M34.5 1.5L35.7 5.1H39.5L36.4 7.4L37.6 11L34.5 8.7L31.4 11L32.6 7.4L29.5 5.1H33.3L34.5 1.5Z" fill="#FFBB00"/><path d="M48.5 1.5L49.7 5.1H53.5L50.4 7.4L51.6 11L48.5 8.7L45.4 11L46.6 7.4L43.5 5.1H47.3L48.5 1.5Z" fill="#FFBB00"/><path d="M62.5 1.5L63.7 5.1H67.5L64.4 7.4L65.6 11L62.5 8.7L59.4 11L60.6 7.4L57.5 5.1H61.3L62.5 1.5Z" fill="#FFBB00"/></svg></div>
           <p class="testimonio-copy">Recuperamos 18.400 € de gastos hipotecarios en menos de cinco meses. Nos guiaron en todo el proceso sin complicaciones.</p>
           <div class="testimonio-footer">
             <span class="testimonio-avatar">MR</span>
-            <span class="testimonio-author">María R. · Valencia</span>
+            <span class="testimonio-author">María R. · Valencia · Gastos hipotecarios</span>
           </div>
         </article>
-        <article class="testimonio-card" data-animate data-delay="1">
-          <div class="stars">★★★★★</div>
+
+        <article class="testimonio-card">
+          <div class="stars" aria-label="5 estrellas"><svg width="72" height="13" viewBox="0 0 72 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.5 1.5L7.7 5.1H11.5L8.4 7.4L9.6 11L6.5 8.7L3.4 11L4.6 7.4L1.5 5.1H5.3L6.5 1.5Z" fill="#FFBB00"/><path d="M20.5 1.5L21.7 5.1H25.5L22.4 7.4L23.6 11L20.5 8.7L17.4 11L18.6 7.4L15.5 5.1H19.3L20.5 1.5Z" fill="#FFBB00"/><path d="M34.5 1.5L35.7 5.1H39.5L36.4 7.4L37.6 11L34.5 8.7L31.4 11L32.6 7.4L29.5 5.1H33.3L34.5 1.5Z" fill="#FFBB00"/><path d="M48.5 1.5L49.7 5.1H53.5L50.4 7.4L51.6 11L48.5 8.7L45.4 11L46.6 7.4L43.5 5.1H47.3L48.5 1.5Z" fill="#FFBB00"/><path d="M62.5 1.5L63.7 5.1H67.5L64.4 7.4L65.6 11L62.5 8.7L59.4 11L60.6 7.4L57.5 5.1H61.3L62.5 1.5Z" fill="#FFBB00"/></svg></div>
           <p class="testimonio-copy">Tenía una deuda comercial bloqueada desde hacía un año. Con LexReclama cobramos en menos de 60 días.</p>
           <div class="testimonio-footer">
             <span class="testimonio-avatar">JM</span>
-            <span class="testimonio-author">Javier M. · Madrid</span>
+            <span class="testimonio-author">Javier M. · Madrid · Reclamación de deuda</span>
           </div>
         </article>
-        <article class="testimonio-card" data-animate data-delay="2">
-          <div class="stars">★★★★★</div>
+
+        <article class="testimonio-card">
+          <div class="stars" aria-label="5 estrellas"><svg width="72" height="13" viewBox="0 0 72 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.5 1.5L7.7 5.1H11.5L8.4 7.4L9.6 11L6.5 8.7L3.4 11L4.6 7.4L1.5 5.1H5.3L6.5 1.5Z" fill="#FFBB00"/><path d="M20.5 1.5L21.7 5.1H25.5L22.4 7.4L23.6 11L20.5 8.7L17.4 11L18.6 7.4L15.5 5.1H19.3L20.5 1.5Z" fill="#FFBB00"/><path d="M34.5 1.5L35.7 5.1H39.5L36.4 7.4L37.6 11L34.5 8.7L31.4 11L32.6 7.4L29.5 5.1H33.3L34.5 1.5Z" fill="#FFBB00"/><path d="M48.5 1.5L49.7 5.1H53.5L50.4 7.4L51.6 11L48.5 8.7L45.4 11L46.6 7.4L43.5 5.1H47.3L48.5 1.5Z" fill="#FFBB00"/><path d="M62.5 1.5L63.7 5.1H67.5L64.4 7.4L65.6 11L62.5 8.7L59.4 11L60.6 7.4L57.5 5.1H61.3L62.5 1.5Z" fill="#FFBB00"/></svg></div>
           <p class="testimonio-copy">Nos anularon una multa de 600 € por defecto de notificación. Resolvieron rápido y con total claridad.</p>
           <div class="testimonio-footer">
             <span class="testimonio-avatar">LG</span>
-            <span class="testimonio-author">Laura G. · Sevilla</span>
+            <span class="testimonio-author">Laura G. · Sevilla · Impugnación de multa</span>
           </div>
         </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="container">
+      <span class="eyebrow" data-animate>Preguntas frecuentes</span>
+      <h2 class="section-title" data-animate>Todo lo que necesitas saber</h2>
+      <p class="section-sub" data-animate data-delay="1">Respuestas directas a las dudas más habituales antes de empezar.</p>
+
+      <div class="faq-list" data-animate data-delay="2">
+
+        <details class="faq-item" open>
+          <summary>
+            ¿Cuánto cuesta contratar a LexReclama?
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="faq-body">
+            La consulta inicial es <strong>completamente gratuita</strong>. En la mayoría de los casos trabajamos con honorarios a éxito: <strong>solo cobramos si recuperamos tu dinero</strong>. Sin pago por adelantado, sin sorpresas.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            ¿Qué tipos de reclamaciones gestionáis?
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="faq-body">
+            Tres especialidades principales: <strong>reclamación de deudas impagadas</strong> por procedimiento monitorio (desde 500 €), <strong>cláusulas bancarias abusivas</strong> (gastos hipotecarios, cláusula suelo, IRPH, comisión de apertura) y <strong>impugnación de multas</strong> de tráfico DGT, sanciones municipales y de Hacienda.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            ¿Cuánto tiempo tarda una reclamación?
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="faq-body">
+            Depende del tipo de caso. Las <strong>reclamaciones de deuda</strong> por monitorio suelen resolverse en 30–90 días. Las <strong>reclamaciones bancarias extrajudiciales</strong> tardan 2–4 meses. Los <strong>recursos de multa</strong>, entre 1 y 3 meses según el organismo.
+          </div>
+        </details>
+
+      </div>
+      <div class="section-cta" data-animate>
+        <a href="#contacto" class="btn btn-primary">Consulta tu caso gratuitamente →</a>
+        <span class="section-cta-note">Análisis sin compromiso · Te respondemos en menos de 24h</span>
       </div>
     </div>
   </section>
@@ -529,20 +684,52 @@
       <div class="contacto-inner">
         <div class="contacto-left" data-animate>
           <span class="eyebrow">Consulta gratuita</span>
-          <h2>Consulta gratuita con nuestros abogados</h2>
-          <p>Consulta inicial gratuita. Te respondemos en menos de 24 horas.</p>
+          <h2>Analizamos tu caso.<br /><span class="text-gradient">Respondemos en 24h.</span></h2>
+          <p>Sin compromiso. Sin pago por adelantado. Nuestros especialistas evalúan tu situación y te dicen exactamente cuánto puedes recuperar.</p>
           <div class="trust-items">
             <div class="trust-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="trust-icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
               <span>Sin pago por adelantado</span>
             </div>
             <div class="trust-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="trust-icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
               <span>Confidencialidad garantizada</span>
             </div>
             <div class="trust-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Especialistas en cada área</span>
+              <span class="trust-icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </span>
+              <span>Especialistas colegiados ICAM</span>
+            </div>
+            <div class="trust-item">
+              <span class="trust-icon-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <span>Respuesta en menos de 24 horas</span>
+            </div>
+          </div>
+
+          <!-- Timeline: qué ocurre tras enviar -->
+          <div class="contact-timeline" aria-hidden="true">
+            <div class="contact-timeline-item contact-timeline-item--done">
+              <span class="ct-dot ct-dot--done"></span>
+              <span class="ct-text">Envías tu consulta — 2 minutos</span>
+            </div>
+            <div class="contact-timeline-item contact-timeline-item--active">
+              <span class="ct-dot ct-dot--active"></span>
+              <span class="ct-text"><strong>Análisis gratuito</strong> — te respondemos en 24h</span>
+            </div>
+            <div class="contact-timeline-item">
+              <span class="ct-dot"></span>
+              <span class="ct-text">Aceptas el encargo sin adelantos</span>
+            </div>
+            <div class="contact-timeline-item">
+              <span class="ct-dot"></span>
+              <span class="ct-text">Recuperas tu dinero — pagamos si ganamos</span>
             </div>
           </div>
         </div>
@@ -594,8 +781,15 @@
             </label>
           </div>
 
-          <div class="data-info">
-            <p><strong>Información básica sobre protección de datos</strong></p>
+          <details class="data-info">
+            <summary>
+              <span>Información básica sobre protección de datos</span>
+              <span class="data-info-icon" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/>
+                </svg>
+              </span>
+            </summary>
             <ul>
               <li><strong>Responsable:</strong> LexReclama — info@lexreclama.es</li>
               <li><strong>Finalidad:</strong> atender su consulta y gestionar la relación profesional</li>
@@ -603,7 +797,7 @@
               <li><strong>Derechos:</strong> acceso, rectificación, supresión, oposición, limitación y portabilidad</li>
               <li><strong>Información adicional:</strong> en la <a href="/politica-privacidad" target="_blank" rel="noopener noreferrer">Política de Privacidad</a></li>
             </ul>
-          </div>
+          </details>
 
           <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
             <span id="submit-text">Enviar consulta gratuita</span>
@@ -627,16 +821,31 @@
     </div>
   </section>
 
+  <!-- FOOTER PRE-CTA -->
+  <div class="footer-pre-cta">
+    <div class="container footer-pre-cta-inner">
+      <span class="footer-pre-cta-text">¿Listo para reclamar lo que es tuyo?</span>
+      <a href="#contacto" class="btn btn-primary btn-sm">Consulta gratuita →</a>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
       <div class="footer-left">
-        <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+        <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+            <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+            <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+          </svg>
+        </span><span class="logo-text">LexReclama</span></a>
         <p class="footer-legal">Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados.<br />Los resultados pasados no garantizan resultados futuros. La estimación de la calculadora es orientativa.</p>
         <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
       </div>
       <div class="footer-right">
         <div class="footer-links">
+          <a href="/contacto/">Contacto</a>
           <a href="/aviso-legal">Aviso legal</a>
           <a href="/politica-privacidad">Privacidad</a>
           <a href="/politica-cookies">Cookies</a>
@@ -695,6 +904,20 @@
         }, { passive: true });
       }
 
+      // Topbar dismiss
+      var topbar = document.getElementById('topbar');
+      var topbarClose = document.getElementById('topbar-close');
+      if (topbar && topbarClose) {
+        // Restore dismissed state
+        if (sessionStorage.getItem('topbar_dismissed') === '1') {
+          topbar.classList.add('is-hidden');
+        }
+        topbarClose.addEventListener('click', function () {
+          topbar.classList.add('is-hidden');
+          sessionStorage.setItem('topbar_dismissed', '1');
+        });
+      }
+
       // Mobile nav hamburger toggle
       var hamburger = document.getElementById('nav-hamburger');
       var mobileNav = document.getElementById('nav-mobile');
@@ -723,5 +946,6 @@
       }
     })();
   </script>
+  </div><!-- end content wrapper -->
 </body>
 </html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.025)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  
+  <rect x="100" y="180" width="1000" height="260" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="100" y="180" width="1000" height="5" rx="3" fill="url(#acc)"/>
+  <text x="600" y="216" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">PLAZOS DE PRESCRIPCIÓN — MULTAS DGT</text>
+  <!-- Timeline line -->
+  <line x1="160" y1="320" x2="1040" y2="320" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+<circle cx="200" cy="320" r="12" fill="#ff5264" opacity="0.9"/><text x="200" y="278" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#ff5264" text-anchor="middle" dominant-baseline="middle">INFRACCIÓN</text><text x="200" y="358" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Día 0</text><circle cx="420" cy="320" r="12" fill="#9292a8" opacity="0.9"/><text x="420" y="278" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">NOTIFICACIÓN</text><text x="420" y="358" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">≤ 3 meses</text><circle cx="640" cy="320" r="12" fill="#5b72ff" opacity="0.9"/><text x="640" y="278" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">ALEGACIONES</text><text x="640" y="358" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">10 días hábiles</text><circle cx="820" cy="320" r="12" fill="#38d9ff" opacity="0.9"/><text x="820" y="278" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#38d9ff" text-anchor="middle" dominant-baseline="middle">RESOLUCIÓN</text><text x="820" y="358" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">≤ 1 año</text><circle cx="1000" cy="320" r="12" fill="#00d48a" opacity="0.9"/><text x="1000" y="278" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">PRESCRIPCIÓN</text><text x="1000" y="358" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">1-5 años</text><text x="600" y="530" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Prescripción de Multas DGT</text><text x="600" y="564" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Cuándo caduca la Administración para cobrarte</text>
+</svg>

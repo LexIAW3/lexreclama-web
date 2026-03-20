@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5b72ff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#38d9ff;stop-opacity:0.15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid dots -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.03)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <!-- Accent glow blob -->
+  <ellipse cx="600" cy="315" rx="320" ry="180" fill="url(#acc2)" filter="url(#glow)"/>
+  
+  <!-- Document card -->
+  <rect x="340" y="120" width="520" height="390" rx="20" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <!-- Header stripe -->
+  <rect x="340" y="120" width="520" height="6" rx="3" fill="url(#acc)"/>
+  <!-- DGT-style fine document content -->
+  <text x="600" y="178" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">NOTIFICACIÓN MULTA DGT</text>
+  <!-- Lines of text (document) -->
+  <rect x="385" y="200" width="300" height="10" rx="5" fill="rgba(255,255,255,0.07)"/>
+  <rect x="385" y="222" width="380" height="10" rx="5" fill="rgba(255,255,255,0.07)"/>
+  <rect x="385" y="244" width="340" height="10" rx="5" fill="rgba(255,255,255,0.07)"/>
+  <rect x="385" y="266" width="360" height="10" rx="5" fill="rgba(255,255,255,0.07)"/>
+  <!-- Amount box -->
+  <rect x="385" y="290" width="430" height="60" rx="10" fill="rgba(91,114,255,0.08)" stroke="rgba(91,114,255,0.2)" stroke-width="1"/>
+  <text x="600" y="320" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">IMPORTE: 200€</text>
+  <!-- Stamp: RECURSO -->
+  <g transform="rotate(-18, 720, 360)">
+    <rect x="580" y="340" width="180" height="56" rx="6" fill="none" stroke="#ff5264" stroke-width="3"/>
+    <text x="670" y="368" font-family="'Space Grotesk', sans-serif" font-size="24" font-weight="900" fill="#ff5264" text-anchor="middle" dominant-baseline="middle" letter-spacing="3">RECURSO</text>
+  </g>
+  <!-- Title -->
+  <text x="600" y="555" font-family="'Space Grotesk', sans-serif" font-size="26" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Recurso de Reposición de Multa</text>
+  <text x="600" y="590" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Cómo impugnar una sanción de tráfico sin coste</text>
+
+</svg>

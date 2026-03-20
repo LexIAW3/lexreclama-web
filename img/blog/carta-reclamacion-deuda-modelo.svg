@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5b72ff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#38d9ff;stop-opacity:0.15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid dots -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.03)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <!-- Accent glow blob -->
+  <ellipse cx="600" cy="315" rx="320" ry="180" fill="url(#acc2)" filter="url(#glow)"/>
+  
+  <!-- Letter/document -->
+  <rect x="350" y="105" width="500" height="380" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <rect x="350" y="105" width="500" height="5" rx="3" fill="url(#acc)"/>
+  <!-- Letter header -->
+  <rect x="380" y="128" width="160" height="12" rx="4" fill="rgba(91,114,255,0.15)" stroke="rgba(91,114,255,0.2)" stroke-width="1"/>
+  <text x="460" y="134" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">LexReclama</text>
+  <!-- Divider -->
+  <line x1="380" y1="158" x2="820" y2="158" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="600" y="184" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">RECLAMACIÓN EXTRAJUDICIAL DE DEUDA</text>
+  <!-- Letter lines -->
+  <rect x="380" y="205" width="440" height="9" rx="4" fill="rgba(255,255,255,0.06)"/>
+  <rect x="380" y="225" width="410" height="9" rx="4" fill="rgba(255,255,255,0.06)"/>
+  <rect x="380" y="245" width="430" height="9" rx="4" fill="rgba(255,255,255,0.06)"/>
+  <rect x="380" y="265" width="390" height="9" rx="4" fill="rgba(255,255,255,0.06)"/>
+  <rect x="380" y="285" width="420" height="9" rx="4" fill="rgba(255,255,255,0.06)"/>
+  <!-- Amount highlighted -->
+  <rect x="380" y="310" width="440" height="52" rx="10" fill="rgba(0,212,138,0.08)" stroke="rgba(0,212,138,0.2)" stroke-width="1"/>
+  <text x="460" y="328" font-family="'Space Grotesk', sans-serif" font-size="12" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Importe reclamado:</text>
+  <text x="680" y="337" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">3.750,00 €</text>
+  <!-- Burofax badge -->
+  <rect x="380" y="382" width="440" height="40" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <text x="600" y="402" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Envío por burofax · Plazo de respuesta: 15 días</text>
+  <!-- Title -->
+  <text x="600" y="548" font-family="'Space Grotesk', sans-serif" font-size="26" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Carta de Reclamación de Deuda</text>
+  <text x="600" y="582" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Modelo y claves para reclamar lo que te deben</text>
+
+</svg>

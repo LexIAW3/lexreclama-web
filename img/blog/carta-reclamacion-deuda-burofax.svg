@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.025)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  
+  <rect x="330" y="110" width="540" height="360" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="330" y="110" width="540" height="5" rx="3" fill="url(#acc)"/>
+  <!-- Envelope icon -->
+  <rect x="390" y="145" width="420" height="260" rx="8" fill="rgba(91,114,255,0.06)" stroke="rgba(91,114,255,0.2)" stroke-width="1.5"/>
+  <!-- Envelope flap -->
+  <path d="M390 145 L600 270 L810 145" fill="none" stroke="rgba(91,114,255,0.3)" stroke-width="1.5"/>
+  <!-- Certificate badge on envelope -->
+  <circle cx="750" cy="145" r="36" fill="rgba(0,212,138,0.15)" stroke="#00d48a" stroke-width="2"/>
+  <text x="750" y="145" font-family="'Space Grotesk', sans-serif" font-size="24" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">✓</text>
+  <!-- Labels -->
+  <text x="600" y="320" font-family="'Space Grotesk', sans-serif" font-size="18" font-weight="900" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">BUROFAX</text>
+  <text x="600" y="350" font-family="'Space Grotesk', sans-serif" font-size="12" font-weight="700" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">CON CERTIFICACIÓN DE CONTENIDO</text>
+  <!-- Benefits -->
+<circle cx="375" cy="415" r="5" fill="#00d48a" opacity="0.8"/><text x="402" y="415" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Prueba fehaciente de envío</text><circle cx="595" cy="415" r="5" fill="#00d48a" opacity="0.8"/><text x="622" y="415" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Acredita el contenido</text><circle cx="375" cy="453" r="5" fill="#00d48a" opacity="0.8"/><text x="402" y="453" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Interrumpe prescripción</text><circle cx="595" cy="453" r="5" fill="#00d48a" opacity="0.8"/><text x="622" y="453" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Válido ante tribunales</text><text x="600" y="545" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">El Burofax como Herramienta Legal</text><text x="600" y="580" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Certifica tu reclamación y protege tu posición jurídica</text>
+</svg>

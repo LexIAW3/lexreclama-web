@@ -19,7 +19,7 @@
   <meta property="og:description" content="Plazo, modelo orientativo y errores que evitar al presentar un recurso de reposición contra una multa de tráfico u otra sanción administrativa." />
   <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="LexReclama" />
-  <meta property="og:image" content="https://www.lexreclama.es/img/blog/recurso-reposicion-multa-abogado.webp" />
+  <meta property="og:image" content="https://www.lexreclama.es/img/blog/recurso-reposicion-multa-abogado.svg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
 <meta property="article:published_time" content="2026-03-18" />
@@ -28,7 +28,7 @@
 
     <meta name="twitter:title" content="Recurso de reposición contra multa: modelo y plazos 2026" />
   <meta name="twitter:description" content="Cómo presentar un recurso de reposición contra una multa: plazos, modelo y errores que evitar." />
-  <meta name="twitter:image" content="https://www.lexreclama.es/img/blog/recurso-reposicion-multa-abogado.webp" />
+  <meta name="twitter:image" content="https://www.lexreclama.es/img/blog/recurso-reposicion-multa-abogado.svg" />
 <!-- Schema.org: Article + BreadcrumbList + FAQPage -->
   <script type="application/ld+json">
   [
@@ -106,26 +106,52 @@
         }
       ]
     }
+    ,{
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Cómo presentar un recurso de reposición contra una multa",
+      "description": "Pasos para interponer un recurso de reposición contra una multa de tráfico u otra sanción administrativa en España.",
+      "totalTime": "P20D",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": "1",
+          "name": "Anota la fecha de notificación y calcula el plazo",
+          "text": "Anota la fecha exacta de notificación. Calcula los 20 días hábiles en un calendario marcando sábados, domingos y festivos nacionales y autonómicos. Ese es tu plazo límite para presentar el recurso."
+        },
+        {
+          "@type": "HowToStep",
+          "position": "2",
+          "name": "Identifica los motivos del recurso",
+          "text": "Revisa si existe alguno de los motivos habituales: defecto de señalización, vicio en la notificación, prescripción de la infracción, error en los datos del vehículo o del conductor, falta de motivación de la resolución. Sin un motivo concreto y acreditable, el recurso tiene pocas posibilidades."
+        },
+        {
+          "@type": "HowToStep",
+          "position": "3",
+          "name": "Redacta el escrito de recurso",
+          "text": "El escrito debe incluir la identificación del recurrente, los hechos, los fundamentos de derecho y el suplico (lo que pides). Adjunta todos los documentos que acrediten tus argumentos: fotografías, certificaciones, capturas de Street View, etc."
+        },
+        {
+          "@type": "HowToStep",
+          "position": "4",
+          "name": "Presenta el recurso ante la DGT antes del día 20 hábil",
+          "text": "Puedes presentarlo por registro electrónico en la Sede Electrónica de la DGT con certificado digital o Cl@ve, en cualquier oficina de registro de la Administración General del Estado, o mediante correo postal certificado con acuse de recibo. Guarda siempre el justificante de presentación con fecha y hora."
+        },
+        {
+          "@type": "HowToStep",
+          "position": "5",
+          "name": "Espera la resolución (hasta 1 mes)",
+          "text": "La Administración dispone de un mes para resolver. Si transcurrido ese mes no hay respuesta expresa, opera el silencio administrativo negativo: el recurso se entiende desestimado y puedes interponer recurso contencioso-administrativo en el plazo de 6 meses."
+        }
+      ]
+    }
   ]
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <script>
-    (function () {
-      try {
-        var key = 'lex_theme_preference_v1';
-        var storedTheme = localStorage.getItem(key);
-        var systemPrefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-        var theme = (storedTheme === 'light' || storedTheme === 'dark')
-          ? storedTheme
-          : (systemPrefersLight ? 'light' : 'dark');
-        document.documentElement.setAttribute('data-theme', theme);
-      } catch (error) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    })();
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script>document.documentElement.setAttribute('data-theme', 'light');</script>
 
     <link rel="stylesheet" href="/styles.css" />
   <style>
@@ -136,13 +162,24 @@
     .breadcrumb span { margin: 0 6px; }
     .article-meta { font-size: 0.85rem; color: var(--muted-2); margin-bottom: 40px; display: flex; gap: 16px; flex-wrap: wrap; }
     .article-lead { font-size: 1.15rem; color: var(--muted); line-height: 1.7; margin-bottom: 40px; padding: 20px 24px; background: rgba(79,124,255,0.08); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
-    h1.article-h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 600; line-height: 1.25; color: var(--text); margin-bottom: 16px; }
-    .article-body h2 { font-size: 1.35rem; font-weight: 600; color: var(--text); margin: 48px 0 16px; padding-top: 8px; border-top: 1px solid var(--border); }
+    h1.article-h1 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 800; line-height: 1.18; letter-spacing: -0.03em; color: var(--text); margin-bottom: 16px; }
+    .article-body h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--text); margin: 48px 0 16px; padding-top: 8px; border-top: 1px solid var(--border); }
     .article-body h3 { font-size: 1.1rem; font-weight: 600; color: var(--text); margin: 32px 0 12px; }
     .article-body p { color: var(--muted); line-height: 1.75; margin-bottom: 16px; }
     .article-body ul, .article-body ol { color: var(--muted); line-height: 1.75; padding-left: 24px; margin-bottom: 16px; }
     .article-body li { margin-bottom: 8px; }
     .article-body strong { color: var(--text); }
+
+    .article-image { margin: 28px 0; }
+    .article-image-hero { margin: 0 0 28px; }
+    .article-image-body { margin: 32px 0; }
+    .article-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      object-fit: cover;
+    }
     .alert-box { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.5); border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
     .alert-box p { margin: 0; color: #f59e0b; }
     .info-box { background: rgba(79,124,255,0.1); border: 1px solid rgba(41,211,255,0.25); border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
@@ -156,10 +193,10 @@
     .badge-green { background: rgba(59,221,159,0.08); color: var(--success); }
     .badge-yellow { background: #fef3c7; color: #92400e; }
     .badge-red { background: #fee2e2; color: #991b1b; }
-    .cta-inline { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin: 48px 0; text-align: center; }
-    .cta-inline h3 { color: var(--text); margin: 0 0 8px; font-size: 1.2rem; }
+    .cta-inline { position: relative; background: var(--surface-2); color: var(--text); border: 1px solid var(--border-strong); border-top: 1px solid rgba(var(--accent-rgb), 0.22); border-radius: 12px; padding: 32px; margin: 48px 0; text-align: center; box-shadow: 0 4px 32px rgba(var(--accent-rgb), 0.05), var(--shadow); }
+    .cta-inline h3 { color: var(--text); margin: 0 0 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.025em; }
     .cta-inline p { color: var(--muted-2); margin: 0 0 20px; }
-    .cta-inline .btn { display: inline-block; background: #fff; color: var(--surface-2); padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+    .cta-inline .btn { display: inline-block; background: var(--grad-accent); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.15); padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
     .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
     .faq-item h3 { margin: 0 0 8px; font-size: 1rem; color: var(--text); }
     .faq-item p { margin: 0; color: var(--muted); font-size: 0.95rem; line-height: 1.65; }
@@ -188,46 +225,39 @@
   <!-- NAV -->
   <nav class="nav" id="main-nav">
     <div class="nav-inner">
-      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">L</span><span class="logo-text">LexReclama</span></a>
+      <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+            <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+            <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+          </svg>
+        </span>
+        <span class="logo-text">LexReclama</span></a>
       <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
         <li><a href="/blog/">Blog</a></li>
+        <li><a href="/contacto/">Contacto</a></li>
       </ul>
       <div class="nav-actions">
-
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
-
-          <span class="icon-sun" aria-hidden="true">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-
-              <circle cx="12" cy="12" r="4"></circle>
-
-              <path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"></path>
-
-            </svg>
-
-          </span>
-
-          <span class="icon-moon" aria-hidden="true">
-
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-
-              <path d="M21 12.8A9 9 0 1 1 11.2 3a7.1 7.1 0 0 0 9.8 9.8z"></path>
-
-            </svg>
-
-          </span>
-
-        </button>
-
         <a href="/#contacto" class="btn btn-sm btn-primary">Consulta gratuita</a>
-
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </nav>
+  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-label="Menú de navegación" hidden>
+    <ul role="list">
+      <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
+      <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
+      <li><a href="/recurrir-multas/">Recurrir multa</a></li>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/contacto/">Contacto</a></li>
+    </ul>
+    <a href="/#contacto" class="btn btn-primary btn-full">Consulta gratuita</a>
+  </div>
 
   <main>
     <article class="blog-article">
@@ -249,11 +279,20 @@
         <span>Lectura: 10 min</span>
       </div>
 
+      <figure class="article-image article-image-hero">
+        <img src="/img/blog/recurso-reposicion-multa-abogado.svg" alt="Notificación de multa DGT con sello de recurso de reposición" width="800" height="450" loading="lazy" style="width:100%;height:auto;border-radius:12px;display:block;"/>
+      </figure>
+
       <div class="article-lead">
         <p>Has recibido una multa de tráfico o una sanción administrativa y no estás de acuerdo con ella. El <strong>recurso de reposición contra una multa</strong> es el primer paso legal para impugnarla en vía administrativa, antes de acudir a los tribunales. Esta guía explica el plazo exacto, qué debe incluir el escrito y qué errores conviene evitar para no perder el recurso.</p>
       </div>
 
       <div class="article-body">
+
+      <figure class="article-image article-image-body">
+        <img src="/img/blog/recurso-reposicion-multa-plazo.svg" alt="Plazos para presentar recurso de reposición: 20 días hábiles" width="800" height="450" loading="lazy" style="width:100%;height:auto;border-radius:12px;display:block;"/>
+      </figure>
+
 
         <!-- 1. ¿Qué es el recurso de reposición? -->
         <h2>¿Qué es el recurso de reposición?</h2>
@@ -295,6 +334,11 @@
           <li>Si la notificación se publicó en el Tablón Edictal de Sanciones de Tráfico (TESTRA) porque no fue posible notificarte personalmente, el plazo corre desde la publicación edictal, no desde que te enteraste.</li>
           <li>Los días hábiles excluyen sábados, domingos y festivos nacionales y de la Comunidad Autónoma correspondiente. Suma bien: con agosto en el cómputo el plazo se alarga considerablemente en días naturales.</li>
         </ul>
+
+        
+      <figure class="article-image article-image-body">
+        <img src="/img/blog/recurso-reposicion-multa-formulario.svg" alt="Motivos válidos para recurrir una multa: defecto de notificación, prescripción, falta de señalización" width="800" height="450" loading="lazy" style="width:100%;height:auto;border-radius:12px;display:block;"/>
+      </figure>
 
         <!-- 4. Cómo presentar el recurso paso a paso -->
         <h2>Cómo presentar el recurso de reposición paso a paso</h2>
@@ -483,27 +527,59 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
-      <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
-      <div class="footer-social">
-        <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      <div class="footer-left">
+        <a href="/" class="logo">
+          <span class="logo-mark" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/>
+              <rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/>
+              <circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/>
+            </svg>
+          </span>
+          <span class="logo-text">LexReclama</span>
         </a>
-        <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
-        </a>
+        <p class="footer-legal">LexReclama — Despacho de abogados. Colegiados en el Ilustre Colegio de Abogados. Los resultados pasados no garantizan resultados futuros.</p>
+        <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
       </div>
-      <p class="footer-copy">© 2026 LexReclama · <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></p>
+      <div class="footer-right">
+        <div class="footer-links">
+          <a href="/aviso-legal">Aviso legal</a>
+          <a href="/politica-privacidad">Política de privacidad</a>
+          <a href="/politica-cookies">Política de cookies</a>
+          <a href="/condiciones">Condiciones generales</a>
+        </div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/lexreclama" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@lexreclama" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9a8.17 8.17 0 0 0 4.78 1.52V7.08a4.85 4.85 0 0 1-1.01-.39z"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
   </footer>
 
   <script>
-    var nav = document.getElementById('main-nav');
-    if (nav) {
+    // Nav scroll effect
+    (function () {
+      var nav = document.getElementById('main-nav');
+      if (!nav) return;
       window.addEventListener('scroll', function () {
         nav.classList.toggle('scrolled', window.scrollY > 20);
       }, { passive: true });
-    }
+    })();
+    // Hamburger menu
+    (function () {
+      var btn = document.getElementById('nav-hamburger');
+      var menu = document.getElementById('nav-mobile');
+      if (!btn || !menu) return;
+      function openMenu() { menu.hidden = false; btn.setAttribute('aria-expanded', 'true'); btn.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
+      function closeMenu() { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); btn.classList.remove('is-open'); document.body.style.overflow = ''; }
+      btn.addEventListener('click', function () { menu.hidden ? openMenu() : closeMenu(); });
+      menu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', closeMenu); });
+      document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target) && !btn.contains(e.target)) { closeMenu(); } });
+    })();
   </script>
   <script src="/app.js"></script>
 </body>

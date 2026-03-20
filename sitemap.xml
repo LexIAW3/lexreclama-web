@@ -11,6 +11,12 @@
       <image:title>LexReclama — Abogados especialistas en reclamaciones bancarias y multas</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://www.lexreclama.es/contacto/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
   <!-- Páginas pilar de servicios -->
   <url>
     <loc>https://www.lexreclama.es/reclamacion-deudas/</loc>
@@ -74,7 +80,7 @@
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://www.lexreclama.es/img/blog/procedimiento-monitorio-pasos.webp</image:loc>
-      <image:title>Procedimiento monitorio en 2026: qué es, plazos y cómo reclamar tu deuda</image:title>
+      <image:title>¿Qué es el procedimiento monitorio? Guía completa 2026</image:title>
       <image:caption>Esquema del procedimiento monitorio paso a paso en España</image:caption>
     </image:image>
   </url>
@@ -123,8 +129,93 @@
     </image:image>
   </url>
   <url>
+    <loc>https://www.lexreclama.es/blog/cuanto-cuesta-monitorio/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.lexreclama.es/blog/reclamar-gastos-hipoteca/</loc>
     <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/monitorio-sin-abogado/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/irph-hipoteca/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/irph-hipoteca-reclamar.webp</image:loc>
+      <image:title>IRPH hipoteca: qué es, si es ilegal y cómo reclamar en 2026</image:title>
+      <image:caption>Comparativa IRPH vs Euríbor en hipotecas españolas</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/clausula-suelo/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/clausula-suelo-hipoteca-reclamacion.webp</image:loc>
+      <image:title>Cláusula suelo: qué es, si es ilegal y cómo reclamarla en 2026</image:title>
+      <image:caption>Hipoteca con cláusula suelo abusiva — cómo reclamar la devolución</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/gastos-hipotecarios/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/gastos-hipotecarios-reclamar-banco.webp</image:loc>
+      <image:title>Gastos hipotecarios: cómo reclamarlos al banco en 2026</image:title>
+      <image:caption>Documentos de hipoteca y gastos reclamables al banco en España</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/contratar-abogado-monitorio/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/procedimiento-monitorio-demanda.webp</image:loc>
+      <image:title>Contratar abogado monitorio online: precio y proceso 2026</image:title>
+      <image:caption>Abogado online preparando petición de juicio monitorio para reclamar deuda</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/cuanto-cuesta-recurrir-multa-trafico/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-formulario.webp</image:loc>
+      <image:title>Cuánto cuesta recurrir una multa de tráfico: precios 2026</image:title>
+      <image:caption>Comparativa de precios para recurrir multas DGT con abogado en 2026</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/comision-apertura-hipoteca/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/reclamar-seguro-vida-hipoteca/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/demanda-tarjeta-revolving/</loc>
+    <lastmod>2026-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>

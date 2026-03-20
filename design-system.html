@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexReclama — Design System</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Design system specific layout */
+    .ds-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+    .ds-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 40px 24px;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .ds-content {
+      padding: 64px 80px;
+      max-width: 960px;
+    }
+    .ds-section {
+      padding: 64px 0;
+      border-top: 1px solid var(--section-border);
+    }
+    .ds-section:first-of-type {
+      border-top: 0;
+      padding-top: 0;
+    }
+    .ds-section-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+    .ds-section-sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 40px;
+    }
+    .ds-nav-brand {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 32px;
+    }
+    .ds-nav-section {
+      margin-bottom: 24px;
+    }
+    .ds-nav-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .ds-nav-link {
+      display: block;
+      padding: 5px 8px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: var(--r-sm);
+      transition: color 0.14s, background 0.14s;
+      margin-bottom: 2px;
+    }
+    .ds-nav-link:hover {
+      color: var(--text);
+      background: var(--ghost-bg);
+    }
+    /* Token swatch grid */
+    .ds-color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .ds-color-swatch {
+      border-radius: var(--r);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .ds-color-preview {
+      height: 60px;
+    }
+    .ds-color-info {
+      padding: 10px 12px;
+      background: var(--surface-2);
+    }
+    .ds-color-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+    }
+    .ds-color-value {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    /* Type scale */
+    .ds-type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .ds-type-meta {
+      width: 120px;
+      flex-shrink: 0;
+    }
+    .ds-type-label { font-size: 0.72rem; color: var(--muted); font-family: monospace; }
+    /* Component demos */
+    .ds-demo {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 32px;
+      margin-bottom: 20px;
+    }
+    .ds-demo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .ds-demo-label {
+      font-size: 0.72rem;
+      color: var(--muted-2);
+      font-family: monospace;
+      display: block;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ds-layout">
+    <aside class="ds-sidebar">
+      <a href="/" class="ds-nav-brand">
+        <span class="logo-mark" style="width:24px;height:24px;margin-right:8px;display:inline-flex;vertical-align:middle;">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="3.5" y="2.5" width="2.5" height="9" rx="0.75" fill="white"/><rect x="3.5" y="9.5" width="7" height="2" rx="0.75" fill="white"/><circle cx="12" cy="4" r="1.25" fill="white" opacity="0.72"/></svg>
+        </span>
+        Design System
+      </a>
+      <nav>
+        <div class="ds-nav-section">
+          <span class="ds-nav-label">Foundations</span>
+          <a href="#tokens" class="ds-nav-link">Design Tokens</a>
+          <a href="#colors" class="ds-nav-link">Color System</a>
+          <a href="#typography" class="ds-nav-link">Typography</a>
+          <a href="#spacing" class="ds-nav-link">Spacing & Radii</a>
+        </div>
+        <div class="ds-nav-section">
+          <span class="ds-nav-label">Components</span>
+          <a href="#buttons" class="ds-nav-link">Buttons</a>
+          <a href="#badges" class="ds-nav-link">Badges</a>
+          <a href="#cards" class="ds-nav-link">Cards</a>
+          <a href="#recovery-stat" class="ds-nav-link">Recovery Stat</a>
+          <a href="#forms" class="ds-nav-link">Form Fields</a>
+          <a href="#bento" class="ds-nav-link">Bento Layouts</a>
+        </div>
+        <div class="ds-nav-section">
+          <span class="ds-nav-label">Sections</span>
+          <a href="#hero" class="ds-nav-link">Hero Pattern</a>
+          <a href="#stats" class="ds-nav-link">Stats Grid</a>
+          <a href="#testimonials" class="ds-nav-link">Testimonials</a>
+          <a href="#steps" class="ds-nav-link">Process Steps</a>
+        </div>
+      </nav>
+      <div style="margin-top:auto;padding-top:32px;">
+      </div>
+    </aside>
+
+    <main class="ds-content">
+      <div style="margin-bottom: 16px;">
+        <span class="eyebrow">LexReclama</span>
+      </div>
+      <h1 style="font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.04em; margin-bottom: 12px;">Design System</h1>
+      <p style="color: var(--muted); font-size: 1rem; max-width: 560px; line-height: 1.75; margin-bottom: 0;">
+        Referencia visual completa del sistema de diseño LexReclama <strong style="color:var(--accent)">v7.1</strong>. Tokens, tipografía, componentes, patrones bento y recovery stats.
+        <br>Referencias: <strong style="color:var(--text)">linear.app · stripe.com · cal.com</strong>
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.74rem;font-weight:600;color:var(--green);background:var(--green-dim);border:1px solid rgba(0,212,138,0.2);border-radius:999px;padding:4px 12px;">
+          ● Grain texture
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.74rem;font-weight:600;color:var(--hero-badge-text);background:var(--hero-badge-bg);border:1px solid var(--border-strong);border-radius:999px;padding:4px 12px;">
+          Aurora multi-capa
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.74rem;font-weight:600;color:var(--hero-badge-text);background:var(--hero-badge-bg);border:1px solid var(--border-strong);border-radius:999px;padding:4px 12px;">
+          Shimmer btn-primary
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.74rem;font-weight:600;color:var(--hero-badge-text);background:var(--hero-badge-bg);border:1px solid var(--border-strong);border-radius:999px;padding:4px 12px;">
+          Spacing scale 4px
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.74rem;font-weight:600;color:var(--hero-badge-text);background:var(--hero-badge-bg);border:1px solid var(--border-strong);border-radius:999px;padding:4px 12px;">
+          Tracking tokens
+        </span>
+      </div>
+
+      <!-- DESIGN TOKENS -->
+      <section class="ds-section" id="tokens">
+        <h2 class="ds-section-title">Design Tokens</h2>
+        <p class="ds-section-sub">Variables CSS globales definidas en <code style="font-size:0.88em;color:var(--accent-2)">:root</code>. Se aplican automáticamente en dark mode; el tema light sobreescribe los tokens en <code style="font-size:0.88em;color:var(--accent-2)">html[data-theme='light']</code>.</p>
+
+        <!-- SPACING SCALE (v4.0 nuevo) -->
+        <div id="spacing" style="margin-top:40px;">
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;">Spacing Scale — 4px base</h3>
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">Escala matemática sobre una cuadrícula de 4px. Usar exclusivamente estos valores para padding, margin y gap.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.8rem;color:var(--muted-2);padding-bottom:6px;border-bottom:1px solid var(--border);"><span>Token</span><span>Value</span><span>Uso típico</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-1</code><span>4px</span><span style="color:var(--muted)">Nudges, icon offsets</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-2</code><span>8px</span><span style="color:var(--muted)">Gap pequeño, padding inline</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-4</code><span>16px</span><span style="color:var(--muted)">Padding base de componentes</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-6</code><span>24px</span><span style="color:var(--muted)">Card padding</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-8</code><span>32px</span><span style="color:var(--muted)">Section padding interno</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-12</code><span>48px</span><span style="color:var(--muted)">Gap entre secciones</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-24</code><span>96px</span><span style="color:var(--muted)">Padding de sección mayor</span></div>
+            <div style="display:grid;grid-template-columns:80px 80px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--s-32</code><span>128px</span><span style="color:var(--muted)">Hero padding top</span></div>
+          </div>
+        </div>
+
+        <!-- LETTER-SPACING SCALE (v4.0 nuevo) -->
+        <div id="tracking" style="margin-top:40px;">
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:8px;">Letter-Spacing Scale</h3>
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">Tracking intencional por jerarquía visual. Nunca usar valores ad-hoc.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:grid;grid-template-columns:160px 120px 1fr;gap:12px;align-items:center;font-size:0.8rem;color:var(--muted-2);padding-bottom:6px;border-bottom:1px solid var(--border);"><span>Token</span><span>Valor</span><span>Uso</span></div>
+            <div style="display:grid;grid-template-columns:160px 120px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--tracking-tighter</code><span>-0.055em</span><span style="color:var(--muted)">h1 hero display</span></div>
+            <div style="display:grid;grid-template-columns:160px 120px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--tracking-tight</code><span>-0.038em</span><span style="color:var(--muted)">h2, h3</span></div>
+            <div style="display:grid;grid-template-columns:160px 120px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--tracking-normal</code><span>-0.015em</span><span style="color:var(--muted)">body, párrafos</span></div>
+            <div style="display:grid;grid-template-columns:160px 120px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--tracking-wide</code><span>0.06em</span><span style="color:var(--muted)">stat labels</span></div>
+            <div style="display:grid;grid-template-columns:160px 120px 1fr;gap:12px;align-items:center;font-size:0.82rem;"><code style="color:var(--accent-2)">--tracking-wider</code><span>0.12em</span><span style="color:var(--muted)">eyebrow labels, badges</span></div>
+          </div>
+        </div>
+
+        <div id="colors">
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:20px;">Backgrounds</h3>
+          <div class="ds-color-grid">
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--bg)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--bg</div><div class="ds-color-value">#09090e</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--surface)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--surface</div><div class="ds-color-value">#0f0f15</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--surface-2)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--surface-2</div><div class="ds-color-value">#16161e</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--surface-3)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--surface-3</div><div class="ds-color-value">#1d1d27</div></div>
+            </div>
+          </div>
+
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:20px;margin-top:32px;">Text</h3>
+          <div class="ds-color-grid">
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--text)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--text</div><div class="ds-color-value">#eeeef2</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--muted)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--muted</div><div class="ds-color-value">#9292a8</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--muted-2)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--muted-2</div><div class="ds-color-value">#5e5e78</div></div>
+            </div>
+          </div>
+
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:20px;margin-top:32px;">Accent</h3>
+          <div class="ds-color-grid">
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--accent)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--accent</div><div class="ds-color-value">#5b72ff</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--accent-h)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--accent-h</div><div class="ds-color-value">#7b8fff</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--accent-2)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--accent-2</div><div class="ds-color-value">#38d9ff</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--green)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--green</div><div class="ds-color-value">#00d48a</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--error)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--error</div><div class="ds-color-value">#ff5264</div></div>
+            </div>
+          </div>
+
+          <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:20px;margin-top:32px;">Gradients</h3>
+          <div class="ds-color-grid">
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--grad-accent)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--grad-accent</div><div class="ds-color-value">135° #5b72ff → #38d9ff</div></div>
+            </div>
+            <div class="ds-color-swatch">
+              <div class="ds-color-preview" style="background:var(--card-bg)"></div>
+              <div class="ds-color-info"><div class="ds-color-name">--grad-card</div><div class="ds-color-value">160° surface gradient</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TYPOGRAPHY -->
+      <section class="ds-section" id="typography">
+        <h2 class="ds-section-title">Typography</h2>
+        <p class="ds-section-sub">Display: <strong>Space Grotesk</strong> (500–700) · Body: <strong>Manrope</strong> (400–800). Letter spacing negativo en display — referencia linear.app.</p>
+
+        <div style="margin-bottom: 32px;">
+          <div class="ds-type-row">
+            <div class="ds-type-meta">
+              <div class="ds-type-label">h1 / display</div>
+              <div class="ds-type-label">clamp(2.8–5.8rem)</div>
+              <div class="ds-type-label">-0.03em ls</div>
+            </div>
+            <h1 style="font-size: clamp(2.8rem, 7.5vw, 5.8rem);">Recupera lo que es tuyo.</h1>
+          </div>
+          <div class="ds-type-row">
+            <div class="ds-type-meta">
+              <div class="ds-type-label">h2 / section</div>
+              <div class="ds-type-label">clamp(1.9–3.1rem)</div>
+            </div>
+            <h2>Servicios de reclamación</h2>
+          </div>
+          <div class="ds-type-row">
+            <div class="ds-type-meta">
+              <div class="ds-type-label">h3 / card title</div>
+              <div class="ds-type-label">1.04rem</div>
+            </div>
+            <h3>Reclamación de deudas</h3>
+          </div>
+          <div class="ds-type-row">
+            <div class="ds-type-meta">
+              <div class="ds-type-label">body / default</div>
+              <div class="ds-type-label">1rem / lh 1.65</div>
+            </div>
+            <p>Reclamamos deudas impagadas, cláusulas bancarias abusivas y multas injustas.</p>
+          </div>
+          <div class="ds-type-row">
+            <div class="ds-type-meta">
+              <div class="ds-type-label">body muted</div>
+              <div class="ds-type-label">var(--muted)</div>
+            </div>
+            <p style="color:var(--muted)">Consulta inicial gratuita. Cobramos solo si recuperamos tu dinero.</p>
+          </div>
+          <div class="ds-type-row">
+            <div class="ds-type-meta">
+              <div class="ds-type-label">eyebrow</div>
+              <div class="ds-type-label">0.7rem / 0.12em</div>
+            </div>
+            <span class="eyebrow">Áreas de práctica</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPACING & RADII -->
+      <section class="ds-section" id="spacing">
+        <h2 class="ds-section-title">Spacing & Radii</h2>
+        <p class="ds-section-sub">Escala de radii. El sistema de espaciado usa múltiplos de 8px.</p>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:40px;">
+          <div style="text-align:center;">
+            <div style="width:40px;height:40px;background:var(--accent);border-radius:var(--r-sm);margin:0 auto 8px;"></div>
+            <div class="ds-type-label">--r-sm<br>8px</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:40px;height:40px;background:var(--accent);border-radius:var(--r);margin:0 auto 8px;"></div>
+            <div class="ds-type-label">--r<br>12px</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:40px;height:40px;background:var(--accent);border-radius:var(--r-lg);margin:0 auto 8px;"></div>
+            <div class="ds-type-label">--r-lg<br>18px</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:40px;height:40px;background:var(--accent);border-radius:var(--r-xl);margin:0 auto 8px;"></div>
+            <div class="ds-type-label">--r-xl<br>24px</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:40px;height:40px;background:var(--accent);border-radius:999px;margin:0 auto 8px;"></div>
+            <div class="ds-type-label">pill<br>999px</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUTTONS -->
+      <section class="ds-section" id="buttons">
+        <h2 class="ds-section-title">Buttons</h2>
+        <p class="ds-section-sub">Tres variantes: primary (gradient + glow), ghost (subtle border), secondary. Tres tamaños: sm, default, lg.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.btn-primary · .btn-ghost · .btn-secondary — sizes: .btn-sm .btn (default) .btn-lg</span>
+          <div class="ds-demo-row" style="margin-bottom:16px;">
+            <button class="btn btn-primary btn-sm">Botón pequeño</button>
+            <button class="btn btn-primary">Botón default</button>
+            <button class="btn btn-primary btn-lg">Botón grande</button>
+          </div>
+          <div class="ds-demo-row" style="margin-bottom:16px;">
+            <button class="btn btn-ghost btn-sm">Ghost sm</button>
+            <button class="btn btn-ghost">Ghost default</button>
+            <button class="btn btn-ghost btn-lg">Ghost lg</button>
+          </div>
+          <div class="ds-demo-row">
+            <button class="btn btn-secondary">Secondary</button>
+            <button class="btn btn-primary btn-full" style="max-width:320px;">Full width →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- BADGES -->
+      <section class="ds-section" id="badges">
+        <h2 class="ds-section-title">Badges & Labels</h2>
+        <p class="ds-section-sub">Hero badge con dot pulsante. Eyebrow labels en CAPS para section headers.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.hero-badge — usado en hero y service pages como status indicator</span>
+          <div class="ds-demo-row">
+            <div class="hero-badge">95% tasa de éxito · +500 casos ganados</div>
+          </div>
+          <div class="ds-demo-row" style="margin-top:20px;">
+            <span class="eyebrow">Áreas de práctica</span>
+            <span class="eyebrow">Proceso</span>
+            <span class="eyebrow">Casos de éxito</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARDS -->
+      <section class="ds-section" id="cards">
+        <h2 class="ds-section-title">Cards</h2>
+        <p class="ds-section-sub">Tres variantes de card: area card (servicio), stat card (métrica), testimonio card.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.area-card — con data-type para accent color top border</span>
+          <div class="areas-grid" style="margin-top:0;">
+            <div class="area-card" data-type="deuda">
+              <div class="area-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+              </div>
+              <h3>Reclamación de deudas</h3>
+              <p>Juicio monitorio para recuperar dinero.</p>
+              <ul class="area-list">
+                <li>Proceso desde 500 €</li>
+                <li>30-90 días habitual</li>
+              </ul>
+              <a href="#" class="area-link">Reclamar deuda →</a>
+            </div>
+            <div class="area-card" data-type="banco">
+              <div class="area-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              </div>
+              <h3>Cláusulas bancarias</h3>
+              <p>Gastos hipotecarios, cláusula suelo, IRPH.</p>
+              <ul class="area-list">
+                <li>Gastos: notaría y registro</li>
+                <li>Cláusula suelo</li>
+              </ul>
+              <a href="#" class="area-link">Reclamar al banco →</a>
+            </div>
+            <div class="area-card" data-type="multa">
+              <div class="area-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3>Impugnación de multas</h3>
+              <p>DGT, municipales, administrativas.</p>
+              <ul class="area-list">
+                <li>Análisis gratuito</li>
+                <li>Sin coste si no hay base</li>
+              </ul>
+              <a href="#" class="area-link">Impugnar multa →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-demo" style="margin-top:20px;" id="stats">
+          <span class="ds-demo-label">.stat-card — grid con 1px borders (Linear style)</span>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <p class="stat-value">+500</p>
+              <p class="stat-label">casos ganados</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-value">95%</p>
+              <p class="stat-label">tasa de éxito</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-value">+2M€</p>
+              <p class="stat-label">recuperados</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-value">24h</p>
+              <p class="stat-label">respuesta garantizada</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="ds-demo" style="margin-top:20px;" id="testimonials">
+          <span class="ds-demo-label">.testimonio-card — trust signal con quote decoration</span>
+          <div class="testimonios-grid">
+            <article class="testimonio-card">
+              <div class="stars" aria-label="5 estrellas">
+                <svg width="72" height="13" viewBox="0 0 72 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M6.5 1.5L7.7 5.1H11.5L8.4 7.4L9.6 11L6.5 8.7L3.4 11L4.6 7.4L1.5 5.1H5.3L6.5 1.5Z" fill="#FFBB00"/>
+                  <path d="M20.5 1.5L21.7 5.1H25.5L22.4 7.4L23.6 11L20.5 8.7L17.4 11L18.6 7.4L15.5 5.1H19.3L20.5 1.5Z" fill="#FFBB00"/>
+                  <path d="M34.5 1.5L35.7 5.1H39.5L36.4 7.4L37.6 11L34.5 8.7L31.4 11L32.6 7.4L29.5 5.1H33.3L34.5 1.5Z" fill="#FFBB00"/>
+                  <path d="M48.5 1.5L49.7 5.1H53.5L50.4 7.4L51.6 11L48.5 8.7L45.4 11L46.6 7.4L43.5 5.1H47.3L48.5 1.5Z" fill="#FFBB00"/>
+                  <path d="M62.5 1.5L63.7 5.1H67.5L64.4 7.4L65.6 11L62.5 8.7L59.4 11L60.6 7.4L57.5 5.1H61.3L62.5 1.5Z" fill="#FFBB00"/>
+                </svg>
+              </div>
+              <p class="testimonio-copy">Recuperamos 18.400 € de gastos hipotecarios en menos de cinco meses. Nos guiaron en todo el proceso sin complicaciones.</p>
+              <div class="testimonio-footer">
+                <span class="testimonio-avatar">MR</span>
+                <span class="testimonio-author">María R. · Valencia</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECOVERY STAT COMPONENT -->
+      <section class="ds-section" id="recovery-stat">
+        <h2 class="ds-section-title">Recovery Stat</h2>
+        <p class="ds-section-sub">Bloque métrico que muestra la recuperación económica ilustrativa. Se usa dentro de la featured area-card (bancario). Gradiente en el amount, glow en la esquina.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.area-recovery → .area-recovery-amount + .area-recovery-label</span>
+          <div style="max-width:320px;">
+            <div class="area-recovery">
+              <span class="area-recovery-amount">+ € 18.400</span>
+              <span class="area-recovery-label">recuperación media · caso ilustrativo sin coste previo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-demo" style="margin-top:20px;">
+          <span class="ds-demo-label">Featured area-card completa con recovery stat (posición 1 del areas-grid)</span>
+          <div class="area-card" data-type="banco" style="max-width:400px;">
+            <div class="area-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <h3>Cláusulas bancarias abusivas</h3>
+            <p>Gastos hipotecarios, cláusula suelo, IRPH y comisiones abusivas.</p>
+            <ul class="area-list">
+              <li>Gastos: notaría, registro y gestoría</li>
+              <li>Cláusula suelo: diferencia histórica</li>
+              <li>IRPH: exceso respecto al Euribor</li>
+            </ul>
+            <div class="area-recovery">
+              <span class="area-recovery-amount">+ € 18.400</span>
+              <span class="area-recovery-label">recuperación media ilustrativa · sin coste inicial</span>
+            </div>
+            <a href="#" class="area-link">Reclamar al banco →</a>
+          </div>
+          <p style="font-size:0.8rem;color:var(--muted-2);margin-top:16px;">
+            <strong style="color:var(--muted)">Nota:</strong> En el areas-grid, esta card es <code style="color:var(--accent-2)">:first-child</code> y recibe automáticamente: grid-row span 2, icono 32px, h3 1.18rem, featured link button treatment.
+          </p>
+        </div>
+      </section>
+
+      <!-- BENTO LAYOUTS -->
+      <section class="ds-section" id="bento">
+        <h2 class="ds-section-title">Bento Layouts</h2>
+        <p class="ds-section-sub">Patrones de grid asimétrico. El primer elemento recibe protagonismo visual. Referencias: cal.com · linear.app.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.areas-grid — 1.5fr 1fr · :first-child spans 2 rows (featured)</span>
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;grid-template-rows:auto auto;gap:8px;margin-top:0;">
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;grid-row:1/3;min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.82rem;text-align:center;">
+              <div>
+                <div style="font-size:1.5rem;font-weight:800;letter-spacing:-0.04em;color:var(--text);">Featured</div>
+                <div style="color:var(--muted);margin-top:4px;">1.5fr · spans 2 rows</div>
+              </div>
+            </div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;min-height:56px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.82rem;">Card 2</div>
+            <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;min-height:56px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.82rem;">Card 3</div>
+          </div>
+        </div>
+
+        <div class="ds-demo" style="margin-top:20px;">
+          <span class="ds-demo-label">.stats-grid — 1.45fr 1fr 1fr (≥760px) · featured stat card más ancha</span>
+          <div class="stats-grid" style="margin-top:0;">
+            <article class="stat-card">
+              <p class="stat-value">0 €</p>
+              <p class="stat-label">Sin pago por adelantado — solo cobramos si ganamos</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-value">24 h</p>
+              <p class="stat-label">Respuesta garantizada</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-value">100%</p>
+              <p class="stat-label">Online — sin desplazamientos</p>
+            </article>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;padding:20px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-lg);">
+          <h4 style="font-size:0.9rem;font-weight:700;margin-bottom:12px;">Reglas del bento system</h4>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+            <li style="padding-left:16px;position:relative;font-size:0.84rem;color:var(--muted);">
+              <span style="position:absolute;left:0;top:8px;width:6px;height:1.5px;background:var(--accent-2);border-radius:1px;display:block;"></span>
+              El featured item siempre ocupa la posición <code style="color:var(--accent-2)">:first-child</code> del grid.
+            </li>
+            <li style="padding-left:16px;position:relative;font-size:0.84rem;color:var(--muted);">
+              <span style="position:absolute;left:0;top:8px;width:6px;height:1.5px;background:var(--accent-2);border-radius:1px;display:block;"></span>
+              Featured ≥1.4× el ancho de los demás tiles. Mantener ratio 3:2 como mínimo.
+            </li>
+            <li style="padding-left:16px;position:relative;font-size:0.84rem;color:var(--muted);">
+              <span style="position:absolute;left:0;top:8px;width:6px;height:1.5px;background:var(--accent-2);border-radius:1px;display:block;"></span>
+              Gap entre tiles: 12px (desktop) · 8px (tablet) · 8px (mobile, 1 columna).
+            </li>
+            <li style="padding-left:16px;position:relative;font-size:0.84rem;color:var(--muted);">
+              <span style="position:absolute;left:0;top:8px;width:6px;height:1.5px;background:var(--accent-2);border-radius:1px;display:block;"></span>
+              En mobile (<1000px), el grid colapsa a 1 columna con todos los items al mismo tamaño.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- FORMS -->
+      <section class="ds-section" id="forms">
+        <h2 class="ds-section-title">Form Fields</h2>
+        <p class="ds-section-sub">Inputs, selects y textareas con estados: default, focus (accent border + glow), error.</p>
+
+        <div class="ds-demo" style="max-width:480px;">
+          <span class="ds-demo-label">.field · input / select / textarea</span>
+          <div class="field" style="margin-bottom:14px;">
+            <label>Nombre completo</label>
+            <input type="text" placeholder="Tu nombre" />
+          </div>
+          <div class="field" style="margin-bottom:14px;">
+            <label>Tipo de reclamación</label>
+            <select>
+              <option>Selecciona el tipo</option>
+              <option>Reclamación de deuda</option>
+              <option>Cláusulas bancarias</option>
+              <option>Impugnación de multa</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:14px;">
+            <label>Descripción del caso</label>
+            <textarea rows="3" placeholder="Describe brevemente tu situación..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-full">Enviar consulta gratuita</button>
+        </div>
+      </section>
+
+      <!-- PROCESS STEPS -->
+      <section class="ds-section" id="steps">
+        <h2 class="ds-section-title">Process Steps</h2>
+        <p class="ds-section-sub">Grid de 3 pasos con divisores de flecha. Estilo linear.app.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.steps → .step + .step-divider</span>
+          <div class="steps">
+            <div class="step">
+              <span class="step-num">01</span>
+              <h3>Consulta gratuita</h3>
+              <p>Nos explicas tu caso. En 24 horas te decimos si tiene viabilidad.</p>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step">
+              <span class="step-num">02</span>
+              <h3>Gestionamos todo</h3>
+              <p>Redactamos, presentamos y hacemos seguimiento.</p>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step">
+              <span class="step-num">03</span>
+              <h3>Cobras lo tuyo</h3>
+              <p>Solo cobramos si recuperamos tu dinero.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HERO PATTERN -->
+      <section class="ds-section" id="hero">
+        <h2 class="ds-section-title">Hero Pattern</h2>
+        <p class="ds-section-sub">Layout dos columnas: contenido izquierda, Hero Visual Panel (HVP) derecha. El HVP simula una interfaz de caso en tramitación.</p>
+
+        <div class="ds-demo">
+          <span class="ds-demo-label">.hero-layout → .hero-content + .hero-visual → .hvp</span>
+          <div style="background:var(--bg);border-radius:var(--r-lg);padding:40px;position:relative;overflow:hidden;">
+            <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:600px;height:400px;border-radius:50%;background:radial-gradient(ellipse,rgba(91,114,255,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+            <div class="hero-layout">
+              <div class="hero-content">
+                <div class="hero-badge">95% tasa de éxito · +500 casos</div>
+                <h1 style="font-size:clamp(2rem,5vw,3.5rem);margin:18px 0 16px;">Recupera lo<br>que es <span class="text-gradient">tuyo.</span></h1>
+                <p class="hero-sub" style="font-size:1rem;">Reclamamos deudas, cláusulas bancarias y multas. Cobramos solo si ganamos.</p>
+                <div class="hero-actions" style="margin-top:24px;">
+                  <a href="#" class="btn btn-primary">Consulta gratuita</a>
+                  <a href="#" class="btn btn-ghost">Cómo funciona →</a>
+                </div>
+              </div>
+              <div class="hero-visual">
+                <div class="hvp">
+                  <div class="hvp-card--main">
+                    <div class="hvp-card-header">
+                      <span class="hvp-dot hvp-dot--green"></span>
+                      <span class="hvp-label">Caso en tramitación</span>
+                      <span class="hvp-tag">Bancaria</span>
+                    </div>
+                    <div class="hvp-amount">+€ 18.400</div>
+                    <div class="hvp-amount-label">estimación de recuperación</div>
+                    <div class="hvp-steps">
+                      <div class="hvp-step hvp-step--done">
+                        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" fill="currentColor" opacity=".15"/><polyline points="4.5 8 7 10.5 11.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span>Documentación recibida</span>
+                      </div>
+                      <div class="hvp-step hvp-step--active">
+                        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+                        <span>Reclamación enviada al banco</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- DS v7.1 changelog -->
+  <script>
+    // Design System version log — consultable desde consola
+    window.__LEX_DS__ = {
+      version: '7.1',
+      date: '2026-03-20',
+      references: ['linear.app', 'stripe.com', 'cal.com'],
+      components: {
+        'area-recovery': 'Bloque métrico en featured card — recovery amount con gradient text',
+        'areas-bento':   'Bento grid 1.5fr/1fr · bancario en posición featured (:first-child)',
+        'stats-bento':   'Stats grid 1.45fr/1fr/1fr en ≥760px · primer stat más prominente',
+        'stats-eyebrow': '.stats-eyebrow → eyebrow label centrado sobre el stats grid',
+        'step-divider':  'Connecting arrow con línea accent 1.5px + arrowhead 7px accent',
+      },
+      changes: {
+        'v7.0': [
+          'motion tokens: --ease-spring/out/smooth/bounce, --dur-instant/fast/normal/slow/xslow',
+          'z-index tokens: --z-base/float/sticky/nav/modal/toast/overlay',
+          'font-optical-sizing: auto + text-rendering: optimizeLegibility en h1–h4',
+          'featured area-card .area-link → ghost button treatment con will-change',
+          '[data-animate] transition: usa tokens --dur-xslow + --ease-spring',
+        ],
+        'v7.1': [
+          'bancario → posición featured en areas-grid (mayor recuperación ilustrativa)',
+          'nuevo componente .area-recovery: amount gradient + label + corner glow ::after',
+          'featured card: inner noise overlay ::after + z-index en children',
+          'stats-grid asimétrico: 1.45fr 1fr 1fr en ≥760px',
+          'stats-eyebrow: eyebrow label centrado sobre las stat cards',
+          'step-divider: línea 1.5px accent + arrowhead 7px accent más visible',
+          'design-system.html: recovery stat + bento layouts documentados',
+        ]
+      }
+    };
+    console.group('LexReclama Design System v' + window.__LEX_DS__.version);
+    console.log('Components:', window.__LEX_DS__.components);
+    console.log('v7.0 changes:', window.__LEX_DS__.changes['v7.0']);
+    console.log('v7.1 changes:', window.__LEX_DS__.changes['v7.1']);
+    console.groupEnd();
+  </script>
+
+</body>
+</html>

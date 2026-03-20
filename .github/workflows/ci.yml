@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate HTML & JS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for syntax errors in server.js
+        run: node --check server.js
+
+      - name: Check for syntax errors in app.js
+        run: node --check app.js
+
+      - name: Verify critical files exist
+        run: |
+          for f in index.html styles.css app.js server.js robots.txt sitemap.xml; do
+            if [ ! -f "$f" ]; then
+              echo "ERROR: Missing required file: $f"
+              exit 1
+            fi
+          done
+          echo "All critical files present."
+
+      - name: Check HTML files are valid (basic)
+        run: |
+          error=0
+          for f in $(find . -name "*.html" -not -path "./node_modules/*" -not -path "./.github/*"); do
+            if ! grep -q "<!DOCTYPE html>" "$f" && ! grep -q "<!doctype html>" "$f"; then
+              echo "WARNING: $f missing DOCTYPE"
+            fi
+            if grep -q "TODO\|FIXME\|PLACEHOLDER" "$f"; then
+              echo "WARNING: $f contains TODO/FIXME/PLACEHOLDER"
+            fi
+          done
+          exit $error

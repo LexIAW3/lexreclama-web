@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.025)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  
+  <rect x="155" y="230" width="280" height="170" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="155" y="230" width="280" height="5" rx="3" fill="#5b72ff"/>
+  <text x="295" y="305" font-family="'Space Grotesk',sans-serif" font-size="52" font-weight="900" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">20</text>
+  <text x="295" y="345" font-family="'Space Grotesk',sans-serif" font-size="14" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">DÍAS</text>
+  <text x="295" y="375" font-family="'Space Grotesk',sans-serif" font-size="12" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">para presentar recurso de reposición</text>
+
+  <rect x="460" y="230" width="280" height="170" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="460" y="230" width="280" height="5" rx="3" fill="#38d9ff"/>
+  <text x="600" y="305" font-family="'Space Grotesk',sans-serif" font-size="52" font-weight="900" fill="#38d9ff" text-anchor="middle" dominant-baseline="middle">30</text>
+  <text x="600" y="345" font-family="'Space Grotesk',sans-serif" font-size="14" font-weight="700" fill="#38d9ff" text-anchor="middle" dominant-baseline="middle">DÍAS</text>
+  <text x="600" y="375" font-family="'Space Grotesk',sans-serif" font-size="12" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">para recurso de alzada (segunda vía)</text>
+
+  <rect x="765" y="230" width="280" height="170" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="765" y="230" width="280" height="5" rx="3" fill="#00d48a"/>
+  <text x="905" y="305" font-family="'Space Grotesk',sans-serif" font-size="52" font-weight="900" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">0 €</text>
+  <text x="905" y="345" font-family="'Space Grotesk',sans-serif" font-size="14" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle"></text>
+  <text x="905" y="375" font-family="'Space Grotesk',sans-serif" font-size="12" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">sin coste ni tasas judiciales</text>
+<text x="600" y="548" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Plazos del Recurso de Reposición</text><text x="600" y="582" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Actúa antes de que caduque tu derecho a recurrir</text>
+</svg>

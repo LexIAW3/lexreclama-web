@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5b72ff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#38d9ff;stop-opacity:0.15"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid dots -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.03)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <!-- Accent glow blob -->
+  <ellipse cx="600" cy="315" rx="320" ry="180" fill="url(#acc2)" filter="url(#glow)"/>
+  
+  <!-- Steps flowchart -->
+  <!-- Step 1 -->
+  <circle cx="200" cy="240" r="34" fill="url(#acc)" opacity="0.9"/>
+  <text x="200" y="240" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle">1</text>
+  <text x="200" y="288" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Petición</text>
+  <text x="200" y="306" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Inicial</text>
+  <!-- Arrow -->
+  <line x1="238" y1="240" x2="328" y2="240" stroke="rgba(91,114,255,0.5)" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="328,234 342,240 328,246" fill="#5b72ff"/>
+  <!-- Step 2 -->
+  <circle cx="380" cy="240" r="34" fill="rgba(91,114,255,0.3)" stroke="#5b72ff" stroke-width="2"/>
+  <text x="380" y="240" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">2</text>
+  <text x="380" y="288" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Admisión</text>
+  <text x="380" y="306" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Juzgado</text>
+  <!-- Arrow -->
+  <line x1="418" y1="240" x2="508" y2="240" stroke="rgba(91,114,255,0.5)" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="508,234 522,240 508,246" fill="#5b72ff"/>
+  <!-- Step 3 -->
+  <circle cx="560" cy="240" r="34" fill="rgba(91,114,255,0.3)" stroke="#5b72ff" stroke-width="2"/>
+  <text x="560" y="240" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">3</text>
+  <text x="560" y="288" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#38d9ff" text-anchor="middle" dominant-baseline="middle">20 días</text>
+  <text x="560" y="306" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Deudor</text>
+  <!-- Three outcomes below step 3 -->
+  <line x1="560" y1="278" x2="560" y2="340" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <!-- Outcome A: pago -->
+  <line x1="440" y1="340" x2="680" y2="340" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  <line x1="440" y1="340" x2="440" y2="380" stroke="rgba(0,212,138,0.5)" stroke-width="1.5"/>
+  <rect x="390" y="380" width="100" height="32" rx="6" fill="rgba(0,212,138,0.12)" stroke="#00d48a" stroke-width="1"/>
+  <text x="440" y="396" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">PAGA</text>
+  <!-- Outcome B: oposición -->
+  <line x1="560" y1="340" x2="560" y2="380" stroke="rgba(255,82,100,0.5)" stroke-width="1.5"/>
+  <rect x="506" y="380" width="108" height="32" rx="6" fill="rgba(255,82,100,0.1)" stroke="#ff5264" stroke-width="1"/>
+  <text x="560" y="396" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#ff5264" text-anchor="middle" dominant-baseline="middle">SE OPONE</text>
+  <!-- Outcome C: no comparece -->
+  <line x1="680" y1="340" x2="680" y2="380" stroke="rgba(91,114,255,0.5)" stroke-width="1.5"/>
+  <rect x="620" y="380" width="120" height="32" rx="6" fill="rgba(91,114,255,0.1)" stroke="#5b72ff" stroke-width="1"/>
+  <text x="680" y="396" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">NO APARECE</text>
+  <!-- Arrow to step 4 -->
+  <line x1="598" y1="240" x2="688" y2="240" stroke="rgba(91,114,255,0.5)" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="688,234 702,240 688,246" fill="#5b72ff"/>
+  <!-- Step 4 -->
+  <circle cx="740" cy="240" r="34" fill="rgba(56,217,255,0.2)" stroke="#38d9ff" stroke-width="2"/>
+  <text x="740" y="240" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#38d9ff" text-anchor="middle" dominant-baseline="middle">4</text>
+  <text x="740" y="288" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Resolución</text>
+  <text x="740" y="306" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Final</text>
+  <!-- Arrow to step 5 -->
+  <line x1="778" y1="240" x2="868" y2="240" stroke="rgba(56,217,255,0.5)" stroke-width="2" stroke-dasharray="6,4"/>
+  <polygon points="868,234 882,240 868,246" fill="#38d9ff"/>
+  <!-- Step 5 -->
+  <circle cx="920" cy="240" r="34" fill="rgba(0,212,138,0.2)" stroke="#00d48a" stroke-width="2"/>
+  <text x="920" y="240" font-family="'Space Grotesk', sans-serif" font-size="22" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">5</text>
+  <text x="920" y="288" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Cobro</text>
+  <text x="920" y="306" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Efectivo</text>
+  <!-- Horizontal bar -->
+  <rect x="130" y="155" width="940" height="2" rx="1" fill="rgba(255,255,255,0.04)"/>
+  <!-- Title -->
+  <text x="600" y="555" font-family="'Space Grotesk', sans-serif" font-size="26" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">El Proceso Monitorio Paso a Paso</text>
+  <text x="600" y="590" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Desde la petición hasta el cobro de la deuda</text>
+
+</svg>

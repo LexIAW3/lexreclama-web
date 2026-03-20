@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.025)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <rect x="320" y="90" width="560" height="420" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/><rect x="320" y="90" width="560" height="6" rx="3" fill="url(#acc)"/><text x="600" y="130" font-family="'Space Grotesk', sans-serif" font-size="12" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">PETICIÓN INICIAL DE PROCESO MONITORIO</text><line x1="340" y1="155" x2="860" y2="155" stroke="rgba(255,255,255,0.05)" stroke-width="1"/><rect x="340" y="164" width="520" height="36" rx="6" fill="rgba(91,114,255,0.06)"/><text x="360" y="182" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Al Juzgado de Primera Instancia de:</text><rect x="360" y="190" width="440" height="8" rx="3" fill="rgba(255,255,255,0.06)"/><rect x="340" y="212" width="520" height="36" rx="6" fill="rgba(255,255,255,0.025)"/><text x="360" y="230" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Datos del acreedor (Solicitante):</text><rect x="360" y="238" width="350" height="8" rx="3" fill="rgba(255,255,255,0.06)"/><rect x="340" y="260" width="520" height="36" rx="6" fill="rgba(255,255,255,0.025)"/><text x="360" y="278" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Datos del deudor (Requerido):</text><rect x="360" y="286" width="350" height="8" rx="3" fill="rgba(255,255,255,0.06)"/><rect x="340" y="308" width="520" height="36" rx="6" fill="rgba(91,114,255,0.06)"/><text x="360" y="326" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Origen y cuantía de la deuda:</text><rect x="360" y="334" width="440" height="8" rx="3" fill="rgba(255,255,255,0.06)"/><rect x="340" y="356" width="520" height="36" rx="6" fill="rgba(255,255,255,0.025)"/><text x="360" y="374" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Documentos que se acompañan:</text><rect x="360" y="382" width="350" height="8" rx="3" fill="rgba(255,255,255,0.06)"/><rect x="340" y="404" width="520" height="36" rx="6" fill="rgba(255,255,255,0.025)"/><text x="360" y="422" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="start" dominant-baseline="middle">Suplico:</text><rect x="360" y="430" width="350" height="8" rx="3" fill="rgba(255,255,255,0.06)"/><text x="600" y="582" font-family="'Space Grotesk', sans-serif" font-size="20" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Documentación Necesaria para el Monitorio</text>
+</svg>
