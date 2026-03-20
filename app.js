@@ -455,6 +455,7 @@ async function submitLead(event) {
 
     await createPaperclipLead(data, tipoLabel);
     trackGtagEvent('generate_lead', { event_category: 'formulario', event_label: data.tipo });
+    currentLeadIdempotency = null;
     form.reset();
     successEl.classList.remove('hidden');
     successEl.querySelector('p').textContent = 'Hemos recibido su solicitud y nos pondremos en contacto con usted en 24-48 horas laborables. Sus datos serán tratados conforme a la Política de Privacidad.';
@@ -666,6 +667,8 @@ function createContactModalElement() {
 
 async function submitModalLead(event) {
   event.preventDefault();
+  if (leadSubmissionInFlight) return;
+  leadSubmissionInFlight = true;
 
   const form = document.getElementById('modal-lead-form');
   const submitBtn = document.getElementById('modal-submit-btn');
@@ -674,7 +677,10 @@ async function submitModalLead(event) {
   const successEl = document.getElementById('modal-form-success');
   const errorEl = document.getElementById('modal-form-error');
 
-  if (!form || !submitBtn || !submitText || !submitLoading || !successEl || !errorEl) return;
+  if (!form || !submitBtn || !submitText || !submitLoading || !successEl || !errorEl) {
+    leadSubmissionInFlight = false;
+    return;
+  }
 
   const data = {
     nombre: document.getElementById('modal-nombre')?.value.trim() || '',
@@ -686,6 +692,7 @@ async function submitModalLead(event) {
     comercialAceptada: false,
     consentimientoTimestamp: new Date().toISOString(),
     versionPolitica: PRIVACY_POLICY_VERSION,
+    idempotencyKey: getLeadIdempotencyKey(),
   };
 
   const tipoLabel = {
@@ -704,12 +711,14 @@ async function submitModalLead(event) {
   try {
     await createPaperclipLead(data, tipoLabel);
     trackGtagEvent('generate_lead', { event_category: 'modal_contacto', event_label: data.tipo });
+    currentLeadIdempotency = null;
     form.reset();
     successEl.classList.remove('hidden');
   } catch (err) {
     console.error('Modal lead submission error:', err);
     errorEl.classList.remove('hidden');
   } finally {
+    leadSubmissionInFlight = false;
     submitBtn.disabled = false;
     submitText.classList.remove('hidden');
     submitLoading.classList.add('hidden');
