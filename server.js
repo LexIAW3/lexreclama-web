@@ -489,11 +489,16 @@ function injectWhatsappIntoHtml(html) {
 }
 
 function injectNonceIntoHtml(html, nonce) {
-  return html.replace(/<script([^>]*)>/g, (match, attrs) => {
-    if (/\bsrc=/.test(attrs)) return match;
-    if (/type="application\/ld\+json"/.test(attrs)) return match;
-    return `<script${attrs} nonce="${nonce}">`;
-  });
+  return html
+    .replace(/<script([^>]*)>/g, (match, attrs) => {
+      if (/\bsrc=/.test(attrs)) return match;
+      if (/type="application\/ld\+json"/.test(attrs)) return match;
+      return `<script${attrs} nonce="${nonce}">`;
+    })
+    .replace(/<style([^>]*)>/g, (match, attrs) => {
+      if (/\bhref=/.test(attrs)) return match; // external <link rel=stylesheet>
+      return `<style${attrs} nonce="${nonce}">`;
+    });
 }
 
 function injectCsrfIntoHtml(html, token) {
@@ -1348,7 +1353,7 @@ const server = http.createServer(async (req, res) => {
       "form-action 'self' https://checkout.stripe.com",
       "connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
       `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://js.stripe.com`,
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: https:",
       "frame-src https://js.stripe.com https://checkout.stripe.com",

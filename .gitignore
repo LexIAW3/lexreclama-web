@@ -2,6 +2,10 @@
 social-templates/png/
 social-templates/jpg/
 
+# Design / marketing assets (not part of the website)
+social-templates/
+assets/rrss/
+
 # Node
 node_modules/
 

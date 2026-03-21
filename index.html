@@ -115,18 +115,18 @@
 <body class="home-page">
 
   <!-- PAGE MESH — persistent gradient orbs give depth to glass cards (aria-hidden, purely decorative) -->
-  <div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
-    <div style="position:absolute;width:800px;height:800px;top:-200px;left:-100px;border-radius:50%;background:radial-gradient(ellipse,rgba(91,114,255,0.12) 0%,transparent 70%);filter:blur(80px);"></div>
-    <div style="position:absolute;width:600px;height:600px;top:-100px;right:-150px;border-radius:50%;background:radial-gradient(ellipse,rgba(56,217,255,0.08) 0%,transparent 70%);filter:blur(70px);"></div>
-    <div style="position:absolute;width:500px;height:700px;top:40%;left:-200px;border-radius:50%;background:radial-gradient(ellipse,rgba(108,60,255,0.08) 0%,transparent 65%);filter:blur(90px);"></div>
-    <div style="position:absolute;width:700px;height:500px;bottom:-100px;right:-200px;border-radius:50%;background:radial-gradient(ellipse,rgba(56,217,255,0.06) 0%,transparent 65%);filter:blur(80px);"></div>
+  <div aria-hidden="true" class="blob-layer">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
   </div>
 
   <!-- SCROLL PROGRESS -->
   <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
 
   <!-- CONTENT (z-index above page-mesh) -->
-  <div style="position:relative;z-index:1;">
+  <div class="blob-layer-content">
 
   <!-- TOPBAR -->
   <div class="topbar" id="topbar">

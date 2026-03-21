@@ -5598,3 +5598,38 @@ html[data-theme='light'] .area-card {
 
 /* Fix 10.2 — Eyebrow margin-bottom */
 .eyebrow { margin-bottom: 14px !important; }
+
+/* === Inline style elimination — style-src unsafe-inline removal === */
+
+/* Blog article images */
+.blog-img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Last FAQ item — no bottom border */
+.faq-item:last-child { border-bottom: none; }
+
+/* Small disclaimer / footnote text in articles */
+.text-disclaimer { font-size: 0.82rem; color: var(--muted-2); margin-top: 16px; font-family: inherit; }
+.text-note       { font-size: 0.88rem; color: var(--muted-2); }
+
+/* Background blob decorative layer (index.html hero) */
+.blob-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.blob-layer-content {
+  position: relative;
+  z-index: 1;
+}
+.blob { position: absolute; border-radius: 50%; }
+.blob-1 { width: 800px; height: 800px; top: -200px; left: -100px;   background: radial-gradient(ellipse, rgba(91,114,255,0.12) 0%, transparent 70%);  filter: blur(80px); }
+.blob-2 { width: 600px; height: 600px; top: -100px; right: -150px;  background: radial-gradient(ellipse, rgba(56,217,255,0.08) 0%, transparent 70%);  filter: blur(70px); }
+.blob-3 { width: 500px; height: 700px; top: 40%; left: -200px;      background: radial-gradient(ellipse, rgba(108,60,255,0.08) 0%, transparent 65%); filter: blur(90px); }
+.blob-4 { width: 700px; height: 500px; bottom: -100px; right: -200px; background: radial-gradient(ellipse, rgba(56,217,255,0.06) 0%, transparent 65%); filter: blur(80px); }
