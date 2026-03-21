@@ -2,6 +2,7 @@
 const SUBMIT_ENDPOINT = '/submit-lead';
 const CHECKOUT_SESSION_ENDPOINT = '/create-checkout-session';
 const CHECKOUT_CONFIRM_ENDPOINT = '/confirm-checkout';
+const SUBSCRIBE_ENDPOINT = '/api/subscribe';
 const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
 const CONTACT_PHONE_DISPLAY = '+34 900 000 000';
@@ -10,6 +11,7 @@ const CSRF_INPUT_NAME = 'csrfToken';
 
 let leadSubmissionInFlight = false;
 let currentLeadIdempotency = null;
+let subscribeSubmissionInFlight = false;
 
 function readCookie(name) {
   const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -770,6 +772,63 @@ async function handleCheckoutReturn() {
   }
 }
 
+async function submitBlogSubscribe(event) {
+  event.preventDefault();
+  if (subscribeSubmissionInFlight) return;
+  subscribeSubmissionInFlight = true;
+
+  const form = document.getElementById('blog-subscribe-form');
+  const submitBtn = document.getElementById('blog-subscribe-btn');
+  const submitText = document.getElementById('blog-subscribe-btn-text');
+  const submitLoading = document.getElementById('blog-subscribe-btn-loading');
+  const okEl = document.getElementById('blog-subscribe-ok');
+  const errorEl = document.getElementById('blog-subscribe-error');
+
+  if (!form || !submitBtn || !submitText || !submitLoading || !okEl || !errorEl) {
+    subscribeSubmissionInFlight = false;
+    return;
+  }
+
+  okEl.classList.add('hidden');
+  errorEl.classList.add('hidden');
+  submitBtn.disabled = true;
+  submitText.classList.add('hidden');
+  submitLoading.classList.remove('hidden');
+
+  const payload = {
+    email: (document.getElementById('blog-subscribe-email')?.value || '').trim(),
+    nombre: (document.getElementById('blog-subscribe-nombre')?.value || '').trim(),
+    tipo_reclamacion: (document.getElementById('blog-subscribe-tipo')?.value || '').trim(),
+    csrfToken: getCsrfToken(),
+  };
+
+  try {
+    const res = await fetch(SUBSCRIBE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    okEl.classList.remove('hidden');
+    form.reset();
+    trackGtagEvent('generate_lead', { event_category: 'newsletter', event_label: 'blog_subscribe' });
+  } catch (err) {
+    console.error('Blog subscribe error:', err);
+    errorEl.classList.remove('hidden');
+  } finally {
+    subscribeSubmissionInFlight = false;
+    submitBtn.disabled = false;
+    submitText.classList.remove('hidden');
+    submitLoading.classList.add('hidden');
+  }
+}
+
+function initBlogSubscribeForm() {
+  const form = document.getElementById('blog-subscribe-form');
+  if (!form) return;
+  form.addEventListener('submit', submitBlogSubscribe);
+}
+
 function createContactModalElement() {
   const modal = document.createElement('div');
   modal.id = 'contact-modal';
@@ -1061,6 +1120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initCookieBanner();
   initWhatsappFloat();
+  initBlogSubscribeForm();
   handleCheckoutReturn();
   trackVirtualPageView();
   window.addEventListener('popstate', trackVirtualPageView);

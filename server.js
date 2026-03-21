@@ -26,6 +26,9 @@ const GA4_MEASUREMENT_ID = (process.env.GA4_MEASUREMENT_ID || '').trim();
 const GOOGLE_ADS_ID = (process.env.GOOGLE_ADS_ID || '').trim();
 const GOOGLE_ADS_CONVERSION_LABEL = (process.env.GOOGLE_ADS_CONVERSION_LABEL || '').trim();
 const WHATSAPP_NUMBER = (process.env.WHATSAPP_NUMBER || '').trim();
+const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
+const BREVO_LIST_ID = Number.parseInt(process.env.BREVO_LIST_ID || '3', 10);
+const BREVO_API_BASE = 'https://api.brevo.com/v3';
 const GESTOR_AGENT_ID = '603134d1-2f20-4c99-9bec-92547dc99b43';
 const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
 const PRIMARY_HOST = 'lexreclama.es';
@@ -63,6 +66,7 @@ const RATE_LIMIT_RULES = {
   '/submit-lead': { scope: 'submit-lead', max: 5 },
   '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
   '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
+  '/api/subscribe': { scope: 'api-subscribe', max: 12 },
 };
 
 const CSRF_COOKIE_NAME = 'lex_csrf_token';
@@ -1314,6 +1318,84 @@ async function handleConfirmCheckout(req, res) {
   }
 }
 
+function normalizeSubscribePayload(payload) {
+  const email = String(payload?.email || '').trim().toLowerCase();
+  const nombre = String(payload?.nombre || '').trim();
+  const tipoReclamacion = String(payload?.tipo_reclamacion || '').trim().toLowerCase();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailOk) return { ok: false, error: 'Email no válido' };
+  if (nombre.length > 120) return { ok: false, error: 'Nombre demasiado largo' };
+  if (tipoReclamacion.length > 80) return { ok: false, error: 'Tipo de reclamación demasiado largo' };
+  return {
+    ok: true,
+    value: {
+      email,
+      nombre,
+      tipoReclamacion,
+    },
+  };
+}
+
+async function subscribeContactInBrevo(payload) {
+  if (!BREVO_API_KEY) throw new Error('BREVO_API_KEY no configurada');
+
+  const attributes = {};
+  if (payload.nombre) attributes.NOMBRE = payload.nombre;
+  if (payload.tipoReclamacion) attributes.TIPO_RECLAMACION = payload.tipoReclamacion;
+
+  const body = {
+    email: payload.email,
+    updateEnabled: true,
+  };
+  if (Object.keys(attributes).length > 0) body.attributes = attributes;
+  if (Number.isInteger(BREVO_LIST_ID) && BREVO_LIST_ID > 0) {
+    body.listIds = [BREVO_LIST_ID];
+  }
+
+  const brevoRes = await fetch(`${BREVO_API_BASE}/contacts`, {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (brevoRes.ok) return;
+
+  let brevoErr = {};
+  try {
+    brevoErr = await brevoRes.json();
+  } catch {
+    brevoErr = {};
+  }
+  const brevoMessage = String(brevoErr?.message || '').toLowerCase();
+  const duplicateError = brevoRes.status === 400 && brevoMessage.includes('already exist');
+  if (duplicateError) return;
+  throw new Error(brevoErr?.message || `Brevo HTTP ${brevoRes.status}`);
+}
+
+async function handleSubscribe(req, res) {
+  const parsed = normalizeSubscribePayload(req.parsedBody);
+  if (!parsed.ok) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: parsed.error }));
+    return;
+  }
+
+  try {
+    await subscribeContactInBrevo(parsed.value);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true }));
+  } catch (err) {
+    const message = String(err?.message || 'Error al suscribirse').toLowerCase();
+    const status = message.includes('brevo_api_key no configurada') ? 503 : 502;
+    res.writeHead(status, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'No se pudo completar la suscripción ahora mismo.' }));
+  }
+}
+
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
 
 function send404(res, csrfToken = '', nonce = '') {
@@ -1375,7 +1457,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Lead submission endpoint
-  if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout')) {
+  if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout' || url.pathname === '/api/subscribe')) {
     const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
     const rule = RATE_LIMIT_RULES[url.pathname];
     const rate = consumeRateLimit(rule, clientIp);
@@ -1388,6 +1470,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/submit-lead') { await handleSubmitLead(req, res); return; }
     if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
     if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
+    if (url.pathname === '/api/subscribe') { await handleSubscribe(req, res); return; }
   }
   if (req.method === 'GET' && handleLegalPage(req, res, url.pathname, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
