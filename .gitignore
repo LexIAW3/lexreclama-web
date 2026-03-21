@@ -1,7 +1,6 @@
 # Build artifacts & generated assets
 social-templates/png/
 social-templates/jpg/
-sitemap.xml
 
 # Node
 node_modules/

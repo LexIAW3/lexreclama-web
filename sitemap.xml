@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.lexreclama.es/</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/og-image.png</image:loc>
+      <image:title>LexReclama — Abogados especialistas en reclamaciones bancarias y multas</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/contacto/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- Páginas pilar de servicios -->
+  <url>
+    <loc>https://www.lexreclama.es/reclamacion-deudas/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/clausulas-bancarias/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/recurrir-multas/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/multas-dgt/</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- Subpáginas pilar — Cláusulas bancarias -->
+  <url>
+    <loc>https://www.lexreclama.es/clausulas-bancarias/gastos-hipotecarios/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/clausulas-bancarias/clausula-suelo/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/clausulas-bancarias/irph-hipoteca/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <!-- Blog -->
+  <url>
+    <loc>https://www.lexreclama.es/blog/</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/recurrir-multa-dgt/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-online.webp</image:loc>
+      <image:title>Cómo recurrir una multa de la DGT en 2026: guía paso a paso</image:title>
+      <image:caption>Persona rellenando el formulario para recurrir una multa DGT online</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/procedimiento-monitorio/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/procedimiento-monitorio-pasos.webp</image:loc>
+      <image:title>¿Qué es el procedimiento monitorio? Guía completa 2026</image:title>
+      <image:caption>Esquema del procedimiento monitorio paso a paso en España</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/prescripcion-multas-dgt/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/prescripcion-multas-dgt-plazo.webp</image:loc>
+      <image:title>Prescripción de multas DGT en 2026: cuándo caduca tu sanción</image:title>
+      <image:caption>Calendario con los plazos de prescripción de multas DGT en España</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/carta-reclamacion-deuda/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/carta-reclamacion-deuda-modelo.webp</image:loc>
+      <image:title>Carta de reclamación de deuda: modelo gratuito y guía para usarla bien</image:title>
+      <image:caption>Modelo de carta de reclamación de deuda a empresa o particular</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/recurso-reposicion-multa/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurso-reposicion-multa-abogado.webp</image:loc>
+      <image:title>Recurso de reposición contra multa: modelo y plazos 2026</image:title>
+      <image:caption>Abogado explicando cómo presentar un recurso de reposición de multa de tráfico</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/coste-monitorio/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/coste-proceso-monitorio-espana.webp</image:loc>
+      <image:title>Cuánto cuesta un juicio monitorio en 2026: costes reales</image:title>
+      <image:caption>Tabla de costes del proceso monitorio en España: tasas y honorarios</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/cuanto-cuesta-monitorio/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/reclamar-gastos-hipoteca/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/monitorio-sin-abogado/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/irph-hipoteca/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/irph-hipoteca-reclamar.webp</image:loc>
+      <image:title>IRPH hipoteca: qué es, si es ilegal y cómo reclamar en 2026</image:title>
+      <image:caption>Comparativa IRPH vs Euríbor en hipotecas españolas</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/clausula-suelo/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/clausula-suelo-hipoteca-reclamacion.webp</image:loc>
+      <image:title>Cláusula suelo: qué es, si es ilegal y cómo reclamarla en 2026</image:title>
+      <image:caption>Hipoteca con cláusula suelo abusiva — cómo reclamar la devolución</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/gastos-hipotecarios/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/gastos-hipotecarios-reclamar-banco.webp</image:loc>
+      <image:title>Gastos hipotecarios: cómo reclamarlos al banco en 2026</image:title>
+      <image:caption>Documentos de hipoteca y gastos reclamables al banco en España</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/contratar-abogado-monitorio/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/procedimiento-monitorio-demanda.webp</image:loc>
+      <image:title>Contratar abogado monitorio online: precio y proceso 2026</image:title>
+      <image:caption>Abogado online preparando petición de juicio monitorio para reclamar deuda</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/cuanto-cuesta-recurrir-multa-trafico/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-formulario.webp</image:loc>
+      <image:title>Cuánto cuesta recurrir una multa de tráfico: precios 2026</image:title>
+      <image:caption>Comparativa de precios para recurrir multas DGT con abogado en 2026</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/comision-apertura-hipoteca/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/reclamar-seguro-vida-hipoteca/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/demanda-tarjeta-revolving/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/prescripcion-deudas/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/procedimiento-monitorio-juicio.svg</image:loc>
+      <image:title>Prescripción de deudas en España: plazos y qué hacer si te reclaman una deuda prescrita 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/reclamar-credito-revolving/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/carta-reclamacion-deuda-empresa.svg</image:loc>
+      <image:title>Reclamar crédito revolving: cómo recuperar los intereses abusivos en 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/recurrir-sancion-administrativa/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-sede-electronica.svg</image:loc>
+      <image:title>Recurrir una sanción administrativa: guía completa 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/recurso-alzada/</loc>
+    <lastmod>2026-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/recurrir-multa-dgt-sede-electronica.svg</image:loc>
+      <image:title>Recurso de alzada: qué es, plazos, cómo presentarlo y ante quién 2026</image:title>
+    </image:image>
+  </url>
+  <!-- Sprint 7 — artículos añadidos 2026-03-21 -->
+  <url>
+    <loc>https://www.lexreclama.es/blog/sms-multa-dgt/</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/sms-multa-dgt.webp</image:loc>
+      <image:title>Mensaje o SMS de la DGT con multa: qué significa y qué hacer en 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/ley-segunda-oportunidad/</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/ley-segunda-oportunidad.webp</image:loc>
+      <image:title>Ley de Segunda Oportunidad: requisitos, proceso y cómo acogerse en 2026</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/blog/me-han-notificado-juicio-monitorio/</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.lexreclama.es/img/blog/juicio-monitorio-notificacion.webp</image:loc>
+      <image:title>Me han notificado un juicio monitorio: qué hacer en los próximos 20 días</image:title>
+    </image:image>
+  </url>
+  <!-- Páginas legales -->
+  <url>
+    <loc>https://www.lexreclama.es/aviso-legal/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/politica-privacidad/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/politica-cookies/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+  <url>
+    <loc>https://www.lexreclama.es/condiciones/</loc>
+    <lastmod>2026-03-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.1</priority>
+  </url>
+</urlset>
