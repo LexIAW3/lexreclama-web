@@ -4886,42 +4886,41 @@ html[data-theme='light'] .btn-primary:hover {
    LEX DS v6.1 — HVP dark contrast · h2 scale · hero glow
    =================================================================== */
 
-/* HVP DARK IN LIGHT MODE — Linear pattern: dark product UI on white page
-   Los textos internos necesitan overrides para ser legibles sobre fondo oscuro */
+/* HVP CARD IN LIGHT MODE — keep hero panel aligned with light UI */
 
 html[data-theme='light'] .hvp-card--main {
-  background: linear-gradient(160deg, #1e1e30 0%, #0d0d1c 100%) !important;
-  border-color: rgba(255, 255, 255, 0.10) !important;
+  background: linear-gradient(160deg, #ffffff 0%, #f1f5ff 100%) !important;
+  border-color: rgba(14, 22, 60, 0.12) !important;
   box-shadow:
-    0 32px 80px rgba(14, 22, 60, 0.28),
-    0 0 0 1px rgba(91, 114, 255, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+    0 24px 64px rgba(14, 22, 60, 0.14),
+    0 0 0 1px rgba(91, 114, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
-/* Text overrides — calibrados para fondo ~#1e1e30 */
+/* Text overrides — calibrated for light card background */
 html[data-theme='light'] .hvp-card--main .hvp-label {
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(14, 22, 60, 0.58);
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-amount-label {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(14, 22, 60, 0.44);
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-steps {
-  border-top-color: rgba(255, 255, 255, 0.09);
+  border-top-color: rgba(14, 22, 60, 0.12);
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-step--active {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(14, 22, 60, 0.88);
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-step--pending {
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(14, 22, 60, 0.42);
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-footer {
-  border-top-color: rgba(255, 255, 255, 0.09);
-  color: rgba(255, 255, 255, 0.38);
+  border-top-color: rgba(14, 22, 60, 0.12);
+  color: rgba(14, 22, 60, 0.46);
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-days {
@@ -4929,9 +4928,9 @@ html[data-theme='light'] .hvp-card--main .hvp-days {
 }
 
 html[data-theme='light'] .hvp-card--main .hvp-tag {
-  background: rgba(91, 114, 255, 0.22);
-  border-color: rgba(91, 114, 255, 0.38);
-  color: rgba(160, 175, 255, 1);
+  background: rgba(53, 82, 232, 0.10);
+  border-color: rgba(53, 82, 232, 0.24);
+  color: #1f3ca8;
 }
 
 /* SECTION H2: mayor escala en la landing — Stripe/Linear ratio (clamp 2.2→4rem)
@@ -5371,14 +5370,14 @@ html[data-theme='light'] .footer-pre-cta {
   opacity: 1 !important;
 }
 
-/* 2) Hero visual panel main card: corrected background tone */
+/* 2) Hero visual panel main card: lock a light visual in light mode */
 html[data-theme='light'] .hvp-card--main {
-  background: linear-gradient(165deg, #1b2340 0%, #0f1733 56%, #0a1126 100%) !important;
-  border-color: rgba(158, 178, 255, 0.2) !important;
+  background: linear-gradient(165deg, #ffffff 0%, #f1f5ff 56%, #eaf0ff 100%) !important;
+  border-color: rgba(14, 22, 60, 0.12) !important;
   box-shadow:
-    0 30px 78px rgba(10, 16, 38, 0.44),
-    0 0 0 1px rgba(112, 139, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09) !important;
+    0 24px 64px rgba(14, 22, 60, 0.14),
+    0 0 0 1px rgba(91, 114, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
 /* 3) Trust/entities spacing: add breathing room between both rows */
