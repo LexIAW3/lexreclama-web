@@ -5317,7 +5317,6 @@ html[data-theme='light'] .entities-label { color: rgba(14, 22, 60, 0.38); }
   gap: 12px;
   margin-top: 48px;
   padding-top: 48px;
-  border-top: 1px solid var(--border);
   text-align: center;
 }
 
