@@ -464,6 +464,7 @@ function buildSitemapXml() {
     '/clausulas-bancarias/clausula-suelo/',
     '/clausulas-bancarias/irph-hipoteca/',
     '/recurrir-multas/',
+    '/multas-dgt/',
     '/blog/',
   ];
   const blogUrls = listBlogArticles()
