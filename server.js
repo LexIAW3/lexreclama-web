@@ -170,7 +170,8 @@ function parseMultipartOrJsonBody(req, res) {
       stream.on('close', () => {
         if (stream.truncated) return; // exceeded fileSize limit — skip
         if (files.length < MAX_UPLOAD_FILES) {
-          files.push({ originalname: filename, mimetype: mimeType, buffer: Buffer.concat(chunks), size });
+          const safeName = (filename || 'upload').replace(/[\r\n"\\]/g, '_').slice(0, 255);
+          files.push({ originalname: safeName, mimetype: mimeType, buffer: Buffer.concat(chunks), size });
         }
       });
     });
