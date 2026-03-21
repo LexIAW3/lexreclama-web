@@ -2048,6 +2048,7 @@ body.contact-modal-open {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  order: 2;
 }
 
 .footer-links a {
@@ -2070,6 +2071,7 @@ body.contact-modal-open {
   display: flex;
   gap: 12px;
   align-items: center;
+  order: 1;
 }
 
 .footer-social a {
