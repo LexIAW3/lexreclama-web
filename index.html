@@ -500,7 +500,15 @@
 
         <!-- RESULTADO -->
         <div class="calc-result hidden" id="calc-result">
-          <div class="result-inner">
+          <!-- Placeholder: visible before first calculation -->
+          <div class="calc-result-placeholder" id="calc-result-placeholder">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="20" cy="20" r="16"/>
+              <path d="M20 13v7l4 4"/>
+            </svg>
+            <p>Introduce los datos y pulsa <strong>Calcular</strong> para ver tu estimación</p>
+          </div>
+          <div class="result-inner" id="result-inner">
             <div class="result-label">Estimación de recuperación</div>
             <div class="result-amount" id="result-amount">—</div>
             <div class="result-note" id="result-note"></div>

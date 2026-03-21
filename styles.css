@@ -1558,7 +1558,6 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   margin-top: 48px;
   display: grid;
   gap: 8px;
-  max-width: 820px;
 }
 
 /* Native <details> accordion */
@@ -5666,3 +5665,143 @@ html[data-theme='light'] .area-card {
 .blob-2 { width: 600px; height: 600px; top: -100px; right: -150px;  background: radial-gradient(ellipse, rgba(56,217,255,0.08) 0%, transparent 70%);  filter: blur(70px); }
 .blob-3 { width: 500px; height: 700px; top: 40%; left: -200px;      background: radial-gradient(ellipse, rgba(108,60,255,0.08) 0%, transparent 65%); filter: blur(90px); }
 .blob-4 { width: 700px; height: 500px; bottom: -100px; right: -200px; background: radial-gradient(ellipse, rgba(56,217,255,0.06) 0%, transparent 65%); filter: blur(80px); }
+
+/* Fix 11.0 — LEX-340: FAQ full-width + calculadora compacta */
+.home-page .faq .faq-list {
+  max-width: none;
+  width: 100%;
+  margin-top: 34px;
+}
+
+.home-page .calculadora .calc-body {
+  max-width: 100%;
+  width: 100%;
+  margin-top: 26px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.76), rgba(247, 250, 255, 0.62));
+  box-shadow: 0 10px 32px rgba(14, 22, 60, 0.08);
+}
+
+.home-page .calculadora .calc-tabs {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0 0 14px;
+}
+
+.home-page .calculadora .calc-tab {
+  width: 100%;
+  padding: 9px 12px;
+}
+
+.home-page .calculadora .calc-panel { padding: 18px; }
+
+.home-page .calculadora .calc-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.home-page .calculadora .calc-fields .field:last-child { grid-column: 1 / -1; }
+
+.home-page .calculadora .calc-result { margin-top: 14px; }
+.home-page .calculadora .result-inner { padding: 22px; }
+
+@media (max-width: 900px) {
+  .home-page .calculadora .calc-body { padding: 14px; }
+  .home-page .calculadora .calc-fields { grid-template-columns: 1fr; }
+}
+
+/* ── LEX DS v5.6 — FAQ full-width + Calculadora compact ───────── */
+
+/* FAQ: full container width — remove the 820px cap */
+/* (max-width removed from .faq-list above) */
+
+/* CALCULADORA: side-by-side compact layout */
+
+/* 1. Remove the max-width cap on the calc body */
+.calculadora .calc-body {
+  max-width: 100%;
+}
+
+/* 2. Grid: tabs row + [form | result] columns */
+.home-page .calculadora .calc-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 28px;
+  align-items: start;
+}
+
+/* Tabs span both columns */
+.home-page .calculadora .calc-tabs {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+/* Result: right column, from row 2 */
+.home-page .calculadora .calc-result {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: 0;
+  min-height: 220px;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Override .hidden within the calculadora context to keep it in flow */
+.home-page .calculadora .calc-result.hidden {
+  display: flex !important;
+}
+
+/* Placeholder: shown when no result yet */
+.calc-result-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--muted-2);
+}
+.calc-result-placeholder svg {
+  opacity: 0.25;
+  flex-shrink: 0;
+}
+.calc-result-placeholder p {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  max-width: 200px;
+}
+
+/* When result is ready, hide placeholder */
+.calc-result:not(.hidden) .calc-result-placeholder {
+  display: none;
+}
+
+/* When in placeholder state, hide the result content */
+.home-page .calculadora .calc-result.hidden .result-inner {
+  display: none;
+}
+
+/* Mobile: stack vertically */
+@media (max-width: 768px) {
+  .home-page .calculadora .calc-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .home-page .calculadora .calc-tabs {
+    grid-column: 1;
+  }
+  .home-page .calculadora .calc-result {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 18px;
+  }
+}
