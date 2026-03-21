@@ -24,6 +24,17 @@ function trackVirtualPageView() {
   });
 }
 
+function trackAdsLeadConversion() {
+  const tracking = window.__LEX_TRACKING || {};
+  const sendTo = typeof tracking.adsConversionSendTo === 'string' ? tracking.adsConversionSendTo.trim() : '';
+  if (!sendTo || typeof window.gtag !== 'function') return;
+  window.gtag('event', 'conversion', {
+    send_to: sendTo,
+    value: Number(tracking.adsConversionValue) || 49.0,
+    currency: tracking.adsConversionCurrency || 'EUR',
+  });
+}
+
 /* ─── CALCULATOR TABS ─────────────────────────────────────── */
 document.querySelectorAll('.calc-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -455,6 +466,7 @@ async function submitLead(event) {
 
     await createPaperclipLead(data, tipoLabel);
     trackGtagEvent('generate_lead', { event_category: 'formulario', event_label: data.tipo });
+    trackAdsLeadConversion();
     currentLeadIdempotency = null;
     form.reset();
     successEl.classList.remove('hidden');
@@ -551,6 +563,7 @@ async function handleCheckoutReturn() {
       currency: 'EUR',
     });
     trackGtagEvent('generate_lead', { event_category: 'formulario', event_label: 'checkout_paid' });
+    trackAdsLeadConversion();
     if (successText) {
       successText.textContent = 'Pago confirmado y caso recibido. Te contactaremos en 24-48 horas laborables.';
     }
@@ -711,6 +724,7 @@ async function submitModalLead(event) {
   try {
     await createPaperclipLead(data, tipoLabel);
     trackGtagEvent('generate_lead', { event_category: 'modal_contacto', event_label: data.tipo });
+    trackAdsLeadConversion();
     currentLeadIdempotency = null;
     form.reset();
     successEl.classList.remove('hidden');

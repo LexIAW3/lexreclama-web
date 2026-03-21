@@ -20,6 +20,8 @@ const STRIPE_SECRET_KEY = (process.env.STRIPE_SECRET_KEY || '').trim();
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const GA4_MEASUREMENT_ID = (process.env.GA4_MEASUREMENT_ID || '').trim();
+const GOOGLE_ADS_ID = (process.env.GOOGLE_ADS_ID || '').trim();
+const GOOGLE_ADS_CONVERSION_LABEL = (process.env.GOOGLE_ADS_CONVERSION_LABEL || '').trim();
 const WHATSAPP_NUMBER = (process.env.WHATSAPP_NUMBER || '').trim();
 const GESTOR_AGENT_ID = '603134d1-2f20-4c99-9bec-92547dc99b43';
 const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
@@ -235,19 +237,32 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
 }
 
 function renderGa4Snippet() {
-  if (!GA4_MEASUREMENT_ID) return '';
+  const trackingIds = [GA4_MEASUREMENT_ID, GOOGLE_ADS_ID].filter(Boolean);
+  if (!trackingIds.length) return '';
+
+  const bootstrapId = trackingIds[0];
+  const configLines = trackingIds.map((id) => `    gtag("config", "${escapeHtml(id)}");`).join('\n');
+  const adsSendTo = GOOGLE_ADS_ID && GOOGLE_ADS_CONVERSION_LABEL
+    ? `${GOOGLE_ADS_ID}/${GOOGLE_ADS_CONVERSION_LABEL}`
+    : '';
+
   return `<!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA4_MEASUREMENT_ID)}"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(bootstrapId)}"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag("js", new Date());
-    gtag("config", "${escapeHtml(GA4_MEASUREMENT_ID)}");
+${configLines}
+    window.__LEX_TRACKING = Object.assign({}, window.__LEX_TRACKING || {}, {
+      adsConversionSendTo: "${escapeHtml(adsSendTo)}",
+      adsConversionValue: 49.0,
+      adsConversionCurrency: "EUR"
+    });
   </script>`;
 }
 
 function injectGa4IntoHtml(html) {
-  if (!GA4_MEASUREMENT_ID) {
+  if (!GA4_MEASUREMENT_ID && !GOOGLE_ADS_ID) {
     return html.replace('<!-- GA4_SNIPPET -->', '');
   }
   const snippet = renderGa4Snippet();
