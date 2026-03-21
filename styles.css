@@ -5598,6 +5598,19 @@ html[data-theme='light'] .area-card {
 /* Fix 10.2 — Eyebrow margin-bottom */
 .eyebrow { margin-bottom: 14px !important; }
 
+/* Fix 10.3 — Home: keep eyebrow pill above section titles */
+.home-page .eyebrow {
+  display: block !important;
+  width: fit-content;
+}
+
+.home-page .calculadora .calc-header > .eyebrow,
+.home-page .testimonios > .container > .eyebrow,
+.home-page .faq > .container > .eyebrow {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* === Inline style elimination — style-src unsafe-inline removal === */
 
 /* Blog article images */
