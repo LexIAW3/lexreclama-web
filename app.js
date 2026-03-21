@@ -1045,7 +1045,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initScrollProgress();
   initCounters();
-  initLiveCalc();
   initCalcButtons();
   initFormValidation();
   toggleBancoFields();
@@ -1174,24 +1173,6 @@ function initCalcButtons() {
   wire('btn-calc-multa', 'click', calcMulta);
   wire('calc-cta-link', 'click', prefillFromCalc);
   wire('banco-tipo', 'change', toggleBancoFields);
-}
-
-/* ─── LIVE CALCULATOR ────────────────────────────────────── */
-function initLiveCalc() {
-  function addLive(ids, primaryId, calcFn) {
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('input', () => {
-        const primary = document.getElementById(primaryId);
-        if (primary && parseFloat(primary.value) > 0) calcFn();
-        else hideResult();
-      });
-    });
-  }
-  addLive(['deuda-importe', 'deuda-meses', 'deuda-docs'], 'deuda-importe', calcDeuda);
-  addLive(['banco-tipo', 'banco-hipoteca', 'banco-anios', 'banco-cuota', 'banco-comision'], 'banco-hipoteca', calcBanco);
-  addLive(['multa-importe', 'multa-tipo', 'multa-motivo'], 'multa-importe', calcMulta);
 }
 
 /* ─── FORM INLINE VALIDATION ─────────────────────────────── */
