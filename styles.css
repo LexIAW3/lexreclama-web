@@ -4683,29 +4683,6 @@ html[data-theme='light'] .eyebrow {
   opacity: 0.6;
 }
 
-/* Centered sections: center the eyebrow, title, sub */
-.calculadora .calc-header,
-.testimonios > .container > :is(span, h2, p),
-.faq > .container > :is(span, h2, p) {
-  text-align: center;
-}
-
-/* Center underline only for sections that center their text */
-.calculadora .section-title::after,
-.testimonios .section-title::after,
-.faq .section-title::after {
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* SECTION SUB: center for centered sections */
-.calculadora .section-sub,
-.testimonios .section-sub,
-.faq .section-sub {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 /* ── LEX DS v5.4 — Light mode fixes, Trust bar, CTA eyebrow ──── */
 
 
@@ -5661,27 +5638,6 @@ html[data-theme='light'] .area-card {
 .home-page .calculadora .calc-header > .eyebrow,
 .home-page .testimonios > .container > .eyebrow,
 .home-page .faq > .container > .eyebrow {
-  margin-left: 0;
-  margin-right: 0;
-}
-
-/* Fix 10.4 — Home: headings and eyebrow always left-aligned */
-.home-page .calculadora .calc-header,
-.home-page .testimonios > .container > :is(span, h2, p),
-.home-page .faq > .container > :is(span, h2, p) {
-  text-align: left;
-}
-
-.home-page .calculadora .section-title::after,
-.home-page .testimonios .section-title::after,
-.home-page .faq .section-title::after {
-  left: 0;
-  transform: none;
-}
-
-.home-page .calculadora .section-sub,
-.home-page .testimonios .section-sub,
-.home-page .faq .section-sub {
   margin-left: 0;
   margin-right: 0;
 }
