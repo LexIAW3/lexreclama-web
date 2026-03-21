@@ -28,6 +28,16 @@ const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
 const PRIMARY_HOST = 'lexreclama.es';
 const SECONDARY_HOST = 'lexreclama.com';
 const MAX_RECENT_LEADS = 25;
+
+// Test lead blocklist — submissions from these emails are accepted (HTTP 200) but
+// not forwarded to Paperclip so they don't generate noise for the claims manager.
+const TEST_EMAIL_BLOCKLIST = new Set([
+  't@t.com',
+  'test@test.com',
+  'qa@qa.com',
+  'qa@test.com',
+  'test@qa.com',
+]);
 const recentLeads = [];
 const STRIPE_API = 'https://api.stripe.com/v1';
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
@@ -805,6 +815,14 @@ async function handleSubmitLead(req, res) {
   if (requiresUpfrontPayment(leadData.value.tipo)) {
     res.writeHead(409, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Este tipo requiere pago previo. Inicia checkout primero.' }));
+    return;
+  }
+
+  // Silently discard test leads so they don't pollute the claims manager queue.
+  if (TEST_EMAIL_BLOCKLIST.has(leadData.value.email.toLowerCase())) {
+    console.log(`[test-lead] silently discarded: ${leadData.value.email}`);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: true, issueId: null, identifier: null, deduplicated: false, test: true }));
     return;
   }
 
