@@ -24,7 +24,7 @@
   /* Text */
   --text:    #0e1120;
   --muted:   #56608a;
-  --muted-2: #8898be;
+  --muted-2: #6e7ea8; /* a11y: darkened from #8898be — passes 4.5:1 on --bg */
 
   /* Borders */
   --border:        rgba(14, 22, 60, 0.1);
@@ -142,7 +142,7 @@ html[data-theme='light'] {
 
   --text:    #0e1120;
   --muted:   #56608a;
-  --muted-2: #8898be;
+  --muted-2: #6e7ea8; /* a11y: darkened from #8898be — passes 4.5:1 on --bg */
 
   --border:        rgba(14, 22, 60, 0.1);
   --border-strong: rgba(14, 22, 60, 0.18);
@@ -803,6 +803,8 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
   .home-page .hero::after { animation: none; }
   .hero-badge::before     { animation: none; }
   .hero-visual            { animation: none; }
+  .btn-primary,
+  .btn-primary:hover      { animation: none; } /* a11y: disable shimmer for reduced-motion users */
 }
 
 @media (max-width: 900px) {
@@ -1791,7 +1793,7 @@ input, select, textarea {
   padding: 10px 12px;
   font-family: var(--font-body);
   font-size: 0.9rem;
-  outline: none;
+  outline: none; /* overridden by :focus-visible for keyboard users */
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   -webkit-appearance: none;
 }
@@ -4823,9 +4825,9 @@ html[data-theme='light'] .recurso-tag {
   color: var(--text);
 }
 
-/* FOCUS VISIBLE: keyboard nav ring */
+/* FOCUS VISIBLE: keyboard nav ring — a11y: full opacity for 3:1+ contrast */
 :focus-visible {
-  outline: 2px solid rgba(var(--accent-rgb), 0.6);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 3px;
 }

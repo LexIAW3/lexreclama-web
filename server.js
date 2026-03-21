@@ -43,18 +43,119 @@ const BLOG_REDIRECTS = {
   '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
 };
 
-/* ─── RATE LIMITER ──────────────────────────────────────────── */
-const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const RATE_LIMIT_MAX = 10;
+/* ─── RATE LIMITER + CSRF ────────────────────────────────────── */
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const rateLimitMap = new Map();
+const RATE_LIMIT_RULES = {
+  '/submit-lead': { scope: 'submit-lead', max: 5 },
+  '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
+  '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
+};
 
-function isRateLimited(ip) {
+const CSRF_COOKIE_NAME = 'lex_csrf_token';
+const CSRF_TTL_MS = 12 * 60 * 60 * 1000;
+const issuedCsrfTokens = new Map();
+
+function parseCookies(req) {
+  const header = String(req.headers.cookie || '');
+  if (!header) return {};
+  return header.split(';').reduce((acc, pair) => {
+    const idx = pair.indexOf('=');
+    if (idx === -1) return acc;
+    const key = pair.slice(0, idx).trim();
+    const value = pair.slice(idx + 1).trim();
+    acc[key] = decodeURIComponent(value);
+    return acc;
+  }, {});
+}
+
+function sweepCsrfTokens() {
+  const now = Date.now();
+  for (const [token, expiresAtMs] of issuedCsrfTokens) {
+    if (expiresAtMs <= now) issuedCsrfTokens.delete(token);
+  }
+}
+
+function getOrCreateCsrfToken(req, res) {
+  sweepCsrfTokens();
+  const cookies = parseCookies(req);
+  const cookieToken = String(cookies[CSRF_COOKIE_NAME] || '').trim();
+  const now = Date.now();
+  const activeExpiry = cookieToken ? issuedCsrfTokens.get(cookieToken) : 0;
+  if (cookieToken && activeExpiry > now) {
+    return cookieToken;
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+  issuedCsrfTokens.set(token, now + CSRF_TTL_MS);
+
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
+  const secureCookie = forwardedProto === 'https';
+  const maxAge = Math.floor(CSRF_TTL_MS / 1000);
+  const cookieParts = [
+    `${CSRF_COOKIE_NAME}=${encodeURIComponent(token)}`,
+    'Path=/',
+    'SameSite=Strict',
+    `Max-Age=${maxAge}`,
+  ];
+  if (secureCookie) cookieParts.push('Secure');
+  res.setHeader('Set-Cookie', cookieParts.join('; '));
+  return token;
+}
+
+function validateAndAttachJsonBody(req, res) {
+  return (async () => {
+    if (Object.prototype.hasOwnProperty.call(req, 'parsedBody')) return true;
+    let parsed;
+    try {
+      parsed = JSON.parse(await readBody(req));
+    } catch (err) {
+      const status = err.statusCode || 400;
+      res.writeHead(status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' }));
+      return false;
+    }
+    req.parsedBody = parsed;
+    return true;
+  })();
+}
+
+function validateCsrfToken(req, res) {
+  return (async () => {
+    const okBody = await validateAndAttachJsonBody(req, res);
+    if (!okBody) return false;
+    sweepCsrfTokens();
+
+    const cookies = parseCookies(req);
+    const cookieToken = String(cookies[CSRF_COOKIE_NAME] || '').trim();
+    const bodyToken = String(req.parsedBody?.csrfToken || '').trim();
+    const known = bodyToken ? issuedCsrfTokens.get(bodyToken) : 0;
+    const validWindow = known > Date.now();
+
+    if (!cookieToken || !bodyToken || !safeEqual(cookieToken, bodyToken) || !validWindow) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'CSRF token inválido' }));
+      return false;
+    }
+    return true;
+  })();
+}
+
+function consumeRateLimit(rule, ip) {
   const now = Date.now();
   const windowStart = now - RATE_LIMIT_WINDOW_MS;
-  const hits = (rateLimitMap.get(ip) || []).filter((t) => t > windowStart);
-  hits.push(now);
-  rateLimitMap.set(ip, hits);
-  return hits.length > RATE_LIMIT_MAX;
+  const key = `${rule.scope}:${ip || 'unknown'}`;
+  const current = rateLimitMap.get(key) || [];
+  const validHits = current.filter((timestamp) => timestamp > windowStart);
+  if (validHits.length >= rule.max) {
+    const oldest = validHits[0];
+    const retryAfterSec = Math.max(1, Math.ceil((oldest + RATE_LIMIT_WINDOW_MS - now) / 1000));
+    rateLimitMap.set(key, validHits);
+    return { limited: true, retryAfterSec };
+  }
+  validHits.push(now);
+  rateLimitMap.set(key, validHits);
+  return { limited: false, retryAfterSec: 0 };
 }
 
 function sweepIdempotencyMaps() {
@@ -310,8 +411,16 @@ function injectWhatsappIntoHtml(html) {
   return html.replace('</body>', `${button}\n</body>`);
 }
 
-function injectRuntimeSnippets(html) {
-  return injectWhatsappIntoHtml(injectGa4IntoHtml(html));
+function injectCsrfIntoHtml(html, token) {
+  if (!token || !html.includes('name="csrfToken"')) return html;
+  return html.replace(
+    /(<input[^>]*name="csrfToken"[^>]*value=")[^"]*(")/g,
+    `$1${token}$2`,
+  );
+}
+
+function injectRuntimeSnippets(html, csrfToken = '') {
+  return injectCsrfIntoHtml(injectWhatsappIntoHtml(injectGa4IntoHtml(html)), csrfToken);
 }
 
 function renderBlogIndex() {
@@ -609,12 +718,7 @@ async function handleAdmin(req, res) {
 }
 
 async function handleSubmitLead(req, res) {
-  let body;
-  try { body = JSON.parse(await readBody(req)); }
-  catch (e) {
-    const status = e.statusCode || 400;
-    res.writeHead(status); res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' })); return;
-  }
+  const body = req.parsedBody;
 
   const leadData = normalizeLeadPayload(body);
   if (!leadData.ok) {
@@ -835,12 +939,7 @@ function sweepPendingCheckoutLeads() {
 }
 
 async function handleCreateCheckoutSession(req, res) {
-  let body;
-  try { body = JSON.parse(await readBody(req)); }
-  catch (e) {
-    const status = e.statusCode || 400;
-    res.writeHead(status); res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' })); return;
-  }
+  const body = req.parsedBody;
 
   const leadData = normalizeLeadPayload(body);
   if (!leadData.ok) {
@@ -893,12 +992,7 @@ async function handleCreateCheckoutSession(req, res) {
 }
 
 async function handleConfirmCheckout(req, res) {
-  let body;
-  try { body = JSON.parse(await readBody(req)); }
-  catch (e) {
-    const status = e.statusCode || 400;
-    res.writeHead(status); res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' })); return;
-  }
+  const body = req.parsedBody;
 
   const leadToken = String(body?.leadToken || '').trim();
   const sessionId = String(body?.sessionId || '').trim();
@@ -959,7 +1053,7 @@ async function handleConfirmCheckout(req, res) {
 
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
 
-function send404(res) {
+function send404(res, csrfToken = '') {
   fs.readFile(PAGE_404_PATH, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -967,7 +1061,7 @@ function send404(res) {
       return;
     }
     res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-    res.end(injectRuntimeSnippets(data.toString('utf8')));
+    res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken));
   });
 }
 
@@ -975,14 +1069,33 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const normalizedPath = normalizePathname(url.pathname);
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
+  const csrfToken = getOrCreateCsrfToken(req, res);
   // CORS only for safe read-only requests; POST endpoints are same-origin only
   if (req.method === 'GET' || req.method === 'HEAD') {
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  res.setHeader(
+    'Content-Security-Policy',
+    [
+      "default-src 'self'",
+      "base-uri 'self'",
+      "object-src 'none'",
+      "frame-ancestors 'none'",
+      "form-action 'self' https://checkout.stripe.com",
+      "connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://js.stripe.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "img-src 'self' data: https:",
+      "frame-src https://js.stripe.com https://checkout.stripe.com",
+      "upgrade-insecure-requests",
+    ].join('; '),
+  );
 
   if ((req.method === 'GET' || req.method === 'HEAD') && (host === SECONDARY_HOST || host === `www.${SECONDARY_HOST}`)) {
     const target = `https://${PRIMARY_HOST}${url.pathname}${url.search}`;
@@ -1000,11 +1113,14 @@ const server = http.createServer(async (req, res) => {
   // Lead submission endpoint
   if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout')) {
     const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
-    if (isRateLimited(clientIp)) {
-      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': '60' });
-      res.end(JSON.stringify({ error: 'Demasiadas solicitudes. Inténtalo en un minuto.' }));
+    const rule = RATE_LIMIT_RULES[url.pathname];
+    const rate = consumeRateLimit(rule, clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }));
       return;
     }
+    if (!await validateCsrfToken(req, res)) return;
     if (url.pathname === '/submit-lead') { await handleSubmitLead(req, res); return; }
     if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
     if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
@@ -1026,7 +1142,7 @@ const server = http.createServer(async (req, res) => {
     if (fs.existsSync(staticCandidate)) {
       const data = fs.readFileSync(staticCandidate, 'utf8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-      res.end(injectRuntimeSnippets(data));
+      res.end(injectRuntimeSnippets(data, csrfToken));
       return;
     }
     const html = normalizedPath === '/blog/' ? renderBlogIndex() : renderPillarPage(normalizedPath);
@@ -1043,7 +1159,7 @@ const server = http.createServer(async (req, res) => {
   // Block internal/build directories from public access
   const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
   if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
-    send404(res); return;
+    send404(res, csrfToken); return;
   }
 
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
@@ -1058,14 +1174,14 @@ const server = http.createServer(async (req, res) => {
     }
     fs.readFile(filePath, (err, data) => {
       if (err) {
-        send404(res); return;
+        send404(res, csrfToken); return;
       }
       const ext = path.extname(filePath);
       const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
       if (ext === '.css' || ext === '.js') headers['Cache-Control'] = 'public, max-age=86400';
       res.writeHead(200, headers);
       if (ext === '.html') {
-        res.end(injectRuntimeSnippets(data.toString('utf8')));
+        res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken));
         return;
       }
       res.end(data);

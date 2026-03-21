@@ -6,9 +6,22 @@ const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
 const CONTACT_PHONE_DISPLAY = '+34 900 000 000';
 const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
+const CSRF_INPUT_NAME = 'csrfToken';
 
 let leadSubmissionInFlight = false;
 let currentLeadIdempotency = null;
+
+function readCookie(name) {
+  const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = document.cookie.match(new RegExp(`(?:^|; )${escaped}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+function getCsrfToken() {
+  const input = document.querySelector(`input[name="${CSRF_INPUT_NAME}"]`);
+  const inputToken = input?.value?.trim() || '';
+  return inputToken || readCookie('lex_csrf_token') || '';
+}
 
 function trackGtagEvent(name, params = {}) {
   if (typeof window.gtag !== 'function') return;
@@ -440,6 +453,7 @@ async function submitLead(event) {
     consentimientoTimestamp: new Date().toISOString(),
     versionPolitica: PRIVACY_POLICY_VERSION,
     idempotencyKey: getLeadIdempotencyKey(),
+    csrfToken: getCsrfToken(),
   };
 
   const tipoLabel = {
@@ -515,7 +529,7 @@ async function confirmCheckout(leadToken, sessionId) {
   const res = await fetch(CHECKOUT_CONFIRM_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ leadToken, sessionId }),
+    body: JSON.stringify({ leadToken, sessionId, csrfToken: getCsrfToken() }),
   });
 
   if (!res.ok) {
@@ -611,6 +625,7 @@ function createContactModalElement() {
         </div>
 
         <form class="contacto-form contact-modal-form" id="modal-lead-form">
+          <input type="hidden" name="${CSRF_INPUT_NAME}" value="${getCsrfToken()}" />
           <div class="form-row">
             <div class="field">
               <label for="modal-nombre">Nombre</label>
@@ -706,6 +721,7 @@ async function submitModalLead(event) {
     consentimientoTimestamp: new Date().toISOString(),
     versionPolitica: PRIVACY_POLICY_VERSION,
     idempotencyKey: getLeadIdempotencyKey(),
+    csrfToken: getCsrfToken(),
   };
 
   const tipoLabel = {
@@ -752,13 +768,19 @@ function initContactModal() {
   const modal = createContactModalElement();
   document.body.appendChild(modal);
 
+  let lastFocusedTrigger = null;
+
+  const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
   const closeModal = () => {
     modal.classList.add('hidden');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('contact-modal-open');
+    lastFocusedTrigger?.focus();
   };
 
-  const openModal = (tipo) => {
+  const openModal = (tipo, triggerEl) => {
+    lastFocusedTrigger = triggerEl || document.activeElement;
     const typeInput = document.getElementById('modal-tipo-reclamacion');
     const successEl = document.getElementById('modal-form-success');
     const errorEl = document.getElementById('modal-form-error');
@@ -778,7 +800,19 @@ function initContactModal() {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    if (modal.classList.contains('hidden')) return;
+    if (event.key === 'Escape') { closeModal(); return; }
+    if (event.key === 'Tab') {
+      const focusable = Array.from(modal.querySelectorAll(FOCUSABLE));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey) {
+        if (document.activeElement === first) { event.preventDefault(); last.focus(); }
+      } else {
+        if (document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    }
   });
 
   document.getElementById('modal-lead-form')?.addEventListener('submit', submitModalLead);
@@ -787,7 +821,7 @@ function initContactModal() {
     trigger.addEventListener('click', (event) => {
       event.preventDefault();
       const targetTipo = trigger.getAttribute('data-claim-type') || inferClaimTypeFromPath(window.location.pathname);
-      openModal(targetTipo);
+      openModal(targetTipo, trigger);
     });
   });
 }
