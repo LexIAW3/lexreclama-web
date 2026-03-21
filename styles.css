@@ -5026,7 +5026,7 @@ html[data-theme='light'] .hvp-notif strong { color: rgba(14, 22, 60, 0.90) !impo
    La primera card (hero de la sección) merece una CTA visualmente distinta.
    Los otros cards mantienen el link en texto — jerarquía clara. */
 
-.area-card:first-child .area-link {
+.area-card:first-child .area-link:not(#area-link-banco) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5049,20 +5049,20 @@ html[data-theme='light'] .hvp-notif strong { color: rgba(14, 22, 60, 0.90) !impo
     box-shadow     var(--dur-fast) var(--ease-out);
 }
 
-.area-card:first-child .area-link:hover {
+.area-card:first-child .area-link:not(#area-link-banco):hover {
   background: rgba(var(--accent-rgb), 0.17);
   border-color: rgba(var(--accent-rgb), 0.36);
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.14);
 }
 
-html[data-theme='light'] .area-card:first-child .area-link {
+html[data-theme='light'] .area-card:first-child .area-link:not(#area-link-banco) {
   background: rgba(var(--accent-rgb), 0.07) !important;
   border-color: rgba(var(--accent-rgb), 0.18) !important;
   color: var(--accent) !important;
 }
 
-html[data-theme='light'] .area-card:first-child .area-link:hover {
+html[data-theme='light'] .area-card:first-child .area-link:not(#area-link-banco):hover {
   background: rgba(var(--accent-rgb), 0.13) !important;
   border-color: rgba(var(--accent-rgb), 0.28) !important;
 }
