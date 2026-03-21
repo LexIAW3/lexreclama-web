@@ -245,6 +245,9 @@ function renderGa4Snippet() {
   const adsSendTo = GOOGLE_ADS_ID && GOOGLE_ADS_CONVERSION_LABEL
     ? `${GOOGLE_ADS_ID}/${GOOGLE_ADS_CONVERSION_LABEL}`
     : '';
+  const trackingBlock = adsSendTo
+    ? `\n    window.__LEX_TRACKING = Object.assign({}, window.__LEX_TRACKING || {}, {\n      adsConversionSendTo: "${escapeHtml(adsSendTo)}",\n      adsConversionValue: 49.0,\n      adsConversionCurrency: "EUR"\n    });`
+    : '';
 
   return `<!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(bootstrapId)}"></script>
@@ -252,12 +255,7 @@ function renderGa4Snippet() {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag("js", new Date());
-${configLines}
-    window.__LEX_TRACKING = Object.assign({}, window.__LEX_TRACKING || {}, {
-      adsConversionSendTo: "${escapeHtml(adsSendTo)}",
-      adsConversionValue: 49.0,
-      adsConversionCurrency: "EUR"
-    });
+${configLines}${trackingBlock}
   </script>`;
 }
 
