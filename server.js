@@ -288,7 +288,7 @@ function formatSlug(slug) {
     .join(' ');
 }
 
-function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml, canonicalPath = '/', noindex = false }) {
+function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml, canonicalPath = '/', noindex = false, nonce = '' }) {
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -299,7 +299,7 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   <meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}" />
   <title>${escapeHtml(pageTitle)} | LexReclama</title>
   <link rel="stylesheet" href="/styles.min.css" />
-  ${renderGa4Snippet()}
+  ${renderGa4Snippet(nonce)}
 </head>
 <body>
   <nav class="nav">
@@ -337,7 +337,7 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
 </html>`;
 }
 
-function renderGa4Snippet() {
+function renderGa4Snippet(nonce = '') {
   const trackingIds = [GA4_MEASUREMENT_ID, GOOGLE_ADS_ID].filter(Boolean);
   if (!trackingIds.length) return '';
 
@@ -349,10 +349,11 @@ function renderGa4Snippet() {
   const trackingBlock = adsSendTo
     ? `\n    window.__LEX_TRACKING = Object.assign({}, window.__LEX_TRACKING || {}, {\n      adsConversionSendTo: "${escapeHtml(adsSendTo)}",\n      adsConversionValue: 49.0,\n      adsConversionCurrency: "EUR"\n    });`
     : '';
+  const nonceAttr = nonce ? ` nonce="${nonce}"` : '';
 
   return `<!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(bootstrapId)}"></script>
-  <script>
+  <script${nonceAttr}>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag("js", new Date());
@@ -411,6 +412,14 @@ function injectWhatsappIntoHtml(html) {
   return html.replace('</body>', `${button}\n</body>`);
 }
 
+function injectNonceIntoHtml(html, nonce) {
+  return html.replace(/<script([^>]*)>/g, (match, attrs) => {
+    if (/\bsrc=/.test(attrs)) return match;
+    if (/type="application\/ld\+json"/.test(attrs)) return match;
+    return `<script${attrs} nonce="${nonce}">`;
+  });
+}
+
 function injectCsrfIntoHtml(html, token) {
   if (!token || !html.includes('name="csrfToken"')) return html;
   return html.replace(
@@ -419,11 +428,13 @@ function injectCsrfIntoHtml(html, token) {
   );
 }
 
-function injectRuntimeSnippets(html, csrfToken = '') {
-  return injectCsrfIntoHtml(injectWhatsappIntoHtml(injectGa4IntoHtml(html)), csrfToken);
+function injectRuntimeSnippets(html, csrfToken = '', nonce = '') {
+  let result = injectCsrfIntoHtml(injectWhatsappIntoHtml(injectGa4IntoHtml(html)), csrfToken);
+  if (nonce) result = injectNonceIntoHtml(result, nonce);
+  return result;
 }
 
-function renderBlogIndex() {
+function renderBlogIndex(nonce = '') {
   const articles = listBlogArticles();
   const items = articles.length
     ? `<ul>${articles.map((slug) => `<li><a href="/blog/${slug}/">${escapeHtml(formatSlug(slug))}</a></li>`).join('')}</ul>`
@@ -436,10 +447,11 @@ function renderBlogIndex() {
     intro: 'Hub de contenido',
     bodyHtml: `<p>Articulos disponibles:</p>${items}`,
     canonicalPath: '/blog/',
+    nonce,
   });
 }
 
-function renderPillarPage(pathname) {
+function renderPillarPage(pathname, nonce = '') {
   const page = PILLAR_PAGES[pathname];
   if (!page) return null;
   return renderContentShell({
@@ -450,6 +462,7 @@ function renderPillarPage(pathname) {
     bodyHtml: `<p>${escapeHtml(page.placeholder)}</p>`,
     canonicalPath: pathname,
     noindex: true,
+    nonce,
   });
 }
 
@@ -531,6 +544,10 @@ const LEGAL_PAGES = {
     body: sectionSlice(LEGAL_TEXTS, '# 4. CONDICIONES GENERALES DE CONTRATACIÓN', '# 5. TEXTOS DE CONSENTIMIENTO — FORMULARIO DE CONTACTO / INTAKE'),
   },
 };
+
+function generateNonce() {
+  return crypto.randomBytes(16).toString('base64url');
+}
 
 function safeEqual(a, b) {
   const left = Buffer.from(a);
@@ -708,7 +725,7 @@ function markdownToHtml(text) {
   return out.join('\n');
 }
 
-function renderLegalPage(title, markdownBody) {
+function renderLegalPage(title, markdownBody, nonce = '') {
   const bodyHtml = markdownToHtml(markdownBody) || '<p>Contenido no disponible.</p>';
   return `<!doctype html>
 <html lang="es">
@@ -717,7 +734,7 @@ function renderLegalPage(title, markdownBody) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, follow" />
   <title>${escapeHtml(title)} · LexReclama</title>
-  ${renderGa4Snippet()}
+  ${renderGa4Snippet(nonce)}
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; }
     .wrap { max-width: 860px; margin: 0 auto; padding: 24px; }
@@ -749,10 +766,10 @@ function renderLegalPage(title, markdownBody) {
 </html>`;
 }
 
-function handleLegalPage(req, res, pathname) {
+function handleLegalPage(req, res, pathname, nonce = '') {
   const page = LEGAL_PAGES[pathname];
   if (!page) return false;
-  const html = renderLegalPage(page.title, page.body);
+  const html = renderLegalPage(page.title, page.body, nonce);
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
   res.end(html);
   return true;
@@ -1111,7 +1128,7 @@ async function handleConfirmCheckout(req, res) {
 
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
 
-function send404(res, csrfToken = '') {
+function send404(res, csrfToken = '', nonce = '') {
   fs.readFile(PAGE_404_PATH, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -1119,7 +1136,7 @@ function send404(res, csrfToken = '') {
       return;
     }
     res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-    res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken));
+    res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
   });
 }
 
@@ -1128,6 +1145,7 @@ const server = http.createServer(async (req, res) => {
   const normalizedPath = normalizePathname(url.pathname);
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
   const csrfToken = getOrCreateCsrfToken(req, res);
+  const nonce = generateNonce();
   // CORS only for safe read-only requests; POST endpoints are same-origin only
   if (req.method === 'GET' || req.method === 'HEAD') {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -1146,7 +1164,7 @@ const server = http.createServer(async (req, res) => {
       "frame-ancestors 'none'",
       "form-action 'self' https://checkout.stripe.com",
       "connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://js.stripe.com",
+      `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://js.stripe.com`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
       "img-src 'self' data: https:",
@@ -1183,7 +1201,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
     if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
   }
-  if (req.method === 'GET' && handleLegalPage(req, res, url.pathname)) return;
+  if (req.method === 'GET' && handleLegalPage(req, res, url.pathname, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
     res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${SITE_URL}/sitemap.xml\n`);
@@ -1200,12 +1218,12 @@ const server = http.createServer(async (req, res) => {
     try {
       const data = await fs.promises.readFile(staticCandidate, 'utf8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-      res.end(injectRuntimeSnippets(data, csrfToken));
+      res.end(injectRuntimeSnippets(data, csrfToken, nonce));
       return;
     } catch {
       // No static file found; use generated fallback below.
     }
-    const html = normalizedPath === '/blog/' ? renderBlogIndex() : renderPillarPage(normalizedPath);
+    const html = normalizedPath === '/blog/' ? renderBlogIndex(nonce) : renderPillarPage(normalizedPath, nonce);
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
     res.end(html);
     return;
@@ -1219,7 +1237,7 @@ const server = http.createServer(async (req, res) => {
   // Block internal/build directories from public access
   const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
   if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
-    send404(res, csrfToken); return;
+    send404(res, csrfToken, nonce); return;
   }
 
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
@@ -1234,14 +1252,14 @@ const server = http.createServer(async (req, res) => {
     }
     fs.readFile(filePath, (err, data) => {
       if (err) {
-        send404(res, csrfToken); return;
+        send404(res, csrfToken, nonce); return;
       }
       const ext = path.extname(filePath);
       const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
       if (ext === '.css' || ext === '.js') headers['Cache-Control'] = 'public, max-age=86400';
       res.writeHead(200, headers);
       if (ext === '.html') {
-        res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken));
+        res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
         return;
       }
       res.end(data);
