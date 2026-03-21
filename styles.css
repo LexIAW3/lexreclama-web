@@ -5145,6 +5145,13 @@ h1, h2, h3, h4 {
   letter-spacing: 0.005em;
 }
 
+.area-note {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 html[data-theme='light'] .area-recovery {
   background: rgba(53, 82, 232, 0.05);
   border-color: rgba(53, 82, 232, 0.11);
