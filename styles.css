@@ -1856,7 +1856,7 @@ body.contact-modal-open {
   border: 0;
   box-shadow: none;
   background: transparent;
-  padding: 0;
+  padding: 0 !important;
 }
 
 .contact-modal-link {
