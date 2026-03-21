@@ -7,12 +7,15 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
+const busboy = require('busboy');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
 const BLOG_DIR = path.join(__dirname, 'blog');
 const LEGAL_TEXTS_PATH = path.join(__dirname, 'legal-texts.md');
 const PAPERCLIP_API = process.env.PAPERCLIP_API_URL || 'http://127.0.0.1:3100';
+const OCR_SERVER = process.env.OCR_SERVER_URL || 'http://127.0.0.1:3200';
+const DOCUMENTS_DIR = path.join(__dirname, '..', 'documents');
 const SITE_URL = 'https://www.lexreclama.es';
 const SUBMIT_API_KEY = process.env.PAPERCLIP_SUBMIT_KEY;
 const COMPANY_ID = process.env.PAPERCLIP_COMPANY_ID;
@@ -130,9 +133,71 @@ function validateAndAttachJsonBody(req, res) {
   })();
 }
 
+const MAX_UPLOAD_FILE_BYTES = 10 * 1024 * 1024; // 10 MB per file
+const MAX_UPLOAD_FILES = 3;
+const ALLOWED_UPLOAD_MIMETYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
+
+function parseMultipartOrJsonBody(req, res) {
+  return new Promise((resolve) => {
+    if (Object.prototype.hasOwnProperty.call(req, 'parsedBody')) { resolve(true); return; }
+    const contentType = String(req.headers['content-type'] || '');
+    if (!contentType.startsWith('multipart/form-data')) {
+      validateAndAttachJsonBody(req, res).then(resolve);
+      return;
+    }
+    const fields = {};
+    const files = [];
+    let rejected = false;
+    let bb;
+    try {
+      bb = busboy({ headers: req.headers, limits: { fileSize: MAX_UPLOAD_FILE_BYTES, files: MAX_UPLOAD_FILES + 1, fieldSize: 8 * 1024 } });
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Formulario inválido' }));
+      resolve(false);
+      return;
+    }
+    bb.on('field', (name, val) => { fields[name] = val; });
+    bb.on('file', (name, stream, info) => {
+      const { filename, mimeType } = info;
+      if (!ALLOWED_UPLOAD_MIMETYPES.has(mimeType)) {
+        stream.resume();
+        return;
+      }
+      const chunks = [];
+      let size = 0;
+      stream.on('data', (d) => { size += d.length; chunks.push(d); });
+      stream.on('close', () => {
+        if (stream.truncated) return; // exceeded fileSize limit — skip
+        if (files.length < MAX_UPLOAD_FILES) {
+          files.push({ originalname: filename, mimetype: mimeType, buffer: Buffer.concat(chunks), size });
+        }
+      });
+    });
+    bb.on('close', () => {
+      if (rejected) return;
+      req.parsedBody = {
+        ...fields,
+        privacidadAceptada: fields.privacidadAceptada === 'true',
+        comercialAceptada: fields.comercialAceptada === 'true',
+      };
+      req.uploadedFiles = files;
+      resolve(true);
+    });
+    bb.on('error', () => {
+      if (rejected) return;
+      rejected = true;
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Error procesando el formulario' }));
+      resolve(false);
+    });
+    req.pipe(bb);
+  });
+}
+
 function validateCsrfToken(req, res) {
   return (async () => {
-    const okBody = await validateAndAttachJsonBody(req, res);
+    const okBody = await parseMultipartOrJsonBody(req, res);
     if (!okBody) return false;
     sweepCsrfTokens();
 
@@ -802,8 +867,46 @@ async function handleAdmin(req, res) {
   res.end(html);
 }
 
+async function uploadDocumentToOcr(issueId, file) {
+  try {
+    const FormDataNode = (await import('node:buffer')).Buffer; // just to ensure node exists
+    // Build multipart manually using node's built-in capabilities
+    const boundary = `----FormBoundary${crypto.randomBytes(16).toString('hex')}`;
+    const CRLF = '\r\n';
+    const parts = [
+      `--${boundary}${CRLF}`,
+      `Content-Disposition: form-data; name="file"; filename="${file.originalname}"${CRLF}`,
+      `Content-Type: ${file.mimetype}${CRLF}`,
+      CRLF,
+    ];
+    const bodyStart = Buffer.from(parts.join(''));
+    const bodyEnd = Buffer.from(`${CRLF}--${boundary}--${CRLF}`);
+    const fullBody = Buffer.concat([bodyStart, file.buffer, bodyEnd]);
+
+    const ocrUrl = new URL(`/api/documents/upload?issueId=${encodeURIComponent(issueId)}`, OCR_SERVER);
+    const res = await fetch(ocrUrl.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+        'Content-Length': String(fullBody.length),
+      },
+      body: fullBody,
+    });
+    if (!res.ok) {
+      const err = await res.text().catch(() => '');
+      console.warn(`[ocr] upload failed for ${file.originalname}: ${res.status} ${err}`);
+      return null;
+    }
+    return await res.json();
+  } catch (err) {
+    console.warn(`[ocr] upload error for ${file.originalname}: ${err.message}`);
+    return null;
+  }
+}
+
 async function handleSubmitLead(req, res) {
   const body = req.parsedBody;
+  const uploadedFiles = req.uploadedFiles || [];
 
   const leadData = normalizeLeadPayload(body);
   if (!leadData.ok) {
@@ -833,6 +936,12 @@ async function handleSubmitLead(req, res) {
       store: recentLeadSubmissions,
       execute: async () => {
         const created = await createIssueForLead(leadData.value, { paid: false });
+        // Upload files to OCR server after issue is created
+        if (uploadedFiles.length > 0) {
+          for (const file of uploadedFiles) {
+            await uploadDocumentToOcr(created.id, file);
+          }
+        }
         return { issueId: created.id, identifier: created.identifier };
       },
     });
@@ -880,6 +989,33 @@ function normalizeLeadPayload(body) {
     otro: 'Consulta general',
   }[tipo] || tipo;
 
+  // Vertical-specific fields
+  const str = (v) => String(body?.[v] || '').trim();
+  let vertical = {};
+  if (tipo === 'multa') {
+    vertical = {
+      multa_expediente: str('multa_expediente'),
+      multa_importe: str('multa_importe'),
+      multa_fecha: str('multa_fecha'),
+      multa_tipo_infraccion: str('multa_tipo_infraccion'),
+      multa_organismo: str('multa_organismo'),
+    };
+  } else if (tipo === 'banco') {
+    vertical = {
+      banco_tipo_clausula: str('banco_tipo_clausula'),
+      banco_nombre: str('banco_nombre'),
+      banco_anio_firma: str('banco_anio_firma'),
+      banco_cuota_mensual: str('banco_cuota_mensual'),
+    };
+  } else if (tipo === 'deuda') {
+    vertical = {
+      deuda_tipo_deuda: str('deuda_tipo_deuda'),
+      deuda_importe_reclamado: str('deuda_importe_reclamado'),
+      deuda_nombre_deudor: str('deuda_nombre_deudor'),
+      deuda_tiene_contrato: str('deuda_tiene_contrato'),
+    };
+  }
+
   return {
     ok: true,
     value: {
@@ -894,11 +1030,38 @@ function normalizeLeadPayload(body) {
       consentimientoTimestamp,
       versionPolitica,
       idempotencyKey,
+      ...vertical,
     },
   };
 }
 
+function buildVerticalDescription(leadData) {
+  const lines = [];
+  if (leadData.tipo === 'multa') {
+    lines.push('**Datos de la multa:**');
+    if (leadData.multa_expediente) lines.push(`- Expediente: ${leadData.multa_expediente}`);
+    if (leadData.multa_importe) lines.push(`- Importe: ${leadData.multa_importe} €`);
+    if (leadData.multa_fecha) lines.push(`- Fecha notificación: ${leadData.multa_fecha}`);
+    if (leadData.multa_tipo_infraccion) lines.push(`- Tipo infracción: ${leadData.multa_tipo_infraccion}`);
+    if (leadData.multa_organismo) lines.push(`- Organismo: ${leadData.multa_organismo}`);
+  } else if (leadData.tipo === 'banco') {
+    lines.push('**Datos bancarios:**');
+    if (leadData.banco_tipo_clausula) lines.push(`- Cláusula: ${leadData.banco_tipo_clausula}`);
+    if (leadData.banco_nombre) lines.push(`- Banco: ${leadData.banco_nombre}`);
+    if (leadData.banco_anio_firma) lines.push(`- Año firma: ${leadData.banco_anio_firma}`);
+    if (leadData.banco_cuota_mensual) lines.push(`- Cuota mensual: ${leadData.banco_cuota_mensual} €`);
+  } else if (leadData.tipo === 'deuda') {
+    lines.push('**Datos de la deuda:**');
+    if (leadData.deuda_tipo_deuda) lines.push(`- Tipo: ${leadData.deuda_tipo_deuda}`);
+    if (leadData.deuda_importe_reclamado) lines.push(`- Importe: ${leadData.deuda_importe_reclamado} €`);
+    if (leadData.deuda_nombre_deudor) lines.push(`- Deudor: ${leadData.deuda_nombre_deudor}`);
+    if (leadData.deuda_tiene_contrato) lines.push(`- Contrato/factura: ${leadData.deuda_tiene_contrato === 'si' ? 'Sí' : 'No'}`);
+  }
+  return lines.length > 1 ? lines : [];
+}
+
 async function createIssueForLead(leadData, paymentMeta = { paid: false }) {
+  const verticalLines = buildVerticalDescription(leadData);
   const issue = {
     title: `Lead: ${leadData.tipoLabel} — ${leadData.nombre}`,
     description: [
@@ -910,6 +1073,7 @@ async function createIssueForLead(leadData, paymentMeta = { paid: false }) {
       `**Consentimiento comercial:** ${leadData.comercialAceptada ? 'Sí' : 'No'}`,
       `**Timestamp consentimiento:** ${leadData.consentimientoTimestamp}`,
       `**Versión política aceptada:** ${leadData.versionPolitica}`,
+      ...(verticalLines.length ? ['', ...verticalLines] : []),
       '',
       '**Descripción del caso:**',
       leadData.descripcion || '(sin descripción)',

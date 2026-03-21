@@ -78,6 +78,92 @@ function toggleBancoFields() {
   }
 }
 
+/* ─── VERTICAL FORM FIELDS ────────────────────────────────── */
+function showVerticalFields(tipo) {
+  document.querySelectorAll('.vertical-fields').forEach(el => el.classList.add('hidden'));
+  if (tipo === 'multa') document.getElementById('vertical-multa')?.classList.remove('hidden');
+  else if (tipo === 'banco') document.getElementById('vertical-banco')?.classList.remove('hidden');
+  else if (tipo === 'deuda') document.getElementById('vertical-deuda')?.classList.remove('hidden');
+}
+
+/* ─── FILE UPLOAD ─────────────────────────────────────────── */
+const MAX_FILE_SIZE_MB = 10;
+const MAX_FILES = 3;
+const ALLOWED_MIME_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
+const ALLOWED_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png']);
+let selectedFiles = [];
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function renderFileList() {
+  const list = document.getElementById('file-list');
+  if (!list) return;
+  list.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+    const li = document.createElement('li');
+    li.className = 'file-item';
+    li.innerHTML = `<span class="file-item-name">${escapeHtml(file.name)}</span><span class="file-item-size">${formatBytes(file.size)}</span><button type="button" class="file-item-remove" aria-label="Eliminar ${escapeHtml(file.name)}" data-index="${i}">✕</button>`;
+    list.appendChild(li);
+  });
+  list.querySelectorAll('.file-item-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedFiles.splice(Number(btn.dataset.index), 1);
+      renderFileList();
+    });
+  });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addFiles(newFiles) {
+  const errors = [];
+  for (const file of newFiles) {
+    if (selectedFiles.length >= MAX_FILES) { errors.push(`Máximo ${MAX_FILES} archivos`); break; }
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(ext) && !ALLOWED_MIME_TYPES.has(file.type)) {
+      errors.push(`${file.name}: formato no permitido (usa PDF, JPG o PNG)`);
+      continue;
+    }
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      errors.push(`${file.name}: demasiado grande (máx. ${MAX_FILE_SIZE_MB} MB)`);
+      continue;
+    }
+    selectedFiles.push(file);
+  }
+  if (errors.length) alert(errors.join('\n'));
+  renderFileList();
+}
+
+function initFileUpload() {
+  const dropZone = document.getElementById('file-drop-zone');
+  const fileInput = document.getElementById('file-input');
+  if (!dropZone || !fileInput) return;
+
+  dropZone.addEventListener('click', (e) => {
+    if (!e.target.classList.contains('file-item-remove')) fileInput.click();
+  });
+  dropZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+  fileInput.addEventListener('change', () => {
+    addFiles(Array.from(fileInput.files));
+    fileInput.value = '';
+  });
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    addFiles(Array.from(e.dataTransfer.files));
+  });
+}
+
 function initNavScrollEffect() {
   const nav = document.getElementById('main-nav');
   if (!nav) return;
@@ -479,6 +565,27 @@ async function submitLead(event) {
     csrfToken: getCsrfToken(),
   };
 
+  // Collect vertical fields based on tipo
+  const verticalData = {};
+  if (data.tipo === 'multa') {
+    verticalData.multa_expediente = (document.getElementById('multa-expediente')?.value || '').trim();
+    verticalData.multa_importe = (document.getElementById('multa-importe-form')?.value || '').trim();
+    verticalData.multa_fecha = (document.getElementById('multa-fecha')?.value || '').trim();
+    verticalData.multa_tipo_infraccion = (document.getElementById('multa-tipo-infraccion')?.value || '').trim();
+    verticalData.multa_organismo = (document.getElementById('multa-organismo')?.value || '').trim();
+  } else if (data.tipo === 'banco') {
+    verticalData.banco_tipo_clausula = (document.getElementById('banco-tipo-clausula')?.value || '').trim();
+    verticalData.banco_nombre = (document.getElementById('banco-nombre')?.value || '').trim();
+    verticalData.banco_anio_firma = (document.getElementById('banco-anio-firma')?.value || '').trim();
+    verticalData.banco_cuota_mensual = (document.getElementById('banco-cuota-mensual')?.value || '').trim();
+  } else if (data.tipo === 'deuda') {
+    verticalData.deuda_tipo_deuda = (document.getElementById('deuda-tipo-deuda')?.value || '').trim();
+    verticalData.deuda_importe_reclamado = (document.getElementById('deuda-importe-reclamado')?.value || '').trim();
+    verticalData.deuda_nombre_deudor = (document.getElementById('deuda-nombre-deudor')?.value || '').trim();
+    const contractRadio = document.querySelector('input[name="deuda_tiene_contrato"]:checked');
+    verticalData.deuda_tiene_contrato = contractRadio ? contractRadio.value : '';
+  }
+
   const tipoLabel = {
     deuda: 'Reclamación de deuda impagada',
     banco: 'Cláusulas bancarias abusivas',
@@ -501,11 +608,12 @@ async function submitLead(event) {
       return;
     }
 
-    await createPaperclipLead(data, tipoLabel);
+    await createPaperclipLead({ ...data, ...verticalData }, tipoLabel, selectedFiles);
     trackGtagEvent('generate_lead', { event_category: 'formulario', event_label: data.tipo });
     trackAdsLeadConversion();
     currentLeadIdempotency = null;
     form.reset();
+    selectedFiles = []; renderFileList();
     successEl.classList.remove('hidden');
     successEl.querySelector('p').textContent = 'Hemos recibido su solicitud y nos pondremos en contacto con usted en 24-48 horas laborables. Sus datos serán tratados conforme a la Política de Privacidad.';
     form.classList.add('hidden');
@@ -520,11 +628,30 @@ async function submitLead(event) {
   }
 }
 
-async function createPaperclipLead(data, tipoLabel) {
+async function createPaperclipLead(data, tipoLabel, files = []) {
+  let body;
+  let headers;
+
+  if (files && files.length > 0) {
+    const fd = new FormData();
+    const allData = { ...data, tipoLabel };
+    for (const [key, value] of Object.entries(allData)) {
+      fd.append(key, value == null ? '' : String(value));
+    }
+    for (const file of files) {
+      fd.append('files', file, file.name);
+    }
+    body = fd;
+    headers = {};
+  } else {
+    body = JSON.stringify({ ...data, tipoLabel });
+    headers = { 'Content-Type': 'application/json' };
+  }
+
   const res = await fetch(SUBMIT_ENDPOINT, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...data, tipoLabel }),
+    headers,
+    body,
   });
 
   if (!res.ok) {
@@ -880,6 +1007,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initCalcButtons();
   initFormValidation();
   toggleBancoFields();
+
+  // Vertical fields
+  const tipoReclamacion = document.getElementById('tipo-reclamacion');
+  if (tipoReclamacion) {
+    tipoReclamacion.addEventListener('change', () => showVerticalFields(tipoReclamacion.value));
+    showVerticalFields(tipoReclamacion.value);
+  }
+
+  // File upload
+  initFileUpload();
+
   initCookieBanner();
   initWhatsappFloat();
   handleCheckoutReturn();

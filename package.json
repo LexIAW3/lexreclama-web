@@ -15,5 +15,8 @@
     "esbuild": "^0.27.3",
     "lightningcss-cli": "^1.30.2",
     "simple-git-hooks": "^2.11.1"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0"
   }
 }

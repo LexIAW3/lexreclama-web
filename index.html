@@ -763,6 +763,121 @@
             </select>
           </div>
 
+          <!-- Campos verticales: se muestran según tipo de reclamación -->
+          <div id="vertical-multa" class="vertical-fields hidden">
+            <div class="form-row">
+              <div class="field">
+                <label for="multa-expediente">Nº de expediente</label>
+                <input type="text" id="multa-expediente" name="multa_expediente" placeholder="EXP-2024-000123" />
+              </div>
+              <div class="field">
+                <label for="multa-importe-form">Importe de la multa (€)</label>
+                <input type="number" id="multa-importe-form" name="multa_importe" placeholder="200" min="0" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="multa-fecha">Fecha de notificación</label>
+                <input type="date" id="multa-fecha" name="multa_fecha" />
+              </div>
+              <div class="field">
+                <label for="multa-tipo-infraccion">Tipo de infracción</label>
+                <select id="multa-tipo-infraccion" name="multa_tipo_infraccion">
+                  <option value="">Selecciona</option>
+                  <option value="velocidad">Exceso de velocidad</option>
+                  <option value="estacionamiento">Estacionamiento indebido</option>
+                  <option value="semaforo">Semáforo en rojo</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="multa-organismo">Órgano sancionador</label>
+              <select id="multa-organismo" name="multa_organismo">
+                <option value="">Selecciona</option>
+                <option value="dgt">DGT</option>
+                <option value="ayuntamiento">Ayuntamiento</option>
+                <option value="guardia-urbana">Guardia Urbana</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="vertical-banco" class="vertical-fields hidden">
+            <div class="form-row">
+              <div class="field">
+                <label for="banco-tipo-clausula">Tipo de cláusula</label>
+                <select id="banco-tipo-clausula" name="banco_tipo_clausula">
+                  <option value="">Selecciona</option>
+                  <option value="suelo">Cláusula suelo</option>
+                  <option value="irph">IRPH</option>
+                  <option value="gastos">Gastos hipotecarios</option>
+                  <option value="comision-apertura">Comisión de apertura</option>
+                  <option value="tarjeta-revolving">Tarjeta revolving</option>
+                  <option value="otra">Otra</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="banco-nombre">Nombre del banco</label>
+                <input type="text" id="banco-nombre" name="banco_nombre" placeholder="BBVA, Santander..." />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="banco-anio-firma">Año de firma</label>
+                <input type="number" id="banco-anio-firma" name="banco_anio_firma" placeholder="2008" min="1980" max="2030" />
+              </div>
+              <div class="field">
+                <label for="banco-cuota-mensual">Cuota mensual aproximada (€)</label>
+                <input type="number" id="banco-cuota-mensual" name="banco_cuota_mensual" placeholder="600" min="0" />
+              </div>
+            </div>
+          </div>
+
+          <div id="vertical-deuda" class="vertical-fields hidden">
+            <div class="form-row">
+              <div class="field">
+                <label for="deuda-tipo-deuda">Tipo de deuda</label>
+                <select id="deuda-tipo-deuda" name="deuda_tipo_deuda">
+                  <option value="">Selecciona</option>
+                  <option value="facturas">Facturas impagadas</option>
+                  <option value="pagare">Pagaré</option>
+                  <option value="prestamo">Préstamo personal</option>
+                  <option value="alquiler">Alquiler impagado</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="deuda-importe-reclamado">Importe reclamado (€)</label>
+                <input type="number" id="deuda-importe-reclamado" name="deuda_importe_reclamado" placeholder="5000" min="0" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="deuda-nombre-deudor">Nombre / razón social del deudor</label>
+                <input type="text" id="deuda-nombre-deudor" name="deuda_nombre_deudor" placeholder="Empresa SL o persona física" />
+              </div>
+              <div class="field">
+                <label>¿Tiene contrato o factura?</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="deuda_tiene_contrato" value="si" /> Sí</label>
+                  <label class="radio-label"><input type="radio" name="deuda_tiene_contrato" value="no" /> No</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload de documentos -->
+          <div class="field">
+            <label>Documentación adjunta <span class="field-hint">(opcional — PDF, JPG o PNG, máx. 10 MB por archivo, hasta 3 archivos)</span></label>
+            <div id="file-drop-zone" class="file-drop-zone" role="button" tabindex="0" aria-label="Zona de carga de archivos">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span class="file-drop-text">Arrastra archivos aquí o <span class="file-drop-link">selecciona</span></span>
+              <input type="file" id="file-input" name="files" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input-hidden" aria-hidden="true" />
+            </div>
+            <ul id="file-list" class="file-list" aria-live="polite"></ul>
+          </div>
+
           <div class="field">
             <label for="descripcion">Cuéntanos brevemente tu situación</label>
             <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describe tu caso: importe, banco o entidad, si ya tienes documentación..." required></textarea>
