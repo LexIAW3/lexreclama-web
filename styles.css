@@ -1856,7 +1856,15 @@ body.contact-modal-open {
   border: 0;
   box-shadow: none;
   background: transparent;
-  padding: 0;
+  padding: 0 !important;
+  border-radius: 0;
+  overflow: visible;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.contact-modal-form::before {
+  content: none !important;
 }
 
 .contact-modal-link {
@@ -3696,6 +3704,16 @@ html[data-theme='light'] .contacto-form::before {
   );
 }
 
+html[data-theme='light'] .contact-modal-form {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme='light'] .contact-modal-form::before {
+  content: none !important;
+}
+
 
 /* ---- 4. STATS: value props al estilo Stripe — frases cortas, gradiente ---- */
 
@@ -4562,6 +4580,17 @@ html[data-theme='dark'] .cookie-banner {
     0 32px 80px rgba(14, 22, 60, 0.22),
     0 0 0 1px rgba(var(--accent-rgb), 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+@media (min-width: 901px) {
+  .contact-modal-dialog {
+    max-height: calc(100dvh - 36px);
+    overflow: hidden;
+  }
+
+  .contact-modal-body {
+    padding: 20px 24px 22px !important;
+  }
 }
 
 html[data-theme='dark'] .contact-modal-dialog {
