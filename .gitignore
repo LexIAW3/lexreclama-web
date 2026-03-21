@@ -1,0 +1,19 @@
+# Build artifacts & generated assets
+social-templates/png/
+social-templates/jpg/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+.env.*
+*.local
+
+# Editor
+.vscode/
+.idea/

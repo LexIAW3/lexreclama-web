@@ -347,7 +347,9 @@ function buildSitemapXml() {
     '/politica-cookies',
     '/condiciones',
   ];
-  const blogUrls = listBlogArticles().map((slug) => `/blog/${slug}/`);
+  const blogUrls = listBlogArticles()
+    .map((slug) => `/blog/${slug}/`)
+    .filter((urlPath) => !BLOG_REDIRECTS[urlPath]);
   const urls = [...staticUrls, ...blogUrls];
   const body = urls.map((urlPath) => `  <url><loc>${SITE_URL}${urlPath}</loc></url>`).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
@@ -1011,6 +1013,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Static file serving
+  // Block internal/build directories from public access
+  const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
+  if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
+    res.writeHead(404); res.end('Not found'); return;
+  }
+
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
   // Security: prevent path traversal
   if (!filePath.startsWith(STATIC_DIR)) {
