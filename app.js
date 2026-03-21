@@ -1159,7 +1159,7 @@ function initCookieBanner() {
   acceptBtn.addEventListener('click', () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
       analytics: true,
-      marketing: true,
+      marketing: false,
       timestamp: new Date().toISOString(),
       version: PRIVACY_POLICY_VERSION,
     }));
