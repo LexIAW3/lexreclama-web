@@ -5519,11 +5519,8 @@ html[data-theme='light'] .hvp-card--main {
 
 /* === LEX DS v7.4 — Visual audit fix (LEX-241/LEX-305) === */
 
-/* Fix 1.1 — Hero H1 line-height */
-.home-page .hero h1 { line-height: 1.0; }
-
-/* Fix 1.2 — Hero H1 margin desde badge */
-.home-page .hero h1 { margin: 32px 0 20px; }
+/* Fix 1.1+1.2 — Hero H1 line-height + margin desde badge */
+.home-page .hero h1 { line-height: 1.0; margin: 32px 0 20px; }
 
 /* Fix 1.3 — Hero actions gap */
 .hero-actions { gap: 14px; }
