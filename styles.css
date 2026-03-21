@@ -5270,8 +5270,7 @@ html[data-theme='light'] .stat-card:nth-child(1) {
 .entities-inner {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 18px;
 }
 
 .entities-label {
@@ -5284,30 +5283,97 @@ html[data-theme='light'] .stat-card:nth-child(1) {
   flex-shrink: 0;
 }
 
-.entities-list {
+.entities-marquee {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 28px;
+  overflow: hidden;
+  min-width: 0;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 10%,
+    #000 90%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 10%,
+    #000 90%,
+    transparent 100%
+  );
 }
 
-.entity-pill {
-  font-size: 0.78rem;
+.entities-track {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+  min-width: max-content;
+  animation: entities-marquee 26s linear infinite;
+}
+
+.entities-marquee:hover .entities-track {
+  animation-play-state: paused;
+}
+
+@keyframes entities-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 28px)); }
+}
+
+.entity-logo-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 152px;
+  height: 42px;
+  border-radius: 999px;
+  padding: 0 20px;
+  border: 1px solid rgba(14, 22, 60, 0.09);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.entity-logo-item svg {
+  width: 100%;
+  height: 100%;
+}
+
+.entity-logo-item text {
+  fill: rgba(14, 22, 60, 0.6);
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--muted);
+  text-anchor: middle;
+  dominant-baseline: middle;
   letter-spacing: 0.02em;
-  transition: color 0.2s ease;
 }
 
-.entity-sep {
-  color: var(--border);
-  font-size: 0.8rem;
-  line-height: 1;
-  opacity: 0.5;
+html[data-theme='light'] .entity-logo-item {
+  background: rgba(255, 255, 255, 0.76);
 }
 
-html[data-theme='light'] .entity-pill { color: rgba(14, 22, 60, 0.45); }
 html[data-theme='light'] .entities-label { color: rgba(14, 22, 60, 0.38); }
+
+@media (max-width: 900px) {
+  .entities-inner {
+    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .entities-marquee {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entities-track {
+    animation: none;
+  }
+}
 
 /* --- SECTION CTA (proceso, faq) --- */
 .section-cta {
