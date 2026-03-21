@@ -1457,4 +1457,10 @@ server.listen(PORT, '127.0.0.1', () => {
   console.log(`GA4:          ${GA4_MEASUREMENT_ID || '(disabled)'}`);
   if (!ADMIN_PASSWORD) console.warn('WARN: ADMIN_PASSWORD is not set; /admin will return 503');
   console.log(`Paperclip:    ${PAPERCLIP_API}`);
+  console.log(`OCR server:   ${OCR_SERVER}`);
+  try {
+    const ocrHost = new URL(OCR_SERVER).hostname;
+    const isInternal = ocrHost === 'localhost' || ocrHost === '127.0.0.1' || /^10\./.test(ocrHost) || /^192\.168\./.test(ocrHost) || /^172\.(1[6-9]|2\d|3[01])\./.test(ocrHost);
+    if (!isInternal) console.warn(`WARN: OCR_SERVER_URL (${OCR_SERVER}) is not a private/loopback address — uploaded documents will be forwarded to an external host`);
+  } catch { console.warn(`WARN: OCR_SERVER_URL (${OCR_SERVER}) is not a valid URL`); }
 });
