@@ -1,0 +1,12 @@
+{
+  "name": "lexreclama-web",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "lightningcss --minify --targets '>= 0.25%' styles.css -o styles.min.css",
+    "build": "npm run build:css"
+  },
+  "devDependencies": {
+    "lightningcss-cli": "^1.30.2"
+  }
+}

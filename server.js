@@ -298,7 +298,7 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   <link rel="canonical" href="${SITE_URL}${canonicalPath}" />
   <meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}" />
   <title>${escapeHtml(pageTitle)} | LexReclama</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.min.css" />
   ${renderGa4Snippet()}
 </head>
 <body>
@@ -1139,11 +1139,13 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && (normalizedPath === '/blog/' || normalizedPath in PILLAR_PAGES)) {
     // Prefer static HTML file if it exists; fall back to generated placeholder
     const staticCandidate = path.join(STATIC_DIR, normalizedPath, 'index.html');
-    if (fs.existsSync(staticCandidate)) {
-      const data = fs.readFileSync(staticCandidate, 'utf8');
+    try {
+      const data = await fs.promises.readFile(staticCandidate, 'utf8');
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
       res.end(injectRuntimeSnippets(data, csrfToken));
       return;
+    } catch {
+      // No static file found; use generated fallback below.
     }
     const html = normalizedPath === '/blog/' ? renderBlogIndex() : renderPillarPage(normalizedPath);
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });

@@ -82,8 +82,9 @@ function initNavScrollEffect() {
   const nav = document.getElementById('main-nav');
   if (!nav) return;
   const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 20);
+  const onScrollThrottled = rafThrottle(onScroll);
   onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('scroll', onScrollThrottled, { passive: true });
 }
 
 /* ─── CALCULATORS ─────────────────────────────────────────── */
@@ -196,6 +197,26 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
+function rafThrottle(fn) {
+  let ticking = false;
+  return (...args) => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      fn(...args);
+    });
+  };
+}
+
+function debounce(fn, waitMs) {
+  let timer = null;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = window.setTimeout(() => fn(...args), waitMs);
+  };
+}
+
 function initBankLeadMagnetCalculator() {
   const root = document.getElementById('bank-lead-calculator');
   if (!root) return;
@@ -230,7 +251,7 @@ function initBankLeadMagnetCalculator() {
     return 1;
   };
 
-  const render = () => {
+  const renderNow = () => {
     const mortgageType = typeInput.value;
     const signedYear = parseInt(yearInput.value, 10);
     const bankName = bankInput.value.trim();
@@ -333,6 +354,8 @@ function initBankLeadMagnetCalculator() {
       ctaEl.dataset.calcSummary = `Hipoteca ${mortgageType} firmada en ${signedYear} con ${bankName}. Estimación orientativa: ${formatRange(totalMin, totalMax)}.`;
     }
   };
+
+  const render = debounce(renderNow, 300);
 
   [typeInput, yearInput, bankInput, amountInput].forEach((input) => {
     input.addEventListener('input', render);
@@ -906,9 +929,10 @@ function initWhatsappFloat() {
     }
     button.classList.toggle('is-visible', window.scrollY > 200);
   };
+  const updateVisibilityThrottled = rafThrottle(updateVisibility);
 
   updateVisibility();
-  window.addEventListener('scroll', updateVisibility, { passive: true });
+  window.addEventListener('scroll', updateVisibilityThrottled, { passive: true });
   if (typeof desktopMedia.addEventListener === 'function') {
     desktopMedia.addEventListener('change', updateVisibility);
   } else if (typeof desktopMedia.addListener === 'function') {
@@ -925,7 +949,7 @@ function initScrollProgress() {
     const total = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     bar.style.width = total > 0 ? (scrolled / total * 100) + '%' : '0%';
   }
-  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('scroll', rafThrottle(update), { passive: true });
   update();
 }
 
