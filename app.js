@@ -91,7 +91,7 @@ const MAX_FILE_SIZE_MB = 10;
 const MAX_FILES = 3;
 const ALLOWED_MIME_TYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
 const ALLOWED_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png']);
-let selectedFiles = [];
+const fileUploadStates = new WeakMap();
 
 function formatBytes(bytes) {
   if (bytes < 1024) return bytes + ' B';
@@ -99,11 +99,11 @@ function formatBytes(bytes) {
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
-function renderFileList() {
-  const list = document.getElementById('file-list');
-  if (!list) return;
+function renderFileList(state) {
+  const list = state?.listEl;
+  if (!state || !list) return;
   list.innerHTML = '';
-  selectedFiles.forEach((file, i) => {
+  state.files.forEach((file, i) => {
     const li = document.createElement('li');
     li.className = 'file-item';
     li.innerHTML = `<span class="file-item-name">${escapeHtml(file.name)}</span><span class="file-item-size">${formatBytes(file.size)}</span><button type="button" class="file-item-remove" aria-label="Eliminar ${escapeHtml(file.name)}" data-index="${i}">✕</button>`;
@@ -111,8 +111,8 @@ function renderFileList() {
   });
   list.querySelectorAll('.file-item-remove').forEach(btn => {
     btn.addEventListener('click', () => {
-      selectedFiles.splice(Number(btn.dataset.index), 1);
-      renderFileList();
+      state.files.splice(Number(btn.dataset.index), 1);
+      renderFileList(state);
     });
   });
 }
@@ -121,10 +121,11 @@ function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function addFiles(newFiles) {
+function addFiles(state, newFiles) {
   const errors = [];
+  if (!state) return;
   for (const file of newFiles) {
-    if (selectedFiles.length >= MAX_FILES) { errors.push(`Máximo ${MAX_FILES} archivos`); break; }
+    if (state.files.length >= MAX_FILES) { errors.push(`Máximo ${MAX_FILES} archivos`); break; }
     const ext = '.' + file.name.split('.').pop().toLowerCase();
     if (!ALLOWED_EXTENSIONS.has(ext) && !ALLOWED_MIME_TYPES.has(file.type)) {
       errors.push(`${file.name}: formato no permitido (usa PDF, JPG o PNG)`);
@@ -134,33 +135,62 @@ function addFiles(newFiles) {
       errors.push(`${file.name}: demasiado grande (máx. ${MAX_FILE_SIZE_MB} MB)`);
       continue;
     }
-    selectedFiles.push(file);
+    state.files.push(file);
   }
   if (errors.length) alert(errors.join('\n'));
-  renderFileList();
+  renderFileList(state);
 }
 
-function initFileUpload() {
-  const dropZone = document.getElementById('file-drop-zone');
-  const fileInput = document.getElementById('file-input');
-  if (!dropZone || !fileInput) return;
+function getFormUploadState(formEl) {
+  if (!formEl) return null;
+  const container = formEl.querySelector('[data-file-upload]');
+  if (!container) return null;
+  return fileUploadStates.get(container) || null;
+}
 
-  dropZone.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('file-item-remove')) fileInput.click();
-  });
-  dropZone.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-  });
-  fileInput.addEventListener('change', () => {
-    addFiles(Array.from(fileInput.files));
-    fileInput.value = '';
-  });
-  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    addFiles(Array.from(e.dataTransfer.files));
+function getFormSelectedFiles(formEl) {
+  const state = getFormUploadState(formEl);
+  return state ? state.files.slice() : [];
+}
+
+function clearFormSelectedFiles(formEl) {
+  const state = getFormUploadState(formEl);
+  if (!state) return;
+  state.files = [];
+  if (state.inputEl) state.inputEl.value = '';
+  renderFileList(state);
+}
+
+function initFileUpload(root = document) {
+  root.querySelectorAll('[data-file-upload]').forEach(container => {
+    if (container.dataset.fileUploadReady === '1') return;
+
+    const dropZone = container.querySelector('[data-file-drop-zone]');
+    const fileInput = container.querySelector('[data-file-input]');
+    const fileList = container.querySelector('[data-file-list]');
+    if (!dropZone || !fileInput || !fileList) return;
+
+    const state = { files: [], inputEl: fileInput, listEl: fileList };
+    fileUploadStates.set(container, state);
+    container.dataset.fileUploadReady = '1';
+
+    dropZone.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('file-item-remove')) fileInput.click();
+    });
+    dropZone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+    });
+    fileInput.addEventListener('change', () => {
+      addFiles(state, Array.from(fileInput.files || []));
+      fileInput.value = '';
+    });
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      addFiles(state, Array.from(e.dataTransfer?.files || []));
+    });
   });
 }
 
@@ -608,12 +638,12 @@ async function submitLead(event) {
       return;
     }
 
-    await createPaperclipLead({ ...data, ...verticalData }, tipoLabel, selectedFiles);
+    await createPaperclipLead({ ...data, ...verticalData }, tipoLabel, getFormSelectedFiles(form));
     trackGtagEvent('generate_lead', { event_category: 'formulario', event_label: data.tipo });
     trackAdsLeadConversion();
     currentLeadIdempotency = null;
     form.reset();
-    selectedFiles = []; renderFileList();
+    clearFormSelectedFiles(form);
     successEl.classList.remove('hidden');
     successEl.querySelector('p').textContent = 'Hemos recibido su solicitud y nos pondremos en contacto con usted en 24-48 horas laborables. Sus datos serán tratados conforme a la Política de Privacidad.';
     form.classList.add('hidden');
@@ -807,6 +837,16 @@ function createContactModalElement() {
             <textarea id="modal-descripcion" name="descripcion" rows="3" placeholder="Importe, entidad o administración implicada, y en qué punto está el caso."></textarea>
           </div>
 
+          <div class="field" data-file-upload>
+            <label for="modal-file-input">Documentación adjunta <span class="field-hint">(opcional — PDF, JPG o PNG, máx. 10 MB por archivo, hasta 3 archivos)</span></label>
+            <div id="modal-file-drop-zone" class="file-drop-zone" role="button" tabindex="0" aria-label="Zona de carga de archivos para formulario rápido" data-file-drop-zone>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span class="file-drop-text">Arrastra archivos aquí o <span class="file-drop-link">selecciona</span></span>
+              <input type="file" id="modal-file-input" name="files" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input-hidden" aria-hidden="true" data-file-input />
+            </div>
+            <ul id="modal-file-list" class="file-list" aria-live="polite" data-file-list></ul>
+          </div>
+
           <div class="field checkbox-field">
             <label class="checkbox-label">
               <input type="checkbox" id="modal-privacidad" required />
@@ -888,11 +928,12 @@ async function submitModalLead(event) {
   errorEl.classList.add('hidden');
 
   try {
-    await createPaperclipLead(data, tipoLabel);
+    await createPaperclipLead(data, tipoLabel, getFormSelectedFiles(form));
     trackGtagEvent('generate_lead', { event_category: 'modal_contacto', event_label: data.tipo });
     trackAdsLeadConversion();
     currentLeadIdempotency = null;
     form.reset();
+    clearFormSelectedFiles(form);
     successEl.classList.remove('hidden');
   } catch (err) {
     console.error('Modal lead submission error:', err);
@@ -917,6 +958,7 @@ function initContactModal() {
 
   const modal = createContactModalElement();
   document.body.appendChild(modal);
+  initFileUpload(modal);
 
   let lastFocusedTrigger = null;
 
