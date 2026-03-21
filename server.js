@@ -454,6 +454,7 @@ function renderPillarPage(pathname) {
 }
 
 function buildSitemapXml() {
+  // Legal pages are noindex — excluded from sitemap (crawl budget, Google guidelines)
   const staticUrls = [
     '/',
     '/contacto/',
@@ -464,10 +465,6 @@ function buildSitemapXml() {
     '/clausulas-bancarias/irph-hipoteca/',
     '/recurrir-multas/',
     '/blog/',
-    '/aviso-legal',
-    '/politica-privacidad',
-    '/politica-cookies',
-    '/condiciones',
   ];
   const blogUrls = listBlogArticles()
     .map((slug) => `/blog/${slug}/`)
