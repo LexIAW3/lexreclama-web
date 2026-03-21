@@ -1856,7 +1856,7 @@ body.contact-modal-open {
   border: 0;
   box-shadow: none;
   background: transparent;
-  padding: 0 !important;
+  padding: 0;
 }
 
 .contact-modal-link {
@@ -4364,7 +4364,7 @@ html[data-theme='light'] .trust-icon-wrap {
 
 /* ---- CONTACT FORM: Refined padding ---- */
 
-.contacto-form { padding: 32px !important; }
+.contacto-form:not(.contact-modal-form) { padding: 32px !important; }
 
 input, select, textarea {
   padding: 11px 14px !important;
