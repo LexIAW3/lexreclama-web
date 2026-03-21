@@ -5697,7 +5697,7 @@ html[data-theme='light'] .area-card {
   max-width: 100%;
   width: 100%;
   margin-top: 26px;
-  padding: 18px;
+  padding: 22px;
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.76), rgba(247, 250, 255, 0.62));
@@ -5728,11 +5728,11 @@ html[data-theme='light'] .area-card {
 
 .home-page .calculadora .calc-fields .field:last-child { grid-column: 1 / -1; }
 
-.home-page .calculadora .calc-result { margin-top: 14px; }
-.home-page .calculadora .result-inner { padding: 22px; }
+.home-page .calculadora .calc-result { margin-top: 0; }
+.home-page .calculadora .result-inner { padding: 20px; }
 
 @media (max-width: 900px) {
-  .home-page .calculadora .calc-body { padding: 14px; }
+  .home-page .calculadora .calc-body { padding: 16px; }
   .home-page .calculadora .calc-fields { grid-template-columns: 1fr; }
 }
 
@@ -5753,8 +5753,9 @@ html[data-theme='light'] .area-card {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr;
-  column-gap: 28px;
-  align-items: start;
+  column-gap: 24px;
+  row-gap: 14px;
+  align-items: stretch;
 }
 
 /* Tabs span both columns */
@@ -5768,7 +5769,7 @@ html[data-theme='light'] .area-card {
   grid-column: 2;
   grid-row: 2;
   margin-top: 0;
-  min-height: 220px;
+  min-height: 200px;
   display: flex !important;
   flex-direction: column;
   justify-content: center;
