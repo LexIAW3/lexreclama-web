@@ -1018,6 +1018,7 @@ function initLiveCalc() {
 function initFormValidation() {
   const form = document.getElementById('lead-form');
   if (!form) return;
+  form.addEventListener('submit', submitLead);
 
   const descripcionInput = document.getElementById('descripcion');
   const isDescriptionRequired = !!(descripcionInput && descripcionInput.required);
