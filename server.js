@@ -944,6 +944,20 @@ async function handleConfirmCheckout(req, res) {
   }
 }
 
+const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
+
+function send404(res) {
+  fs.readFile(PAGE_404_PATH, (err, data) => {
+    if (err) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Not found');
+      return;
+    }
+    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.end(injectRuntimeSnippets(data.toString('utf8')));
+  });
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const normalizedPath = normalizePathname(url.pathname);
@@ -1016,7 +1030,7 @@ const server = http.createServer(async (req, res) => {
   // Block internal/build directories from public access
   const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
   if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
-    res.writeHead(404); res.end('Not found'); return;
+    send404(res); return;
   }
 
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
@@ -1031,7 +1045,7 @@ const server = http.createServer(async (req, res) => {
     }
     fs.readFile(filePath, (err, data) => {
       if (err) {
-        res.writeHead(404); res.end('Not found'); return;
+        send404(res); return;
       }
       const ext = path.extname(filePath);
       const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
