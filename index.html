@@ -108,7 +108,7 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <script>document.documentElement.setAttribute('data-theme', 'light');</script>
-  <link rel="stylesheet" href="styles.min.css" />
+  <link rel="stylesheet" href="/styles.min.css" />
 
   <!-- GA4_SNIPPET -->
 </head>
@@ -366,7 +366,7 @@
             <span class="area-recovery-amount">+ € 18.400</span>
             <span class="area-recovery-label">recuperación media · caso ilustrativo sin coste previo</span>
           </div>
-          <a href="#contacto" class="area-link" onclick="setClaimType('banco')">Reclamar al banco →</a>
+          <a href="#contacto" id="area-link-banco" class="area-link">Reclamar al banco →</a>
         </div>
 
         <div class="area-card" data-type="deuda" data-animate data-delay="1">
@@ -380,7 +380,7 @@
             <li>Plazo habitual: 30-90 días</li>
             <li>Alta tasa de éxito si hay documentación</li>
           </ul>
-          <a href="#contacto" class="area-link" onclick="setClaimType('deuda')">Reclamar deuda →</a>
+          <a href="#contacto" id="area-link-deuda" class="area-link">Reclamar deuda →</a>
         </div>
 
         <div class="area-card" data-type="multa" data-animate data-delay="2">
@@ -394,7 +394,7 @@
             <li>Análisis de viabilidad gratuito</li>
             <li>Sin coste si no hay base legal</li>
           </ul>
-          <a href="#contacto" class="area-link" onclick="setClaimType('multa')">Impugnar multa →</a>
+          <a href="#contacto" id="area-link-multa" class="area-link">Impugnar multa →</a>
         </div>
       </div>
     </div>
@@ -436,7 +436,7 @@
               </select>
             </div>
           </div>
-          <button class="btn btn-primary" onclick="calcDeuda()">Calcular</button>
+          <button id="btn-calc-deuda" class="btn btn-primary">Calcular</button>
         </div>
 
         <!-- BANCO -->
@@ -444,7 +444,7 @@
           <div class="calc-fields">
             <div class="field">
               <label>Tipo de reclamación</label>
-              <select id="banco-tipo" onchange="toggleBancoFields()">
+              <select id="banco-tipo">
                 <option value="gastos">Gastos hipotecarios</option>
                 <option value="suelo">Cláusula suelo</option>
                 <option value="irph">IRPH</option>
@@ -468,7 +468,7 @@
               <input type="number" id="banco-comision" placeholder="1500" min="0" />
             </div>
           </div>
-          <button class="btn btn-primary" onclick="calcBanco()">Calcular</button>
+          <button id="btn-calc-banco" class="btn btn-primary">Calcular</button>
         </div>
 
         <!-- MULTA -->
@@ -496,7 +496,7 @@
               </select>
             </div>
           </div>
-          <button class="btn btn-primary" onclick="calcMulta()">Calcular</button>
+          <button id="btn-calc-multa" class="btn btn-primary">Calcular</button>
         </div>
 
         <!-- RESULTADO -->
@@ -507,7 +507,7 @@
             <div class="result-note" id="result-note"></div>
             <div class="result-cta">
               <p>Esta es una estimación orientativa. Para un análisis preciso y gratuito:</p>
-              <a href="#contacto" class="btn btn-primary" onclick="prefillFromCalc()">Quiero que me analicen el caso</a>
+              <a href="#contacto" id="calc-cta-link" class="btn btn-primary">Quiero que me analicen el caso</a>
             </div>
           </div>
         </div>
@@ -874,7 +874,7 @@
 
   <!-- WHATSAPP_BUTTON -->
 
-  <script src="/app.js"></script>
+  <script src="/app.js" defer></script>
 
   <!-- Animation observer + nav scroll effect -->
   <script>

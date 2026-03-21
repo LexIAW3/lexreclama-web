@@ -877,6 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollProgress();
   initCounters();
   initLiveCalc();
+  initCalcButtons();
   initFormValidation();
   toggleBancoFields();
   initCookieBanner();
@@ -977,6 +978,22 @@ function initCounters() {
     });
   }, { threshold: 0.6 });
   els.forEach(el => observer.observe(el));
+}
+
+/* ─── CALCULATOR BUTTONS ─────────────────────────────────── */
+function initCalcButtons() {
+  const wire = (id, event, fn) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(event, fn);
+  };
+  wire('area-link-banco', 'click', () => setClaimType('banco'));
+  wire('area-link-deuda', 'click', () => setClaimType('deuda'));
+  wire('area-link-multa', 'click', () => setClaimType('multa'));
+  wire('btn-calc-deuda', 'click', calcDeuda);
+  wire('btn-calc-banco', 'click', calcBanco);
+  wire('btn-calc-multa', 'click', calcMulta);
+  wire('calc-cta-link', 'click', prefillFromCalc);
+  wire('banco-tipo', 'change', toggleBancoFields);
 }
 
 /* ─── LIVE CALCULATOR ────────────────────────────────────── */
