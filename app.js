@@ -25,12 +25,30 @@ function getCsrfToken() {
   return inputToken || readCookie('lex_csrf_token') || '';
 }
 
+function readCookieConsent() {
+  const raw = localStorage.getItem(COOKIE_CONSENT_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function hasAnalyticsConsent() {
+  return readCookieConsent()?.analytics === true;
+}
+
 function trackGtagEvent(name, params = {}) {
+  if (!hasAnalyticsConsent()) return;
   if (typeof window.gtag !== 'function') return;
   window.gtag('event', name, params);
 }
 
 function trackVirtualPageView() {
+  if (!hasAnalyticsConsent()) return;
   if (typeof window.gtag !== 'function') return;
   window.gtag('event', 'page_view', {
     page_location: window.location.href,
@@ -1141,17 +1159,20 @@ function initCookieBanner() {
   acceptBtn.addEventListener('click', () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
       analytics: true,
+      marketing: true,
       timestamp: new Date().toISOString(),
-      version: '2026-03',
+      version: PRIVACY_POLICY_VERSION,
     }));
+    window.gtag?.('consent', 'update', { ad_storage: 'granted', analytics_storage: 'granted' });
     banner.classList.add('hidden');
   });
 
   rejectBtn.addEventListener('click', () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
       analytics: false,
+      marketing: false,
       timestamp: new Date().toISOString(),
-      version: '2026-03',
+      version: PRIVACY_POLICY_VERSION,
     }));
     banner.classList.add('hidden');
   });

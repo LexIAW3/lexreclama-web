@@ -436,6 +436,11 @@ function renderGa4Snippet(nonce = '') {
   <script${nonceAttr}>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    gtag("consent", "default", {
+      ad_storage: "denied",
+      analytics_storage: "denied",
+      wait_for_update: 500
+    });
     gtag("js", new Date());
 ${configLines}${trackingBlock}
   </script>`;
