@@ -1843,6 +1843,12 @@ input.field-invalid {
   color: var(--error);
 }
 
+.blog-subscribe-antispam {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin: 2px 0 0;
+}
+
 /* === FORMS === */
 
 .field {
