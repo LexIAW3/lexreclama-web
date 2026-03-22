@@ -256,6 +256,17 @@ function calcDeuda() {
 
 function calcBanco() {
   const tipo = document.getElementById('banco-tipo').value;
+  const anioFirma = document.getElementById('calc-banco-anio-firma')?.value || '';
+  const rangoFirmaLabel = {
+    'antes-2000': 'Antes de 2000',
+    '2000-2007': '2000-2007',
+    '2008-2013': '2008-2013',
+    '2014-2019': '2014-2019',
+    '2019-adelante': '2019 en adelante',
+  }[anioFirma] || 'No indicado';
+  const urgenciaPrescripcion = (anioFirma === 'antes-2000' || anioFirma === '2000-2007')
+    ? ' Atención: por antigüedad de la firma puede existir riesgo de prescripción en parte de la reclamación. Conviene revisar el caso con urgencia.'
+    : '';
   let total = 0;
   let nota = '';
 
@@ -264,7 +275,7 @@ function calcBanco() {
     if (hipoteca <= 0) { hideResult(); return; }
     // Gastos hipotecarios típicos: ~1.5-2% del capital (notaría, registro, gestoría, AJD)
     total = hipoteca * 0.018;
-    nota = `Estimación de gastos hipotecarios recuperables (notaría, registro, gestoría) para una hipoteca de ${fmt(hipoteca)}. Porcentaje medio del 1,8% sobre capital.`;
+    nota = `Estimación de gastos hipotecarios recuperables (notaría, registro, gestoría) para una hipoteca de ${fmt(hipoteca)} firmada en ${rangoFirmaLabel}. Porcentaje medio del 1,8% sobre capital.${urgenciaPrescripcion}`;
 
   } else if (tipo === 'suelo') {
     const anios = parseInt(document.getElementById('banco-anios').value) || 0;
@@ -272,7 +283,7 @@ function calcBanco() {
     if (anios <= 0 || cuota <= 0) { hideResult(); return; }
     // Diferencia estimada con cláusula suelo: ~8-12% de cuota mensual durante el período
     total = cuota * 12 * anios * 0.10;
-    nota = `Diferencia estimada entre lo pagado con cláusula suelo y el tipo legal correspondiente, durante ${anios} años con cuota de ${fmt(cuota)}/mes. Esta cifra puede variar significativamente según el tipo suelo y el Euribor aplicable en cada período.`;
+    nota = `Diferencia estimada entre lo pagado con cláusula suelo y el tipo legal correspondiente, durante ${anios} años con cuota de ${fmt(cuota)}/mes. Hipoteca firmada en ${rangoFirmaLabel}. Esta cifra puede variar significativamente según el tipo suelo y el Euribor aplicable en cada período.`;
 
   } else if (tipo === 'irph') {
     const anios = parseInt(document.getElementById('banco-anios').value) || 0;
@@ -280,13 +291,13 @@ function calcBanco() {
     if (anios <= 0 || cuota <= 0) { hideResult(); return; }
     // Exceso IRPH vs Euribor+1: ~15% de cuota media anual
     total = cuota * 12 * anios * 0.15;
-    nota = `Exceso estimado pagado por IRPH respecto a Euribor + 1% durante ${anios} años. Requiere análisis del cuadro de amortización para cifra exacta.`;
+    nota = `Exceso estimado pagado por IRPH respecto a Euribor + 1% durante ${anios} años. Hipoteca firmada en ${rangoFirmaLabel}. Requiere análisis del cuadro de amortización para cifra exacta.`;
 
   } else if (tipo === 'comision') {
     const comision = parseFloat(document.getElementById('banco-comision').value) || 0;
     if (comision <= 0) { hideResult(); return; }
     total = comision;
-    nota = `La comisión de apertura es directamente el importe recuperable si el tribunal la declara abusiva. Hay jurisprudencia favorable del TJUE.`;
+    nota = `La comisión de apertura es directamente el importe recuperable si el tribunal la declara abusiva. Hipoteca firmada en ${rangoFirmaLabel}. Hay jurisprudencia favorable del TJUE.`;
   }
 
   showResult(total, nota);
