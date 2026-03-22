@@ -370,6 +370,7 @@ function initBankLeadMagnetCalculator() {
   const root = document.getElementById('bank-lead-calculator');
   if (!root) return;
 
+  const calculatorForm = document.getElementById('bank-lead-form');
   const typeInput = document.getElementById('bank-calc-type');
   const yearInput = document.getElementById('bank-calc-year');
   const bankInput = document.getElementById('bank-calc-entity');
@@ -518,6 +519,19 @@ function initBankLeadMagnetCalculator() {
     input.addEventListener('input', render);
     input.addEventListener('change', render);
   });
+
+  if (calculatorForm) {
+    calculatorForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!calculatorForm.checkValidity()) {
+        calculatorForm.reportValidity();
+        return;
+      }
+      renderNow();
+      if (resultBox.classList.contains('hidden')) return;
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 
   if (ctaEl) {
     ctaEl.addEventListener('click', () => {
