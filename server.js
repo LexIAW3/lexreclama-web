@@ -58,6 +58,9 @@ const idempotencyInFlight = new Map();
 const PORTAL_CODE_TTL_MS = 10 * 60 * 1000;
 const PORTAL_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 const PORTAL_SESSION_COOKIE_NAME = 'lex_portal_session';
+const PORTAL_COOKIE_SECURE =
+  process.env.NODE_ENV === 'production'
+  || String(process.env.HTTPS_ENABLED || '').trim().toLowerCase() === 'true';
 const portalAuthCodes = new Map();
 const portalSessions = new Map();
 const portalMessages = new Map();
@@ -1512,13 +1515,15 @@ function appendSetCookieHeader(res, cookieValue) {
 }
 
 function buildPortalSessionCookie(token, maxAgeSeconds) {
-  return [
+  const flags = [
     `${PORTAL_SESSION_COOKIE_NAME}=${encodeURIComponent(token)}`,
     'Path=/api/portal',
     'HttpOnly',
-    'Secure',
-    'SameSite=Strict',
-    `Max-Age=${maxAgeSeconds}`,
+  ];
+  if (PORTAL_COOKIE_SECURE) flags.push('Secure');
+  flags.push('SameSite=Strict', `Max-Age=${maxAgeSeconds}`);
+  return [
+    ...flags,
   ].join('; ');
 }
 
@@ -1555,6 +1560,14 @@ function mapIssueToPortalCase(issue, messages = []) {
     blocked: ['Recibido', 'Pendiente de documentacion', 'Analisis legal', 'Resolucion', 'Cierre'],
     done: ['Recibido', 'Analisis legal', 'Resolucion', 'Cierre completado'],
   };
+  const activeStepByStatus = {
+    todo: 'En revision',
+    in_progress: 'Analisis legal',
+    blocked: 'Pendiente de documentacion',
+    done: 'Cierre completado',
+  };
+  const steps = stepsByStatus[status] || stepsByStatus.todo;
+  const activeStep = activeStepByStatus[status] || steps[0];
   return {
     id: issue.id,
     identifier: issue.identifier,
@@ -1562,7 +1575,8 @@ function mapIssueToPortalCase(issue, messages = []) {
     status: status,
     statusLabel: mapIssueStatusLabel(status),
     updatedAt: issue.updatedAt || new Date().toISOString(),
-    steps: stepsByStatus[status] || stepsByStatus.todo,
+    steps,
+    activeStep,
     messages,
   };
 }
@@ -1594,6 +1608,7 @@ async function fetchIssueComments(issueId) {
     .filter((comment) => String(comment.body || '').trimStart().startsWith('[CLIENTE]'))
     .map((comment) => ({
       author: comment.authorAgentId ? 'Despacho' : 'Cliente',
+      fromClient: !comment.authorAgentId,
       body: String(comment.body || '')
         .replace(/^\s*\[CLIENTE\]\s*/i, '')
         .replace(/^#+\s*/gm, '')
@@ -1799,7 +1814,7 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
     return;
   }
   const current = portalMessages.get(caseId) || [];
-  current.push({ author: 'Cliente', body: message, createdAt: new Date().toISOString() });
+  current.push({ author: 'Cliente', fromClient: true, body: message, createdAt: new Date().toISOString() });
   portalMessages.set(caseId, current.slice(-12));
 
   if (SUBMIT_API_KEY) {
