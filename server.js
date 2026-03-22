@@ -1539,7 +1539,7 @@ function mapIssueToPortalCase(issue, messages = []) {
 
 async function fetchIssueByIdentifier(caseId) {
   const res = await fetch(
-    `${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues?query=${encodeURIComponent(caseId)}&limit=20`,
+    `${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues?q=${encodeURIComponent(caseId)}&limit=20`,
     {
       headers: {
         Authorization: `Bearer ${SUBMIT_API_KEY}`,
