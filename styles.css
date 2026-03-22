@@ -2065,13 +2065,21 @@ body.contact-modal-open {
 .checkbox-label input[type='checkbox'] {
   appearance: none;
   -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  min-height: 18px;
+  aspect-ratio: 1 / 1;
+  padding: 0 !important;
   border: 1.5px solid var(--border-strong);
   border-radius: 4px;
   background: var(--field-bg);
   margin-top: 1px;
   flex-shrink: 0;
+  flex: 0 0 18px;
+  box-sizing: border-box;
+  display: inline-grid;
+  place-content: center;
   cursor: pointer;
   transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
