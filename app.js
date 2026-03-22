@@ -77,6 +77,7 @@ document.querySelectorAll('.calc-tab').forEach(tab => {
     tab.classList.add('active');
     document.getElementById(`panel-${type}`).classList.add('active');
     document.getElementById('calc-result').classList.add('hidden');
+    syncCalcCtaClaimType(type);
   });
 });
 
@@ -525,9 +526,26 @@ function setClaimType(type) {
   if (sel) sel.value = type;
 }
 
-function prefillFromCalc() {
+function getActiveCalculatorClaimType() {
   const activeTab = document.querySelector('.calc-tab.active');
-  if (activeTab) setClaimType(activeTab.dataset.tab);
+  const type = activeTab?.dataset?.tab;
+  return type === 'deuda' || type === 'banco' || type === 'multa' ? type : 'otro';
+}
+
+function syncCalcCtaClaimType(type = getActiveCalculatorClaimType()) {
+  const cta = document.getElementById('calc-cta-link');
+  if (!cta) return;
+  if (type === 'deuda' || type === 'banco' || type === 'multa') {
+    cta.setAttribute('data-claim-type', type);
+    return;
+  }
+  cta.removeAttribute('data-claim-type');
+}
+
+function prefillFromCalc() {
+  const type = getActiveCalculatorClaimType();
+  if (type !== 'otro') setClaimType(type);
+  syncCalcCtaClaimType(type);
 }
 
 function inferClaimTypeFromPath(pathname) {
@@ -1324,6 +1342,7 @@ function initCalcButtons() {
   wire('btn-calc-multa', 'click', calcMulta);
   wire('calc-cta-link', 'click', prefillFromCalc);
   wire('banco-tipo', 'change', toggleBancoFields);
+  syncCalcCtaClaimType();
 }
 
 /* ─── FORM INLINE VALIDATION ─────────────────────────────── */
