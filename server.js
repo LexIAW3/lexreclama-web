@@ -1560,10 +1560,15 @@ async function fetchIssueComments(issueId) {
   });
   const data = await res.json().catch(() => []);
   if (!res.ok || !Array.isArray(data)) return [];
-  return data.map((comment) => ({
-    author: comment.authorAgentId ? 'Despacho' : 'Cliente',
-    body: String(comment.body || '').replace(/^#+\s*/gm, '').slice(0, 450),
-  }));
+  return data
+    .filter((comment) => String(comment.body || '').trimStart().startsWith('[CLIENTE]'))
+    .map((comment) => ({
+      author: comment.authorAgentId ? 'Despacho' : 'Cliente',
+      body: String(comment.body || '')
+        .replace(/^\s*\[CLIENTE\]\s*/i, '')
+        .replace(/^#+\s*/gm, '')
+        .slice(0, 450),
+    }));
 }
 
 function extractClientEmail(issue) {
