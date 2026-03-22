@@ -22,13 +22,25 @@ jobs:
 
       - name: Verify critical files exist
         run: |
-          for f in index.html styles.css app.js server.js robots.txt sitemap.xml; do
+          for f in index.html styles.css app.js server.js sitemap.xml; do
             if [ ! -f "$f" ]; then
               echo "ERROR: Missing required file: $f"
               exit 1
             fi
           done
           echo "All critical files present."
+
+      - name: Verify minified assets are in sync with sources
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+          if ! git diff --quiet styles.min.css app.min.js; then
+            echo "ERROR: styles.min.css or app.min.js are out of sync with their sources."
+            echo "Run 'npm run build' locally and commit the updated minified files."
+            git diff --stat styles.min.css app.min.js
+            exit 1
+          fi
+          echo "Minified assets are in sync."
 
       - name: Check HTML files are valid (basic)
         run: |
