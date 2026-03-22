@@ -5,38 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portal cliente · LexReclama</title>
   <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal-cliente/styles.css" />
 </head>
 <body>
   <main class="portal-shell">
+
+    <!-- ── Step 1: Login ── -->
     <section class="card" id="login-step">
-      <div class="brand">LexReclama</div>
+      <img src="/logo.svg" alt="LexReclama" class="brand-logo" />
       <h1>Consulta tu caso</h1>
       <p class="muted">Introduce tu número de caso para recibir un código de acceso.</p>
       <form id="login-form" class="stack">
         <label for="case-id">Número de caso</label>
-        <input id="case-id" name="caseId" type="text" placeholder="Ej. LEX-123" autocomplete="off" required />
+        <input id="case-id" name="caseId" type="text" placeholder="Ej. LEX-1234" autocomplete="off" required />
         <button type="submit">Solicitar código de acceso</button>
       </form>
       <p class="legal">Solo tendrás acceso a tu propio caso. Código válido 10 minutos.</p>
       <p id="login-error" class="error" hidden></p>
     </section>
 
+    <!-- ── Step 2: 2FA ── -->
     <section class="card" id="code-step" hidden>
       <button type="button" class="link" id="back-to-login">← Cambiar número de caso</button>
       <h2>Código enviado</h2>
       <p class="muted" id="code-help"></p>
       <form id="code-form" class="stack">
-        <label for="code-input">Código de 6 dígitos</label>
-        <input id="code-input" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required />
+        <label>Código de 6 dígitos</label>
+        <div class="otp-grid" id="otp-grid" role="group" aria-label="Código de verificación">
+          <input class="otp-cell" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="one-time-code" aria-label="Dígito 1" />
+          <input class="otp-cell" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="Dígito 2" />
+          <input class="otp-cell" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="Dígito 3" />
+          <input class="otp-cell" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="Dígito 4" />
+          <input class="otp-cell" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="Dígito 5" />
+          <input class="otp-cell" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="Dígito 6" />
+        </div>
         <div class="row between">
           <span id="countdown" class="muted">Válido 10:00</span>
+          <button type="button" class="link" id="resend-btn" disabled>Reenviar código</button>
         </div>
-        <button type="submit">Verificar</button>
+        <button type="submit" id="verify-btn" disabled>Verificar</button>
       </form>
       <p id="code-error" class="error" hidden></p>
     </section>
 
+    <!-- ── Step 3: App ── -->
     <section class="app" id="portal-app" hidden>
       <header class="app-header">
         <div>
@@ -48,26 +63,44 @@
 
       <div class="cases" id="case-list"></div>
 
+      <!-- Empty state (shown when 0 cases) -->
+      <div class="empty-state" id="case-empty" hidden>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="7" width="20" height="14" rx="2"/>
+          <path d="M16 7V5a2 2 0 0 0-4 0v2"/>
+          <path d="M12 12v4m0 0h.01"/>
+        </svg>
+        <p>No tienes casos activos.</p>
+        <p>Contacta con nosotros si crees que hay un error.</p>
+        <a href="https://lexreclama.es" target="_blank" rel="noopener">Ir a lexreclama.es</a>
+      </div>
+
+      <!-- Case detail (hidden until a case is selected) -->
       <article class="case-detail card" id="case-detail" hidden>
+        <div class="detail-header">
+          <button type="button" class="detail-back" id="detail-back">← Mis casos</button>
+        </div>
         <h3 id="detail-title"></h3>
-        <p id="detail-status" class="badge"></p>
+        <p id="detail-status"></p>
         <p id="detail-updated" class="muted"></p>
-        <div>
-          <h4>Próximos pasos</h4>
-          <ul id="detail-steps"></ul>
-        </div>
-        <div>
-          <h4>Mensajes</h4>
-          <ul id="detail-messages" class="messages"></ul>
-        </div>
+
+        <h4>Progreso del caso</h4>
+        <ul class="steps-list" id="detail-steps"></ul>
+
+        <h4>Mensajes</h4>
+        <ul class="messages" id="detail-messages"></ul>
+
+        <h4>Escribe al despacho</h4>
         <form id="message-form" class="stack">
-          <label for="message-input">Escribe al despacho</label>
           <textarea id="message-input" maxlength="1000" rows="4" placeholder="Escribe tu mensaje o duda sobre el caso…"></textarea>
-          <button type="submit">Enviar mensaje</button>
+          <div class="char-counter"><span id="char-count">0</span>/1000</div>
+          <button type="submit" id="send-btn" disabled>Enviar mensaje</button>
         </form>
-        <p id="message-status" class="muted"></p>
+        <div class="toast" id="message-toast">✓ Mensaje enviado. Te responderemos en 24–48h.</div>
+        <p id="message-error" class="error" hidden></p>
       </article>
     </section>
+
   </main>
 
   <script src="/portal-cliente/app.js" defer></script>
