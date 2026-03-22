@@ -31,6 +31,7 @@ const BREVO_LIST_ID = Number.parseInt(process.env.BREVO_LIST_ID || '3', 10);
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
 const GESTOR_AGENT_ID = '603134d1-2f20-4c99-9bec-92547dc99b43';
 const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
+const PRIVACY_POLICY_VERSION = '2026-03';
 const PRIMARY_HOST = 'lexreclama.es';
 const SECONDARY_HOST = 'lexreclama.com';
 const MAX_RECENT_LEADS = 25;
@@ -64,6 +65,7 @@ const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const rateLimitMap = new Map();
 const RATE_LIMIT_RULES = {
   '/submit-lead': { scope: 'submit-lead', max: 5 },
+  '/api/lead': { scope: 'api-lead', max: 8 },
   '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
   '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
   '/api/subscribe': { scope: 'api-subscribe', max: 12 },
@@ -974,6 +976,49 @@ async function handleSubmitLead(req, res) {
   }
 }
 
+function normalizeApiLeadPayload(body) {
+  const nombre = String(body?.nombre || '').trim();
+  const email = String(body?.email || '').trim();
+  const tipoReclamacion = String(body?.tipo_reclamacion || body?.tipo || '').trim().toLowerCase();
+  const descripcion = String(body?.descripcion || '').trim();
+
+  if (!nombre || !email || !tipoReclamacion) {
+    return { ok: false, error: 'Campos requeridos: nombre, email y tipo_reclamacion' };
+  }
+
+  const payload = {
+    ...body,
+    nombre,
+    email,
+    tipo: tipoReclamacion,
+    descripcion,
+    privacidadAceptada: body?.privacidadAceptada === true || String(body?.privacidadAceptada || '').toLowerCase() === 'true',
+    comercialAceptada: body?.comercialAceptada === true || String(body?.comercialAceptada || '').toLowerCase() === 'true',
+    consentimientoTimestamp: String(body?.consentimientoTimestamp || '').trim() || new Date().toISOString(),
+    versionPolitica: String(body?.versionPolitica || '').trim() || PRIVACY_POLICY_VERSION,
+    idempotencyKey: String(body?.idempotencyKey || '').trim() || '',
+  };
+
+  if (!payload.privacidadAceptada) {
+    return { ok: false, error: 'Debes aceptar la política de privacidad' };
+  }
+
+  return { ok: true, value: payload };
+}
+
+async function handleApiLead(req, res) {
+  const basePayload = normalizeApiLeadPayload(req.parsedBody || {});
+  if (!basePayload.ok) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: basePayload.error }));
+    return;
+  }
+
+  req.parsedBody = basePayload.value;
+  req.uploadedFiles = [];
+  await handleSubmitLead(req, res);
+}
+
 function requiresUpfrontPayment(tipo) {
   return tipo in PAID_CLAIM_TYPES;
 }
@@ -1462,7 +1507,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Lead submission endpoint
-  if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout' || url.pathname === '/api/subscribe')) {
+  if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/api/lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout' || url.pathname === '/api/subscribe')) {
     const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
     const rule = RATE_LIMIT_RULES[url.pathname];
     const rate = consumeRateLimit(rule, clientIp);
@@ -1473,6 +1518,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (!await validateCsrfToken(req, res)) return;
     if (url.pathname === '/submit-lead') { await handleSubmitLead(req, res); return; }
+    if (url.pathname === '/api/lead') { await handleApiLead(req, res); return; }
     if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
     if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
     if (url.pathname === '/api/subscribe') { await handleSubscribe(req, res); return; }

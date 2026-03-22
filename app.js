@@ -3,6 +3,7 @@ const SUBMIT_ENDPOINT = '/submit-lead';
 const CHECKOUT_SESSION_ENDPOINT = '/create-checkout-session';
 const CHECKOUT_CONFIRM_ENDPOINT = '/confirm-checkout';
 const SUBSCRIBE_ENDPOINT = '/api/subscribe';
+const API_LEAD_ENDPOINT = '/api/lead';
 const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
 const CONTACT_PHONE_DISPLAY = '+34 900 000 000';
@@ -382,6 +383,14 @@ function initBankLeadMagnetCalculator() {
   const irphEl = document.getElementById('bank-calc-irph');
   const noteEl = document.getElementById('bank-calc-note');
   const ctaEl = document.getElementById('bank-calc-cta');
+  const captureForm = document.getElementById('bank-lead-capture-form');
+  const captureNameInput = document.getElementById('bank-lead-name');
+  const captureEmailInput = document.getElementById('bank-lead-email');
+  const capturePrivacyInput = document.getElementById('bank-lead-privacy');
+  const captureSuccessEl = document.getElementById('bank-lead-success');
+  const captureErrorEl = document.getElementById('bank-lead-error');
+  const captureSubmitBtn = document.getElementById('bank-lead-submit');
+  let captureSubmissionInFlight = false;
 
   if (!typeInput || !yearInput || !bankInput || !amountInput || !resultBox) return;
 
@@ -516,6 +525,72 @@ function initBankLeadMagnetCalculator() {
       if (!modalDescription) return;
       const summary = ctaEl.dataset.calcSummary || '';
       if (summary) modalDescription.value = summary;
+    });
+  }
+
+  if (captureForm && captureNameInput && captureEmailInput && captureSuccessEl && captureErrorEl && captureSubmitBtn) {
+    captureForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (captureSubmissionInFlight) return;
+
+      const nombre = captureNameInput.value.trim();
+      const email = captureEmailInput.value.trim();
+      const privacidadAceptada = !!capturePrivacyInput?.checked;
+      if (!nombre || !email || !privacidadAceptada) {
+        captureErrorEl.textContent = 'Revisa los campos obligatorios y acepta la política de privacidad.';
+        captureErrorEl.classList.remove('hidden');
+        captureSuccessEl.classList.add('hidden');
+        return;
+      }
+
+      const calcSummary = ctaEl?.dataset?.calcSummary || '';
+      const payload = {
+        nombre,
+        email,
+        tipo_reclamacion: 'banco',
+        tipo: 'banco',
+        descripcion: calcSummary,
+        privacidadAceptada: true,
+        comercialAceptada: false,
+        consentimientoTimestamp: new Date().toISOString(),
+        versionPolitica: PRIVACY_POLICY_VERSION,
+        idempotencyKey: generateIdempotencyKey(),
+        csrfToken: getCsrfToken(),
+        banco_nombre: bankInput.value.trim(),
+        banco_anio_firma: yearInput.value.trim(),
+        banco_tipo_clausula: typeInput.value === 'variable' ? 'hipoteca variable' : 'hipoteca fija',
+      };
+
+      captureSubmissionInFlight = true;
+      captureSubmitBtn.disabled = true;
+      captureErrorEl.classList.add('hidden');
+      captureSuccessEl.classList.add('hidden');
+
+      try {
+        const res = await fetch(API_LEAD_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `HTTP ${res.status}`);
+        }
+
+        captureSuccessEl.classList.remove('hidden');
+        captureErrorEl.classList.add('hidden');
+        captureForm.querySelectorAll('input, select, textarea, button').forEach((el) => {
+          el.disabled = true;
+        });
+      } catch (err) {
+        console.error('Bank lead capture error:', err);
+        captureErrorEl.textContent = 'No hemos podido enviar tu solicitud. Inténtalo de nuevo en unos minutos.';
+        captureErrorEl.classList.remove('hidden');
+        captureSuccessEl.classList.add('hidden');
+        captureSubmitBtn.disabled = false;
+      } finally {
+        captureSubmissionInFlight = false;
+      }
     });
   }
 }

@@ -347,6 +347,28 @@
               </article>
             </div>
             <p class="bank-lead-note" id="bank-calc-note">Resultado orientativo sujeto a revisión documental (escritura y cuadro de amortización).</p>
+            <div class="bank-lead-capture">
+              <h3>Recibe una valoración legal personalizada</h3>
+              <p>Déjanos tus datos y te contactamos para revisar tu caso sin coste.</p>
+              <form id="bank-lead-capture-form" class="bank-lead-capture-form" novalidate>
+                <input type="hidden" name="csrfToken" value="" />
+                <div class="field">
+                  <label for="bank-lead-name">Nombre</label>
+                  <input type="text" id="bank-lead-name" name="nombre" autocomplete="name" required />
+                </div>
+                <div class="field">
+                  <label for="bank-lead-email">Email</label>
+                  <input type="email" id="bank-lead-email" name="email" autocomplete="email" required />
+                </div>
+                <label class="contacto-legal">
+                  <input type="checkbox" id="bank-lead-privacy" required />
+                  Acepto la <a href="/politica-privacidad/" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+                </label>
+                <button type="submit" class="btn btn-primary btn-full" id="bank-lead-submit">Quiero que reviséis mi hipoteca</button>
+                <p class="bank-lead-feedback hidden" id="bank-lead-success" role="status">Solicitud enviada. Te contactaremos en 24-48 horas laborables.</p>
+                <p class="bank-lead-feedback bank-lead-feedback--error hidden" id="bank-lead-error" role="alert">No hemos podido enviar tu solicitud. Inténtalo de nuevo en unos minutos.</p>
+              </form>
+            </div>
             <a href="#contacto" class="btn btn-primary" data-open-contact-modal="true" data-claim-type="banco" id="bank-calc-cta">Analiza tu caso gratis</a>
           </div>
         </div>

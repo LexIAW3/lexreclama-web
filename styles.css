@@ -2696,6 +2696,46 @@ body.contact-modal-open {
   margin-bottom: 16px;
 }
 
+.bank-lead-capture {
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.bank-lead-capture h3 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.bank-lead-capture p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.bank-lead-capture-form {
+  display: grid;
+  gap: 10px;
+}
+
+.bank-lead-capture-form .contacto-legal {
+  font-size: 0.8rem;
+}
+
+.bank-lead-capture-form .btn {
+  margin-top: 2px;
+}
+
+.bank-lead-feedback {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--green);
+}
+
+.bank-lead-feedback--error {
+  color: var(--error);
+}
+
 /* === RESPONSIVE — 1000px === */
 
 @media (max-width: 1000px) {
