@@ -537,7 +537,7 @@ function initBankLeadMagnetCalculator() {
       const email = captureEmailInput.value.trim();
       const privacidadAceptada = !!capturePrivacyInput?.checked;
       if (!nombre || !email || !privacidadAceptada) {
-        captureErrorEl.textContent = 'Revisa los campos obligatorios y acepta la política de privacidad.';
+        captureErrorEl.textContent = 'Completa nombre, email y acepta la política de privacidad.';
         captureErrorEl.classList.remove('hidden');
         captureSuccessEl.classList.add('hidden');
         return;
@@ -584,7 +584,7 @@ function initBankLeadMagnetCalculator() {
         });
       } catch (err) {
         console.error('Bank lead capture error:', err);
-        captureErrorEl.textContent = 'No hemos podido enviar tu solicitud. Inténtalo de nuevo en unos minutos.';
+        captureErrorEl.textContent = 'No hemos podido enviar tu solicitud ahora. Vuelve a intentarlo en 2 minutos.';
         captureErrorEl.classList.remove('hidden');
         captureSuccessEl.classList.add('hidden');
         captureSubmitBtn.disabled = false;
