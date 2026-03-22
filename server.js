@@ -1959,9 +1959,18 @@ const server = http.createServer(async (req, res) => {
     send404(res, csrfToken, nonce); return;
   }
 
+  // Security: block dotfiles (e.g. /.env, /.gitignore) and server-side source files
+  const segments = url.pathname.split('/');
+  const hasDotSegment = segments.some((s) => s.startsWith('.') && s.length > 1);
+  const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh']);
+  const lastSegment = segments[segments.length - 1] || '';
+  if (hasDotSegment || BLOCKED_FILENAMES.has(lastSegment)) {
+    send404(res, csrfToken, nonce); return;
+  }
+
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
   // Security: prevent path traversal
-  if (!filePath.startsWith(STATIC_DIR)) {
+  if (!filePath.startsWith(STATIC_DIR + path.sep) && filePath !== STATIC_DIR) {
     res.writeHead(403); res.end('Forbidden'); return;
   }
 
