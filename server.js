@@ -60,6 +60,26 @@ const BLOG_REDIRECTS = {
   '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
 };
 
+function detectTestLeadReason(leadData) {
+  const email = String(leadData?.email || '').trim().toLowerCase();
+  const nombre = String(leadData?.nombre || '').trim().toLowerCase();
+  if (!email) return '';
+
+  if (TEST_EMAIL_BLOCKLIST.has(email)) return 'email_blocklist';
+
+  const parts = email.split('@');
+  const local = parts[0] || '';
+  const domain = parts[1] || '';
+
+  if (domain.endsWith('.invalid')) return 'invalid_tld';
+  if (domain === 'lexreclama-test.invalid') return 'qa_domain';
+  if (local.startsWith('qa-smoke')) return 'qa_smoke_local';
+  if (local === 'qa' || local === 'smoke') return 'qa_local';
+  if (nombre.includes('qa test') || nombre.includes('smoke test')) return 'qa_name';
+
+  return '';
+}
+
 /* ─── RATE LIMITER + CSRF ────────────────────────────────────── */
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const rateLimitMap = new Map();
@@ -939,8 +959,9 @@ async function handleSubmitLead(req, res) {
   }
 
   // Silently discard test leads so they don't pollute the claims manager queue.
-  if (TEST_EMAIL_BLOCKLIST.has(leadData.value.email.toLowerCase())) {
-    console.log(`[test-lead] silently discarded: ${leadData.value.email}`);
+  const testLeadReason = detectTestLeadReason(leadData.value);
+  if (testLeadReason) {
+    console.log(`[test-lead] silently discarded (${testLeadReason}): ${leadData.value.email}`);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ ok: true, issueId: null, identifier: null, deduplicated: false, test: true }));
     return;
