@@ -1144,7 +1144,9 @@ function initContactModal() {
   triggers.forEach((trigger) => {
     trigger.addEventListener('click', (event) => {
       event.preventDefault();
-      const targetTipo = trigger.getAttribute('data-claim-type') || inferClaimTypeFromPath(window.location.pathname);
+      const targetTipo = trigger.id === 'calc-cta-link'
+        ? getActiveCalculatorClaimType()
+        : (trigger.getAttribute('data-claim-type') || inferClaimTypeFromPath(window.location.pathname));
       openModal(targetTipo, trigger);
     });
   });
