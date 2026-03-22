@@ -6,6 +6,8 @@ const state = {
   activeCase:  null,
 };
 
+const portalRequestCodeMessage = (caseId) => `Si el caso ${caseId} existe, recibiras un codigo en el email registrado.`;
+
 const el = {
   loginStep:    document.querySelector('#login-step'),
   codeStep:     document.querySelector('#code-step'),
@@ -318,7 +320,7 @@ el.loginForm.addEventListener('submit', async (event) => {
       method: 'POST',
       body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
     });
-    el.codeHelp.textContent = `Hemos enviado un código al correo asociado a ${state.caseId}${data.maskedEmail ? ' (' + data.maskedEmail + ')' : ''}.`;
+    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId);
     clearOtp();
     el.verifyBtn.hidden = false;
     startCountdown(Date.now() + (data.expiresInSec * 1000));
@@ -364,6 +366,7 @@ el.resendBtn.addEventListener('click', async () => {
       method: 'POST',
       body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
     });
+    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId);
     clearOtp();
     el.verifyBtn.hidden = false;
     startCountdown(Date.now() + (data.expiresInSec * 1000));

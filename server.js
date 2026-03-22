@@ -1604,16 +1604,15 @@ async function handlePortalRequestCode(req, res) {
   }
 
   const issue = await fetchIssueByIdentifier(caseId);
-  if (!issue) {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Caso no encontrado' }));
-    return;
-  }
-
-  const email = extractClientEmail(issue);
-  if (!email) {
-    res.writeHead(409, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'El caso no tiene email asociado' }));
+  const email = issue ? extractClientEmail(issue) : null;
+  if (!issue || !email) {
+    await new Promise((resolve) => setTimeout(resolve, 200 + Math.random() * 100));
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      ok: true,
+      maskedEmail: null,
+      expiresInSec: Math.floor(PORTAL_CODE_TTL_MS / 1000),
+    }));
     return;
   }
 
