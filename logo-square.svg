@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="LexReclama">
+  <!-- Balance icon centered — Concepto B -->
+  <!-- Blue vertical stem (center x=60) -->
+  <rect x="58.5" y="20" width="3" height="46" rx="1.5" fill="#2563eb"/>
+  <!-- Blue horizontal top bar -->
+  <rect x="40" y="20" width="40" height="3.5" rx="1.5" fill="#2563eb"/>
+  <!-- Dark left plate -->
+  <rect x="40" y="48" width="15" height="3.5" rx="1.5" fill="#0a0a0a"/>
+  <!-- Dark right plate -->
+  <rect x="65" y="48" width="15" height="3.5" rx="1.5" fill="#0a0a0a"/>
+  <!-- Dark base -->
+  <rect x="50" y="64" width="20" height="3.5" rx="1.5" fill="#0a0a0a"/>
+
+  <!-- Wordmark below icon — Bebas Neue -->
+  <text
+    x="60" y="102"
+    text-anchor="middle"
+    font-family="'Bebas Neue', Impact, 'Arial Narrow', sans-serif"
+    font-size="22"
+    font-weight="400"
+    fill="#0a0a0a"
+    letter-spacing="2">LEXRECLAMA</text>
+</svg>

@@ -50,6 +50,7 @@
   /* Typography */
   --font-body:    'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: 'Space Grotesk', 'Manrope', -apple-system, sans-serif;
+  --font-logo:    'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
   --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
 
   /* Spacing scale — base 4px */
@@ -527,10 +528,10 @@ html[data-theme='light'] .topbar {
 .logo {
   text-decoration: none;
   color: var(--text);
-  font-family: var(--font-display);
-  letter-spacing: -0.03em;
-  font-weight: 700;
-  font-size: 1.04rem;
+  font-family: var(--font-logo);
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  font-size: 1.2rem;
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -540,13 +541,11 @@ html[data-theme='light'] .topbar {
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: var(--grad-accent);
+  background: #2563eb;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* Subtle inner highlight — same as btn-primary */
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
 }
 
 .logo-mark svg { display: block; }
