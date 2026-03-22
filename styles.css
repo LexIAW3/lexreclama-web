@@ -50,7 +50,6 @@
   /* Typography */
   --font-body:    'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: 'Space Grotesk', 'Manrope', -apple-system, sans-serif;
-  --font-logo:    'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
   --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
 
   /* Spacing scale — base 4px */
@@ -527,31 +526,20 @@ html[data-theme='light'] .topbar {
 
 .logo {
   text-decoration: none;
-  color: var(--text);
-  font-family: var(--font-logo);
-  letter-spacing: 0.04em;
-  font-weight: 400;
-  font-size: 1.2rem;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
 }
 
-.logo-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: #2563eb;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.logo-img {
+  display: block;
+  height: 35px;
+  width: auto;
 }
 
-.logo-mark svg { display: block; }
-
-/* Keep logo-text visible in both themes */
-.logo-text { color: var(--text); }
+/* Dark mode: invert black letterforms to white, preserve blue accent */
+html[data-theme='dark'] .logo-img {
+  filter: invert(1) hue-rotate(180deg);
+}
 
 .nav-links {
   list-style: none;
