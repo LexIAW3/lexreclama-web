@@ -690,24 +690,32 @@
       <aside class="blog-subscribe" data-animate data-delay="1">
         <div class="blog-subscribe-content">
           <p class="blog-subscribe-eyebrow">Guía gratuita</p>
-          <h3>Recibe nuestra guía gratuita: Cómo reclamar al banco paso a paso</h3>
-          <p>Déjanos tu email y te la enviamos junto con actualizaciones prácticas para reclamar con seguridad jurídica.</p>
+          <h3>Cómo recuperar tu dinero del banco: la guía práctica que nadie te da</h3>
+          <p>Descubre qué cláusulas bancarias son ilegales, cuánto puedes reclamar y cómo hacerlo sin complicaciones. En PDF, clara y directa.</p>
+          <ul class="blog-subscribe-bullets">
+            <li>Cláusulas más frecuentes y cómo identificarlas</li>
+            <li>Importes reales recuperados por otros clientes</li>
+            <li>Pasos legales explicados sin jerga jurídica</li>
+          </ul>
         </div>
         <form id="blog-subscribe-form" class="blog-subscribe-form">
           <input type="hidden" name="csrfToken" value="" />
           <div class="blog-subscribe-row">
-            <label for="blog-subscribe-email">Email</label>
-            <input type="email" id="blog-subscribe-email" name="email" placeholder="tu@email.com" required />
+            <label for="blog-subscribe-nombre">Nombre</label>
+            <input type="text" id="blog-subscribe-nombre" name="nombre" placeholder="Tu nombre" required autocomplete="given-name" />
+            <span class="blog-subscribe-field-error" id="blog-subscribe-nombre-error">Introduce tu nombre para personalizar la guía.</span>
           </div>
           <div class="blog-subscribe-row">
-            <label for="blog-subscribe-nombre">Nombre (opcional)</label>
-            <input type="text" id="blog-subscribe-nombre" name="nombre" placeholder="Tu nombre" />
+            <label for="blog-subscribe-email">Email</label>
+            <input type="email" id="blog-subscribe-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+            <span class="blog-subscribe-field-error" id="blog-subscribe-email-error">Introduce un email válido para recibir la guía.</span>
           </div>
           <input type="hidden" id="blog-subscribe-tipo" name="tipo_reclamacion" value="banco" />
           <button type="submit" class="btn btn-primary" id="blog-subscribe-btn">
-            <span id="blog-subscribe-btn-text">Quiero la guía gratuita</span>
+            <span id="blog-subscribe-btn-text">Enviarme la guía gratuita →</span>
             <span id="blog-subscribe-btn-loading" class="hidden">Enviando…</span>
           </button>
+          <p style="font-size:0.75rem;color:rgba(255,255,255,0.38);margin:2px 0 0;">Sin spam. Cancelación inmediata cuando quieras.</p>
           <p id="blog-subscribe-ok" class="blog-subscribe-message blog-subscribe-message-ok hidden">¡Perfecto! Revisa tu bandeja en unos minutos.</p>
           <p id="blog-subscribe-error" class="blog-subscribe-message blog-subscribe-message-error hidden">No se pudo completar la suscripción. Inténtalo de nuevo.</p>
         </form>

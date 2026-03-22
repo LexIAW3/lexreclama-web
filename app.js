@@ -793,7 +793,6 @@ async function handleCheckoutReturn() {
 async function submitBlogSubscribe(event) {
   event.preventDefault();
   if (subscribeSubmissionInFlight) return;
-  subscribeSubmissionInFlight = true;
 
   const form = document.getElementById('blog-subscribe-form');
   const submitBtn = document.getElementById('blog-subscribe-btn');
@@ -802,10 +801,35 @@ async function submitBlogSubscribe(event) {
   const okEl = document.getElementById('blog-subscribe-ok');
   const errorEl = document.getElementById('blog-subscribe-error');
 
-  if (!form || !submitBtn || !submitText || !submitLoading || !okEl || !errorEl) {
-    subscribeSubmissionInFlight = false;
-    return;
+  if (!form || !submitBtn || !submitText || !submitLoading || !okEl || !errorEl) return;
+
+  // Inline validation
+  const nombreInput = document.getElementById('blog-subscribe-nombre');
+  const emailInput = document.getElementById('blog-subscribe-email');
+  const nombreError = document.getElementById('blog-subscribe-nombre-error');
+  const emailError = document.getElementById('blog-subscribe-email-error');
+  let valid = true;
+
+  const nombre = (nombreInput?.value || '').trim();
+  const email = (emailInput?.value || '').trim();
+
+  if (nombreInput && nombreError) {
+    const empty = !nombre;
+    nombreError.classList.toggle('visible', empty);
+    nombreInput.classList.toggle('field-invalid', empty);
+    if (empty) valid = false;
   }
+
+  if (emailInput && emailError) {
+    const invalid = !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    emailError.classList.toggle('visible', invalid);
+    emailInput.classList.toggle('field-invalid', invalid);
+    if (invalid) valid = false;
+  }
+
+  if (!valid) return;
+
+  subscribeSubmissionInFlight = true;
 
   okEl.classList.add('hidden');
   errorEl.classList.add('hidden');
@@ -814,8 +838,8 @@ async function submitBlogSubscribe(event) {
   submitLoading.classList.remove('hidden');
 
   const payload = {
-    email: (document.getElementById('blog-subscribe-email')?.value || '').trim(),
-    nombre: (document.getElementById('blog-subscribe-nombre')?.value || '').trim(),
+    email,
+    nombre,
     tipo_reclamacion: (document.getElementById('blog-subscribe-tipo')?.value || '').trim(),
     csrfToken: getCsrfToken(),
   };
@@ -829,6 +853,8 @@ async function submitBlogSubscribe(event) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     okEl.classList.remove('hidden');
     form.reset();
+    document.querySelectorAll('.blog-subscribe-field-error').forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid'));
     trackGtagEvent('generate_lead', { event_category: 'newsletter', event_label: 'blog_subscribe' });
   } catch (err) {
     console.error('Blog subscribe error:', err);
