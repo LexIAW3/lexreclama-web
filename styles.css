@@ -2502,6 +2502,8 @@ body.contact-modal-open {
 
 .service-page .related-blog a:hover { border-color: var(--border-strong); }
 
+.service-page .related-blog { margin-top: 28px; }
+
 .bank-lead-calc {
   margin-top: 26px;
   display: grid;
