@@ -1,4 +1,3 @@
-const storageKey = 'lex_portal_session_token';
 const state = {
   caseId:      '',
   expiresAtMs: 0,
@@ -284,17 +283,12 @@ function renderCases(cases) {
 /* ─── Session ─── */
 
 async function loadSession() {
-  const token = localStorage.getItem(storageKey);
-  if (!token) return false;
   try {
-    const data = await api('/api/portal/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const data = await api('/api/portal/me');
     renderCases(data.cases || []);
     showStep('app');
     return true;
   } catch {
-    localStorage.removeItem(storageKey);
     return false;
   }
 }
@@ -342,11 +336,10 @@ el.codeForm.addEventListener('submit', async (event) => {
   if (code.length < 6) return;
   el.verifyBtn.disabled = true;
   try {
-    const data = await api('/api/portal/verify-code', {
+    await api('/api/portal/verify-code', {
       method: 'POST',
       body: JSON.stringify({ caseId: state.caseId, code, csrfToken: readCsrfToken() }),
     });
-    localStorage.setItem(storageKey, data.token);
     await loadSession();
   } catch (err) {
     setError(el.codeError, err.message);
@@ -382,7 +375,6 @@ el.resendBtn.addEventListener('click', async () => {
 el.messageForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!state.activeCase) return;
-  const token   = localStorage.getItem(storageKey) || '';
   const message = el.messageInput.value.trim();
   if (!message) return;
   el.sendBtn.disabled = true;
@@ -390,7 +382,6 @@ el.messageForm.addEventListener('submit', async (event) => {
   try {
     await api(`/api/portal/cases/${encodeURIComponent(state.activeCase.identifier)}/messages`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify({ message, csrfToken: readCsrfToken() }),
     });
     el.messageInput.value  = '';
@@ -422,15 +413,10 @@ el.backToLogin.addEventListener('click', () => {
 /* ─── Event: Logout ─── */
 
 el.logoutBtn.addEventListener('click', async () => {
-  const token = localStorage.getItem(storageKey);
-  if (token) {
-    await api('/api/portal/logout', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ csrfToken: readCsrfToken() }),
-    }).catch(() => null);
-  }
-  localStorage.removeItem(storageKey);
+  await api('/api/portal/logout', {
+    method: 'POST',
+    body: JSON.stringify({ csrfToken: readCsrfToken() }),
+  }).catch(() => null);
   showStep('login');
 });
 

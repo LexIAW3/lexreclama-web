@@ -57,6 +57,7 @@ const recentCheckoutCreations = new Map();
 const idempotencyInFlight = new Map();
 const PORTAL_CODE_TTL_MS = 10 * 60 * 1000;
 const PORTAL_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const PORTAL_SESSION_COOKIE_NAME = 'lex_portal_session';
 const portalAuthCodes = new Map();
 const portalSessions = new Map();
 const portalMessages = new Map();
@@ -1497,6 +1498,35 @@ function parseBearerToken(req) {
   return header.slice(7).trim();
 }
 
+function appendSetCookieHeader(res, cookieValue) {
+  const existing = res.getHeader('Set-Cookie');
+  if (!existing) {
+    res.setHeader('Set-Cookie', cookieValue);
+    return;
+  }
+  if (Array.isArray(existing)) {
+    res.setHeader('Set-Cookie', [...existing, cookieValue]);
+    return;
+  }
+  res.setHeader('Set-Cookie', [existing, cookieValue]);
+}
+
+function buildPortalSessionCookie(token, maxAgeSeconds) {
+  return [
+    `${PORTAL_SESSION_COOKIE_NAME}=${encodeURIComponent(token)}`,
+    'Path=/api/portal',
+    'HttpOnly',
+    'Secure',
+    'SameSite=Strict',
+    `Max-Age=${maxAgeSeconds}`,
+  ].join('; ');
+}
+
+function parsePortalSessionToken(req) {
+  const cookies = parseCookies(req);
+  return String(cookies[PORTAL_SESSION_COOKIE_NAME] || '').trim();
+}
+
 function sweepPortalState() {
   const now = Date.now();
   for (const [caseId, auth] of portalAuthCodes) {
@@ -1682,17 +1712,20 @@ async function handlePortalVerifyCode(req, res) {
   auth.used = true;
   portalAuthCodes.set(caseId, auth);
 
+  appendSetCookieHeader(
+    res,
+    buildPortalSessionCookie(token, Math.floor(PORTAL_SESSION_TTL_MS / 1000)),
+  );
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
     ok: true,
-    token,
     expiresAt: new Date(Date.now() + PORTAL_SESSION_TTL_MS).toISOString(),
   }));
 }
 
 function getPortalSessionFromRequest(req) {
   sweepPortalState();
-  const token = parseBearerToken(req);
+  const token = parsePortalSessionToken(req);
   if (!token) return null;
   const session = portalSessions.get(token);
   if (!session) return null;
@@ -1739,8 +1772,9 @@ async function handlePortalMe(req, res) {
 }
 
 async function handlePortalLogout(req, res) {
-  const token = parseBearerToken(req);
+  const token = parsePortalSessionToken(req);
   if (token) portalSessions.delete(token);
+  appendSetCookieHeader(res, buildPortalSessionCookie('', 0));
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ ok: true }));
 }
