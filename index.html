@@ -1035,10 +1035,51 @@
   </footer>
 
   <aside id="cookie-banner" class="cookie-banner hidden" aria-live="polite">
-    <p>Usamos cookies técnicas necesarias para el funcionamiento del sitio. Puedes aceptar cookies analíticas opcionales o mantener solo las necesarias. Consulta nuestra <a href="/politica-cookies/">política de cookies</a>.</p>
-    <div class="cookie-actions">
-      <button type="button" class="btn btn-outline" id="cookie-reject">Solo necesarias</button>
-      <button type="button" class="btn btn-primary" id="cookie-accept">Aceptar analíticas</button>
+    <div class="cookie-banner-inner">
+      <div class="cookie-copy">
+        <div class="cookie-copy-head">
+          <span class="cookie-icon" aria-hidden="true">C</span>
+          <strong>Tu privacidad, bajo control</strong>
+        </div>
+        <p>
+          Usamos cookies necesarias para que la web funcione y, si nos autorizas, cookies analíticas para mejorarla.
+          Este aviso aparece una sola vez y puedes cambiar tu decisión en cualquier momento desde nuestra
+          <a href="/politica-cookies/">política de cookies</a>.
+        </p>
+      </div>
+
+      <div class="cookie-meta">
+        <p class="cookie-gpc" id="cookie-gpc-status">Comprobando señal de privacidad global…</p>
+        <button type="button" class="cookie-details-toggle" id="cookie-details-toggle" aria-expanded="false" aria-controls="cookie-details">
+          Mostrar detalles
+        </button>
+      </div>
+
+      <div class="cookie-actions">
+        <button type="button" class="btn btn-primary" id="cookie-accept">Permitir todas</button>
+        <button type="button" class="btn btn-outline" id="cookie-customize">Personalizar →</button>
+        <button type="button" class="btn btn-ghost" id="cookie-reject">Denegar</button>
+      </div>
+    </div>
+
+    <div id="cookie-details" class="cookie-details hidden">
+      <div class="cookie-detail-row">
+        <div>
+          <strong>Cookies necesarias</strong>
+          <p>Imprescindibles para seguridad y funcionamiento básico.</p>
+        </div>
+        <span class="cookie-detail-fixed">Siempre activas</span>
+      </div>
+      <div class="cookie-detail-row">
+        <div>
+          <strong>Cookies analíticas</strong>
+          <p>Nos ayudan a entender el uso del sitio para mejorarlo.</p>
+        </div>
+        <label class="cookie-switch">
+          <input type="checkbox" id="cookie-analytics-optin" />
+          <span>Activar</span>
+        </label>
+      </div>
     </div>
   </aside>
 

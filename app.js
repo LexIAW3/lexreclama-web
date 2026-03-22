@@ -1185,33 +1185,66 @@ document.addEventListener('DOMContentLoaded', () => {
 function initCookieBanner() {
   const banner = document.getElementById('cookie-banner');
   const acceptBtn = document.getElementById('cookie-accept');
+  const customizeBtn = document.getElementById('cookie-customize');
   const rejectBtn = document.getElementById('cookie-reject');
-  if (!banner || !acceptBtn || !rejectBtn) return;
+  const detailsToggle = document.getElementById('cookie-details-toggle');
+  const details = document.getElementById('cookie-details');
+  const analyticsOptIn = document.getElementById('cookie-analytics-optin');
+  const gpcStatus = document.getElementById('cookie-gpc-status');
+  if (!banner || !acceptBtn || !customizeBtn || !rejectBtn || !detailsToggle || !details || !analyticsOptIn || !gpcStatus) return;
+
+  const gpcEnabled = navigator.globalPrivacyControl === true;
+  gpcStatus.textContent = gpcEnabled
+    ? 'Señal GPC detectada: respetamos tu preferencia y mantenemos solo cookies necesarias por defecto.'
+    : 'No se detecta señal GPC. Puedes elegir entre permitir, personalizar o denegar cookies analíticas.';
 
   const existing = localStorage.getItem(COOKIE_CONSENT_KEY);
   if (!existing) {
     banner.classList.remove('hidden');
   }
 
-  acceptBtn.addEventListener('click', () => {
+  const persistConsent = (analyticsAllowed) => {
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
-      analytics: true,
+      analytics: analyticsAllowed,
       marketing: false,
       timestamp: new Date().toISOString(),
       version: PRIVACY_POLICY_VERSION,
+      source: analyticsAllowed ? 'allow_all' : 'deny_or_custom',
+      gpcDetected: gpcEnabled,
     }));
-    window.gtag?.('consent', 'update', { ad_storage: 'granted', analytics_storage: 'granted' });
+    window.gtag?.('consent', 'update', {
+      ad_storage: analyticsAllowed ? 'granted' : 'denied',
+      analytics_storage: analyticsAllowed ? 'granted' : 'denied',
+    });
     banner.classList.add('hidden');
+  };
+
+  acceptBtn.addEventListener('click', () => {
+    persistConsent(true);
   });
 
   rejectBtn.addEventListener('click', () => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
-      analytics: false,
-      marketing: false,
-      timestamp: new Date().toISOString(),
-      version: PRIVACY_POLICY_VERSION,
-    }));
-    banner.classList.add('hidden');
+    persistConsent(false);
+  });
+
+  detailsToggle.addEventListener('click', () => {
+    const isOpen = !details.classList.contains('hidden');
+    details.classList.toggle('hidden', isOpen);
+    detailsToggle.setAttribute('aria-expanded', String(!isOpen));
+    detailsToggle.textContent = isOpen ? 'Mostrar detalles' : 'Ocultar detalles';
+    if (isOpen) customizeBtn.textContent = 'Personalizar →';
+  });
+
+  customizeBtn.addEventListener('click', () => {
+    const isDetailsOpen = !details.classList.contains('hidden');
+    if (!isDetailsOpen) {
+      details.classList.remove('hidden');
+      detailsToggle.setAttribute('aria-expanded', 'true');
+      detailsToggle.textContent = 'Ocultar detalles';
+      customizeBtn.textContent = 'Guardar selección';
+      return;
+    }
+    persistConsent(analyticsOptIn.checked);
   });
 }
 
