@@ -2,11 +2,20 @@
 # Ensures the web, OCR and LexPanel services are running. Safe to run from cron.
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 WEB_PORT=8080
 WEB_BASE_URL="http://127.0.0.1:$WEB_PORT"
 OCR_PORT=3200
 OCR_BASE_URL="http://127.0.0.1:$OCR_PORT"
 LOG_FILE="/tmp/lexreclama-watchdog.log"
+
+# Load optional secrets from .env (BREVO_API_KEY etc.)
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$SCRIPT_DIR/.env"
+  set +a
+fi
 
 log() {
   echo "[$(date)] $*" >> "$LOG_FILE"
@@ -16,6 +25,26 @@ is_expected_web_server() {
   local header
   header="$(curl -sSI --max-time 2 "$WEB_BASE_URL/" | tr -d '\r' | awk -F': ' 'tolower($1)=="x-content-type-options"{print tolower($2)}')"
   [[ "$header" == "nosniff" ]]
+}
+
+# Returns true (exit 0) if the running web server is serving stale code:
+# i.e. server.js was modified AFTER the server process started.
+web_server_is_stale() {
+  local server_js="$SCRIPT_DIR/server.js"
+  local pid
+  pid="$(lsof -tiTCP:"$WEB_PORT" -sTCP:LISTEN 2>/dev/null | head -1 || true)"
+  [[ -z "$pid" ]] && return 1  # not running — not "stale", just down
+
+  local proc_start
+  proc_start="$(stat -c %Y /proc/"$pid" 2>/dev/null || true)"
+  [[ -z "$proc_start" ]] && return 1  # can't determine start time
+
+  local file_mtime
+  file_mtime="$(stat -c %Y "$server_js" 2>/dev/null || true)"
+  [[ -z "$file_mtime" ]] && return 1  # can't determine file mtime
+
+  # Stale if server.js is newer than the process start (with 5 s tolerance)
+  (( file_mtime > proc_start + 5 ))
 }
 
 is_expected_ocr_server() {
@@ -61,6 +90,8 @@ restart_web_server() {
   ADMIN_USER=admin \
   ADMIN_PASSWORD=***REMOVED*** \
   GA4_MEASUREMENT_ID=G-FFLXTDCJM5 \
+  BREVO_API_KEY="${BREVO_API_KEY:-}" \
+  BREVO_LIST_ID="${BREVO_LIST_ID:-3}" \
   PORT="$WEB_PORT" \
   nohup node /home/paperclip/despacho/web/server.js >> /tmp/web-server.log 2>&1 &
 
@@ -112,6 +143,9 @@ restart_ocr_server() {
 status=0
 
 if ! is_expected_web_server; then
+  restart_web_server || status=1
+elif web_server_is_stale; then
+  log "Web server is stale (server.js modified after process start). Restarting to apply new code."
   restart_web_server || status=1
 fi
 
