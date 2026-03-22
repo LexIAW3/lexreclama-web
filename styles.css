@@ -1849,6 +1849,46 @@ input.field-invalid {
   margin: 2px 0 0;
 }
 
+/* Light mode: branded glass CTA for blog subscribe */
+html[data-theme='light'] .blog-subscribe {
+  background: linear-gradient(
+    145deg,
+    rgba(37, 99, 235, 0.07) 0%,
+    rgba(255, 255, 255, 0.88) 55%,
+    rgba(255, 255, 255, 0.82) 100%
+  );
+  border-color: rgba(37, 99, 235, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 4px 6px -1px rgba(14, 22, 60, 0.06),
+    0 20px 40px rgba(14, 22, 60, 0.10),
+    0 0 60px rgba(37, 99, 235, 0.06);
+}
+
+html[data-theme='light'] .blog-subscribe::before {
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.16) 0%, transparent 70%);
+}
+
+html[data-theme='light'] .blog-subscribe h3 {
+  color: #0a0a0a;
+}
+
+html[data-theme='light'] .blog-subscribe-content p {
+  color: rgba(10, 10, 10, 0.62);
+}
+
+html[data-theme='light'] .blog-subscribe-bullets li {
+  color: rgba(10, 10, 10, 0.62);
+}
+
+html[data-theme='light'] .blog-subscribe-row label {
+  color: rgba(10, 10, 10, 0.72);
+}
+
+html[data-theme='light'] .blog-subscribe-antispam {
+  color: rgba(10, 10, 10, 0.42);
+}
+
 /* === FORMS === */
 
 .field {
