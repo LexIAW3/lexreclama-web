@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portal cliente · LexReclama</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/portal-cliente/styles.css" />
+</head>
+<body>
+  <main class="portal-shell">
+    <section class="card" id="login-step">
+      <div class="brand">LexReclama</div>
+      <h1>Consulta tu caso</h1>
+      <p class="muted">Introduce tu número de caso para recibir un código de acceso.</p>
+      <form id="login-form" class="stack">
+        <label for="case-id">Número de caso</label>
+        <input id="case-id" name="caseId" type="text" placeholder="Ej. LEX-123" autocomplete="off" required />
+        <button type="submit">Solicitar código de acceso</button>
+      </form>
+      <p class="legal">Solo tendrás acceso a tu propio caso. Código válido 10 minutos.</p>
+      <p id="login-error" class="error" hidden></p>
+    </section>
+
+    <section class="card" id="code-step" hidden>
+      <button type="button" class="link" id="back-to-login">← Cambiar número de caso</button>
+      <h2>Código enviado</h2>
+      <p class="muted" id="code-help"></p>
+      <form id="code-form" class="stack">
+        <label for="code-input">Código de 6 dígitos</label>
+        <input id="code-input" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required />
+        <div class="row between">
+          <span id="countdown" class="muted">Válido 10:00</span>
+        </div>
+        <button type="submit">Verificar</button>
+      </form>
+      <p id="code-error" class="error" hidden></p>
+    </section>
+
+    <section class="app" id="portal-app" hidden>
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Área privada</p>
+          <h2>Mis casos</h2>
+        </div>
+        <button type="button" class="ghost" id="logout-btn">Cerrar sesión</button>
+      </header>
+
+      <div class="cases" id="case-list"></div>
+
+      <article class="case-detail card" id="case-detail" hidden>
+        <h3 id="detail-title"></h3>
+        <p id="detail-status" class="badge"></p>
+        <p id="detail-updated" class="muted"></p>
+        <div>
+          <h4>Próximos pasos</h4>
+          <ul id="detail-steps"></ul>
+        </div>
+        <div>
+          <h4>Mensajes</h4>
+          <ul id="detail-messages" class="messages"></ul>
+        </div>
+        <form id="message-form" class="stack">
+          <label for="message-input">Escribe al despacho</label>
+          <textarea id="message-input" maxlength="1000" rows="4" placeholder="Escribe tu mensaje o duda sobre el caso…"></textarea>
+          <button type="submit">Enviar mensaje</button>
+        </form>
+        <p id="message-status" class="muted"></p>
+      </article>
+    </section>
+  </main>
+
+  <script src="/portal-cliente/app.js" defer></script>
+</body>
+</html>

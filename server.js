@@ -55,6 +55,11 @@ const completedCheckoutLeads = new Map();
 const recentLeadSubmissions = new Map();
 const recentCheckoutCreations = new Map();
 const idempotencyInFlight = new Map();
+const PORTAL_CODE_TTL_MS = 10 * 60 * 1000;
+const PORTAL_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const portalAuthCodes = new Map();
+const portalSessions = new Map();
+const portalMessages = new Map();
 const BLOG_REDIRECTS = {
   '/blog/cuanto-cuesta-monitorio/': '/blog/coste-monitorio/',
   '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
@@ -89,6 +94,10 @@ const RATE_LIMIT_RULES = {
   '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
   '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
   '/api/subscribe': { scope: 'api-subscribe', max: 12 },
+  '/api/portal/request-code': { scope: 'portal-request-code', max: 6 },
+  '/api/portal/verify-code': { scope: 'portal-verify-code', max: 20 },
+  '/api/portal/logout': { scope: 'portal-logout', max: 30 },
+  '/api/portal/cases': { scope: 'portal-cases', max: 60 },
 };
 
 const CSRF_COOKIE_NAME = 'lex_csrf_token';
@@ -1467,6 +1476,311 @@ async function handleSubscribe(req, res) {
   }
 }
 
+function normalizeCaseIdentifier(input) {
+  return String(input || '').trim().toUpperCase();
+}
+
+function isCaseIdentifierValid(identifier) {
+  return /^LEX-\d{1,8}$/.test(identifier);
+}
+
+function maskEmail(email) {
+  const [local, domain] = String(email || '').split('@');
+  if (!local || !domain) return '***';
+  const safeLocal = `${local.slice(0, 2)}***`;
+  return `${safeLocal}@${domain}`;
+}
+
+function parseBearerToken(req) {
+  const header = String(req.headers.authorization || '').trim();
+  if (!header.startsWith('Bearer ')) return '';
+  return header.slice(7).trim();
+}
+
+function sweepPortalState() {
+  const now = Date.now();
+  for (const [caseId, auth] of portalAuthCodes) {
+    if (auth.expiresAtMs <= now || auth.used) portalAuthCodes.delete(caseId);
+  }
+  for (const [token, session] of portalSessions) {
+    if (session.expiresAtMs <= now) portalSessions.delete(token);
+  }
+}
+
+function mapIssueStatusLabel(status) {
+  const labels = {
+    todo: 'En revision',
+    in_progress: 'En curso',
+    blocked: 'Pendiente de documentacion',
+    done: 'Resuelto',
+  };
+  return labels[status] || 'En revision';
+}
+
+function mapIssueToPortalCase(issue, messages = []) {
+  const status = String(issue?.status || 'todo');
+  const stepsByStatus = {
+    todo: ['Recibido', 'En revision', 'Analisis legal', 'Resolucion', 'Cierre'],
+    in_progress: ['Recibido', 'En revision', 'Analisis legal', 'Resolucion', 'Cierre'],
+    blocked: ['Recibido', 'Pendiente de documentacion', 'Analisis legal', 'Resolucion', 'Cierre'],
+    done: ['Recibido', 'Analisis legal', 'Resolucion', 'Cierre completado'],
+  };
+  return {
+    id: issue.id,
+    identifier: issue.identifier,
+    title: issue.title || 'Caso',
+    status: status,
+    statusLabel: mapIssueStatusLabel(status),
+    updatedAt: issue.updatedAt || new Date().toISOString(),
+    steps: stepsByStatus[status] || stepsByStatus.todo,
+    messages,
+  };
+}
+
+async function fetchIssueByIdentifier(caseId) {
+  const res = await fetch(
+    `${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues?query=${encodeURIComponent(caseId)}&limit=20`,
+    {
+      headers: {
+        Authorization: `Bearer ${SUBMIT_API_KEY}`,
+      },
+    },
+  );
+  const data = await res.json().catch(() => []);
+  if (!res.ok || !Array.isArray(data)) return null;
+  const exact = data.find((issue) => String(issue.identifier || '').toUpperCase() === caseId);
+  return exact || null;
+}
+
+async function fetchIssueComments(issueId) {
+  const res = await fetch(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(issueId)}/comments`, {
+    headers: {
+      Authorization: `Bearer ${SUBMIT_API_KEY}`,
+    },
+  });
+  const data = await res.json().catch(() => []);
+  if (!res.ok || !Array.isArray(data)) return [];
+  return data.map((comment) => ({
+    author: comment.authorAgentId ? 'Despacho' : 'Cliente',
+    body: String(comment.body || '').replace(/^#+\s*/gm, '').slice(0, 450),
+  }));
+}
+
+function extractClientEmail(issue) {
+  const description = String(issue?.description || '');
+  const emailLine = description.match(/\*\*Email:\*\*\s*([^\s<]+)/i);
+  if (emailLine && emailLine[1]) return emailLine[1].trim().toLowerCase();
+  const genericMatch = description.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  if (genericMatch && genericMatch[0]) return genericMatch[0].trim().toLowerCase();
+  return '';
+}
+
+async function sendPortalCodeEmail(email, caseId, code) {
+  if (!BREVO_API_KEY) return false;
+  const body = {
+    sender: { name: 'LexReclama', email: 'no-reply@lexreclama.es' },
+    to: [{ email }],
+    subject: `Codigo de acceso para ${caseId}`,
+    htmlContent: `<p>Tu codigo de acceso para <strong>${escapeHtml(caseId)}</strong> es:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${escapeHtml(code)}</p><p>Caduca en 10 minutos y solo se puede usar una vez.</p>`,
+  };
+  const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  return res.ok;
+}
+
+async function handlePortalRequestCode(req, res) {
+  const caseId = normalizeCaseIdentifier(req.parsedBody?.caseId);
+  if (!isCaseIdentifierValid(caseId)) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Numero de caso invalido' }));
+    return;
+  }
+
+  const issue = await fetchIssueByIdentifier(caseId);
+  if (!issue) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Caso no encontrado' }));
+    return;
+  }
+
+  const email = extractClientEmail(issue);
+  if (!email) {
+    res.writeHead(409, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'El caso no tiene email asociado' }));
+    return;
+  }
+
+  const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+  const salt = crypto.randomBytes(8).toString('hex');
+  const hash = crypto.createHash('sha256').update(`${salt}:${code}`).digest('hex');
+  portalAuthCodes.set(caseId, {
+    issueId: issue.id,
+    email,
+    codeHash: hash,
+    salt,
+    attempts: 0,
+    used: false,
+    expiresAtMs: Date.now() + PORTAL_CODE_TTL_MS,
+  });
+
+  const sent = await sendPortalCodeEmail(email, caseId, code);
+  if (!sent) {
+    console.warn(`[portal] codigo 2FA generado para ${caseId} pero no enviado por Brevo`);
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    ok: true,
+    maskedEmail: maskEmail(email),
+    expiresInSec: Math.floor(PORTAL_CODE_TTL_MS / 1000),
+  }));
+}
+
+async function handlePortalVerifyCode(req, res) {
+  const caseId = normalizeCaseIdentifier(req.parsedBody?.caseId);
+  const code = String(req.parsedBody?.code || '').trim();
+  const auth = portalAuthCodes.get(caseId);
+  if (!auth || auth.used || auth.expiresAtMs <= Date.now()) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Codigo invalido o expirado' }));
+    return;
+  }
+  if (!/^\d{6}$/.test(code)) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Formato de codigo invalido' }));
+    return;
+  }
+
+  const codeHash = crypto.createHash('sha256').update(`${auth.salt}:${code}`).digest('hex');
+  if (codeHash !== auth.codeHash) {
+    auth.attempts += 1;
+    if (auth.attempts >= 5) auth.used = true;
+    portalAuthCodes.set(caseId, auth);
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Codigo incorrecto' }));
+    return;
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+  portalSessions.set(token, {
+    caseId,
+    issueId: auth.issueId,
+    email: auth.email,
+    expiresAtMs: Date.now() + PORTAL_SESSION_TTL_MS,
+  });
+  auth.used = true;
+  portalAuthCodes.set(caseId, auth);
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    ok: true,
+    token,
+    expiresAt: new Date(Date.now() + PORTAL_SESSION_TTL_MS).toISOString(),
+  }));
+}
+
+function getPortalSessionFromRequest(req) {
+  sweepPortalState();
+  const token = parseBearerToken(req);
+  if (!token) return null;
+  const session = portalSessions.get(token);
+  if (!session) return null;
+  if (session.expiresAtMs <= Date.now()) {
+    portalSessions.delete(token);
+    return null;
+  }
+  return { token, session };
+}
+
+async function handlePortalMe(req, res) {
+  const auth = getPortalSessionFromRequest(req);
+  if (!auth) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
+    return;
+  }
+  const issueRes = await fetch(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}`, {
+    headers: {
+      Authorization: `Bearer ${SUBMIT_API_KEY}`,
+    },
+  });
+  const issue = await issueRes.json().catch(() => null);
+  if (!issueRes.ok || !issue) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Caso no disponible' }));
+    return;
+  }
+
+  const apiMessages = await fetchIssueComments(auth.session.issueId);
+  const localMessages = portalMessages.get(auth.session.caseId) || [];
+  const allMessages = [...apiMessages.slice(0, 5), ...localMessages].slice(-8);
+  const portalCase = mapIssueToPortalCase(issue, allMessages.length ? allMessages : [{ author: 'Despacho', body: 'Tu caso esta en seguimiento. Te notificaremos cualquier cambio.' }]);
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    ok: true,
+    session: {
+      caseId: auth.session.caseId,
+      expiresAt: new Date(auth.session.expiresAtMs).toISOString(),
+    },
+    cases: [portalCase],
+  }));
+}
+
+async function handlePortalLogout(req, res) {
+  const token = parseBearerToken(req);
+  if (token) portalSessions.delete(token);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ ok: true }));
+}
+
+async function handlePortalCaseMessage(req, res, caseIdRaw) {
+  const auth = getPortalSessionFromRequest(req);
+  if (!auth) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
+    return;
+  }
+  const caseId = normalizeCaseIdentifier(caseIdRaw);
+  if (caseId !== auth.session.caseId) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'No autorizado para este caso' }));
+    return;
+  }
+  const message = String(req.parsedBody?.message || '').trim();
+  if (!message || message.length > 1000) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Mensaje invalido' }));
+    return;
+  }
+  const current = portalMessages.get(caseId) || [];
+  current.push({ author: 'Cliente', body: message, createdAt: new Date().toISOString() });
+  portalMessages.set(caseId, current.slice(-12));
+
+  if (SUBMIT_API_KEY) {
+    await fetch(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}/comments`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${SUBMIT_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        body: `## Mensaje desde portal cliente\n\nCaso: **${caseId}**\n\n${message}`,
+      }),
+    }).catch(() => null);
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ ok: true }));
+}
+
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
 
 function send404(res, csrfToken = '', nonce = '') {
@@ -1527,10 +1841,26 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Lead submission endpoint
-  if (req.method === 'POST' && (url.pathname === '/submit-lead' || url.pathname === '/api/lead' || url.pathname === '/create-checkout-session' || url.pathname === '/confirm-checkout' || url.pathname === '/api/subscribe')) {
+  if (req.method === 'GET' && url.pathname === '/api/portal/me') {
+    await handlePortalMe(req, res);
+    return;
+  }
+
+  // Lead + portal submission endpoints
+  if (req.method === 'POST' && (
+    url.pathname === '/submit-lead'
+    || url.pathname === '/api/lead'
+    || url.pathname === '/create-checkout-session'
+    || url.pathname === '/confirm-checkout'
+    || url.pathname === '/api/subscribe'
+    || url.pathname === '/api/portal/request-code'
+    || url.pathname === '/api/portal/verify-code'
+    || url.pathname === '/api/portal/logout'
+    || url.pathname.startsWith('/api/portal/cases/')
+  )) {
     const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
-    const rule = RATE_LIMIT_RULES[url.pathname];
+    const rateLimitPath = url.pathname.startsWith('/api/portal/cases/') ? '/api/portal/cases' : url.pathname;
+    const rule = RATE_LIMIT_RULES[rateLimitPath];
     const rate = consumeRateLimit(rule, clientIp);
     if (rate.limited) {
       res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
@@ -1543,6 +1873,14 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
     if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
     if (url.pathname === '/api/subscribe') { await handleSubscribe(req, res); return; }
+    if (url.pathname === '/api/portal/request-code') { await handlePortalRequestCode(req, res); return; }
+    if (url.pathname === '/api/portal/verify-code') { await handlePortalVerifyCode(req, res); return; }
+    if (url.pathname === '/api/portal/logout') { await handlePortalLogout(req, res); return; }
+    if (url.pathname.startsWith('/api/portal/cases/') && url.pathname.endsWith('/messages')) {
+      const caseId = decodeURIComponent(url.pathname.replace('/api/portal/cases/', '').replace('/messages', '').replace(/\//g, ''));
+      await handlePortalCaseMessage(req, res, caseId);
+      return;
+    }
   }
   if (req.method === 'GET' && handleLegalPage(req, res, url.pathname, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
