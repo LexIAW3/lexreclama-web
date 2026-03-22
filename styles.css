@@ -2746,7 +2746,8 @@ body.contact-modal-open {
 .service-page .related-blog { margin-top: 28px; }
 
 .bank-lead-calc {
-  margin-top: 26px;
+  margin: 26px auto 0;
+  max-width: 900px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
