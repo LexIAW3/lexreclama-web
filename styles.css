@@ -5957,6 +5957,15 @@ html[data-theme='light'] .area-card {
   display: none;
 }
 
+/* LEX-405 — Unir .footer-pre-cta con .footer sin separación visual */
+.footer-pre-cta + .footer {
+  margin-top: 0 !important;
+  border-top: none !important;
+}
+.footer-pre-cta + .footer::before {
+  display: none;
+}
+
 /* Mobile: stack vertically */
 @media (max-width: 768px) {
   .home-page .calculadora .calc-body {
