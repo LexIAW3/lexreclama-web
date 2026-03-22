@@ -1982,9 +1982,14 @@ body.contact-modal-open {
   max-height: min(92vh, 860px);
   overflow: auto;
   border-radius: var(--r-xl);
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  box-shadow: var(--shadow-lg);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  border: 1px solid rgba(14, 22, 60, 0.10);
+  box-shadow:
+    0 32px 80px rgba(14, 22, 60, 0.22),
+    0 0 0 1px rgba(var(--accent-rgb), 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .contact-modal-body {
@@ -4747,18 +4752,6 @@ html[data-theme='dark'] .cookie-banner {
     inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
-/* MODAL DIALOG — premium glass panel */
-.contact-modal-dialog {
-  background: rgba(255, 255, 255, 0.94) !important;
-  backdrop-filter: blur(40px) saturate(1.8);
-  -webkit-backdrop-filter: blur(40px) saturate(1.8);
-  border-color: rgba(14, 22, 60, 0.10) !important;
-  box-shadow:
-    0 32px 80px rgba(14, 22, 60, 0.22),
-    0 0 0 1px rgba(var(--accent-rgb), 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
-
 @media (min-width: 901px) {
   .contact-modal-dialog {
     max-height: calc(100dvh - 36px);
@@ -4771,12 +4764,12 @@ html[data-theme='dark'] .cookie-banner {
 }
 
 html[data-theme='dark'] .contact-modal-dialog {
-  background: rgba(16, 22, 52, 0.92) !important;
-  border-color: rgba(255, 255, 255, 0.09) !important;
+  background: rgba(16, 22, 52, 0.92);
+  border-color: rgba(255, 255, 255, 0.09);
   box-shadow:
     0 32px 80px rgba(0, 0, 0, 0.55),
     0 0 0 1px rgba(var(--accent-rgb), 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* Footer logo in light mode: ensure readable contrast */
