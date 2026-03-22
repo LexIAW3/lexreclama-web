@@ -6,6 +6,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const zlib = require('zlib');
 const { URL } = require('url');
 const busboy = require('busboy');
 
@@ -383,14 +384,25 @@ function normalizePathname(pathname) {
   return pathname.endsWith('/') ? pathname : `${pathname}/`;
 }
 
+const BLOG_ARTICLES_CACHE_TTL_MS = 60 * 1000; // 60 s
+let blogArticlesCache = null;
+let blogArticlesCachedAtMs = 0;
+
 function listBlogArticles() {
+  const now = Date.now();
+  if (blogArticlesCache && now - blogArticlesCachedAtMs < BLOG_ARTICLES_CACHE_TTL_MS) {
+    return blogArticlesCache;
+  }
   try {
     const entries = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
-    return entries
+    const result = entries
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name)
       .filter((slug) => fs.existsSync(path.join(BLOG_DIR, slug, 'index.html')))
       .sort();
+    blogArticlesCache = result;
+    blogArticlesCachedAtMs = now;
+    return result;
   } catch {
     return [];
   }
@@ -674,6 +686,28 @@ function generateNonce() {
   return crypto.randomBytes(16).toString('base64url');
 }
 
+const COMPRESSIBLE_EXTS = new Set(['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg']);
+
+function sendCompressed(req, res, headers, body) {
+  const accept = String(req.headers['accept-encoding'] || '');
+  if (accept.includes('br') && typeof zlib.brotliCompress === 'function') {
+    zlib.brotliCompress(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }, (err, compressed) => {
+      if (err) { res.writeHead(200, headers); res.end(body); return; }
+      res.writeHead(200, { ...headers, 'Content-Encoding': 'br', 'Vary': 'Accept-Encoding' });
+      res.end(compressed);
+    });
+  } else if (accept.includes('gzip')) {
+    zlib.gzip(body, { level: 6 }, (err, compressed) => {
+      if (err) { res.writeHead(200, headers); res.end(body); return; }
+      res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' });
+      res.end(compressed);
+    });
+  } else {
+    res.writeHead(200, headers);
+    res.end(body);
+  }
+}
+
 function safeEqual(a, b) {
   const left = Buffer.from(a);
   const right = Buffer.from(b);
@@ -895,8 +929,7 @@ function handleLegalPage(req, res, pathname, nonce = '') {
   const page = LEGAL_PAGES[pathname];
   if (!page) return false;
   const html = renderLegalPage(page.title, page.body, nonce);
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-  res.end(html);
+  sendCompressed(req, res, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' }, Buffer.from(html));
   return true;
 }
 
@@ -1836,15 +1869,33 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
 
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
 
-function send404(res, csrfToken = '', nonce = '') {
+function send404(req, res, csrfToken = '', nonce = '') {
   fs.readFile(PAGE_404_PATH, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Not found');
       return;
     }
-    res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-    res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
+    const body = Buffer.from(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
+    // Use sendCompressed but override status to 404
+    const accept = String(req?.headers?.['accept-encoding'] || '');
+    const headers = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' };
+    if (accept.includes('br') && typeof zlib.brotliCompress === 'function') {
+      zlib.brotliCompress(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }, (e, c) => {
+        if (e) { res.writeHead(404, headers); res.end(body); return; }
+        res.writeHead(404, { ...headers, 'Content-Encoding': 'br', 'Vary': 'Accept-Encoding' });
+        res.end(c);
+      });
+    } else if (accept.includes('gzip')) {
+      zlib.gzip(body, { level: 6 }, (e, c) => {
+        if (e) { res.writeHead(404, headers); res.end(body); return; }
+        res.writeHead(404, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' });
+        res.end(c);
+      });
+    } else {
+      res.writeHead(404, headers);
+      res.end(body);
+    }
   });
 }
 
@@ -1942,24 +1993,23 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (req.method === 'GET' && url.pathname === '/sitemap.xml') {
-    res.writeHead(200, { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-    res.end(buildSitemapXml());
+    const sitemapHeaders = { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' };
+    sendCompressed(req, res, sitemapHeaders, Buffer.from(buildSitemapXml()));
     return;
   }
   if (req.method === 'GET' && (normalizedPath === '/blog/' || normalizedPath in PILLAR_PAGES)) {
     // Prefer static HTML file if it exists; fall back to generated placeholder
     const staticCandidate = path.join(STATIC_DIR, normalizedPath, 'index.html');
+    const htmlHeaders = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' };
     try {
       const data = await fs.promises.readFile(staticCandidate, 'utf8');
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-      res.end(injectRuntimeSnippets(data, csrfToken, nonce));
+      sendCompressed(req, res, htmlHeaders, Buffer.from(injectRuntimeSnippets(data, csrfToken, nonce)));
       return;
     } catch {
       // No static file found; use generated fallback below.
     }
     const html = normalizedPath === '/blog/' ? renderBlogIndex(nonce) : renderPillarPage(normalizedPath, nonce);
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-    res.end(html);
+    sendCompressed(req, res, htmlHeaders, Buffer.from(html));
     return;
   }
   if (req.method === 'GET' && url.pathname === '/admin') {
@@ -1971,7 +2021,7 @@ const server = http.createServer(async (req, res) => {
   // Block internal/build directories from public access
   const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
   if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
-    send404(res, csrfToken, nonce); return;
+    send404(req, res, csrfToken, nonce); return;
   }
 
   // Security: block dotfiles (e.g. /.env, /.gitignore) and server-side source files
@@ -1980,7 +2030,7 @@ const server = http.createServer(async (req, res) => {
   const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh']);
   const lastSegment = segments[segments.length - 1] || '';
   if (hasDotSegment || BLOCKED_FILENAMES.has(lastSegment)) {
-    send404(res, csrfToken, nonce); return;
+    send404(req, res, csrfToken, nonce); return;
   }
 
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
@@ -1995,16 +2045,21 @@ const server = http.createServer(async (req, res) => {
     }
     fs.readFile(filePath, (err, data) => {
       if (err) {
-        send404(res, csrfToken, nonce); return;
+        send404(req, res, csrfToken, nonce); return;
       }
       const ext = path.extname(filePath);
       const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
       if (ext === '.css' || ext === '.js') headers['Cache-Control'] = 'public, max-age=86400';
-      res.writeHead(200, headers);
       if (ext === '.html') {
-        res.end(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
+        const body = Buffer.from(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
+        sendCompressed(req, res, headers, body);
         return;
       }
+      if (COMPRESSIBLE_EXTS.has(ext)) {
+        sendCompressed(req, res, headers, data);
+        return;
+      }
+      res.writeHead(200, headers);
       res.end(data);
     });
   });

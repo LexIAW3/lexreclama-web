@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /aviso-legal/
-Disallow: /politica-privacidad/
-Disallow: /politica-cookies/
-Disallow: /condiciones/
-
-Sitemap: https://www.lexreclama.es/sitemap.xml
