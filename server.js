@@ -1603,6 +1603,15 @@ async function handleSubscribe(req, res) {
     return;
   }
 
+  // Silently discard test/invalid addresses so they don't hit Brevo and return 5xx.
+  const testLeadReason = detectTestLeadReason(parsed.value);
+  if (testLeadReason) {
+    console.log(`[test-lead] subscribe silently discarded (${testLeadReason}): ${maskEmail(parsed.value.email)}`);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true }));
+    return;
+  }
+
   try {
     await subscribeContactInBrevo(parsed.value);
     res.writeHead(200, { 'Content-Type': 'application/json' });
