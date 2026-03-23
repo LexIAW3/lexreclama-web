@@ -125,7 +125,7 @@ restart_ocr_server() {
 
   PAPERCLIP_API_URL=http://127.0.0.1:3100 \
   PAPERCLIP_COMPANY_ID=624b9ad4-76e3-4a63-91a4-29d4b646fca9 \
-  PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:-***REMOVED***}" \
+  PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:?PAPERCLIP_API_KEY must be set in .env — see LEX-508}" \
   ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
   PORT="$OCR_PORT" \
   nohup /home/paperclip/despacho/ocr-server/start.sh >> /tmp/ocr-server.log 2>&1 &

@@ -2054,7 +2054,7 @@ const server = http.createServer(async (req, res) => {
   // Security: block dotfiles (e.g. /.env, /.gitignore) and server-side source files
   const segments = url.pathname.split('/');
   const hasDotSegment = segments.some((s) => s.startsWith('.') && s.length > 1);
-  const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh']);
+  const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md']);
   const lastSegment = segments[segments.length - 1] || '';
   if (hasDotSegment || BLOCKED_FILENAMES.has(lastSegment)) {
     send404(req, res, csrfToken, nonce); return;
@@ -2120,7 +2120,7 @@ setInterval(sweepAllMaps, 30 * 60 * 1000).unref();
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Landing page: http://127.0.0.1:${PORT}`);
   console.log(`Lead submit:  POST http://127.0.0.1:${PORT}/submit-lead`);
-  console.log(`Admin panel:  GET  http://127.0.0.1:${PORT}/admin (Basic Auth user: ${ADMIN_USER})`);
+  console.log(`Admin panel:  GET  http://127.0.0.1:${PORT}/admin (Basic Auth configured)`);
   console.log(`GA4:          ${GA4_MEASUREMENT_ID || '(disabled)'}`);
   if (!ADMIN_PASSWORD) console.warn('WARN: ADMIN_PASSWORD is not set; /admin will return 503');
   console.log(`Paperclip:    ${PAPERCLIP_API}`);
