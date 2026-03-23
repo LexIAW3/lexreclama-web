@@ -35,6 +35,7 @@ const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
 const PRIVACY_POLICY_VERSION = '2026-03';
 const PRIMARY_HOST = 'lexreclama.es';
 const SECONDARY_HOST = 'lexreclama.com';
+const APP_HOST = process.env.APP_HOST || 'app.lexreclama.es';
 const MAX_RECENT_LEADS = 25;
 
 // Test lead blocklist — submissions from these emails are accepted (HTTP 200) but
@@ -1963,6 +1964,21 @@ const server = http.createServer(async (req, res) => {
     res.end();
     return;
   }
+
+  // Serve customer portal at app host root without changing URL.
+  if (req.method === 'GET' && host === APP_HOST && url.pathname === '/') {
+    const portalPath = path.join(STATIC_DIR, 'portal-cliente', 'index.html');
+    const data = await fs.promises.readFile(portalPath, 'utf8');
+    const html = injectRuntimeSnippets(data, csrfToken, nonce);
+    sendCompressed(
+      req,
+      res,
+      { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+      Buffer.from(html),
+    );
+    return;
+  }
+
   if ((req.method === 'GET' || req.method === 'HEAD') && BLOG_REDIRECTS[normalizedPath]) {
     const target = `${BLOG_REDIRECTS[normalizedPath]}${url.search}`;
     res.writeHead(301, { Location: target, 'Cache-Control': 'public, max-age=3600' });
