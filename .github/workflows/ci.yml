@@ -32,7 +32,7 @@ jobs:
 
       - name: Verify minified assets are in sync with sources
         run: |
-          npm ci --ignore-scripts
+          npm ci
           npm run build
           if ! git diff --quiet styles.min.css app.min.js; then
             echo "ERROR: styles.min.css or app.min.js are out of sync with their sources."
