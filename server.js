@@ -47,6 +47,20 @@ const TEST_EMAIL_BLOCKLIST = new Set([
   'test@qa.com',
 ]);
 const recentLeads = [];
+
+// Asset content hashes for cache-busting — computed once at startup.
+// HTML pages reference /styles.min.css?v=HASH and /app.min.js?v=HASH so browsers
+// re-fetch on deploy while still caching aggressively (max-age=1y, immutable).
+function computeFileHash(filePath) {
+  try {
+    const buf = fs.readFileSync(filePath);
+    return crypto.createHash('sha256').update(buf).digest('hex').slice(0, 8);
+  } catch {
+    return 'dev';
+  }
+}
+const ASSET_CSS_HASH = computeFileHash(path.join(__dirname, 'styles.min.css'));
+const ASSET_JS_HASH  = computeFileHash(path.join(__dirname, 'app.min.js'));
 const STRIPE_API = 'https://api.stripe.com/v1';
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -425,7 +439,7 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   <link rel="canonical" href="${SITE_URL}${canonicalPath}" />
   <meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}" />
   <title>${escapeHtml(pageTitle)} | LexReclama</title>
-  <link rel="stylesheet" href="/styles.min.css" />
+  <link rel="stylesheet" href="/styles.min.css?v=${ASSET_CSS_HASH}" />
   ${renderGa4Snippet(nonce)}
 </head>
 <body>
@@ -565,8 +579,14 @@ function injectCsrfIntoHtml(html, token) {
   );
 }
 
+function injectAssetVersionsIntoHtml(html) {
+  return html
+    .replace(/href="(\/styles\.min\.css)"/g, `href="$1?v=${ASSET_CSS_HASH}"`)
+    .replace(/src="(\/app\.min\.js)"/g, `src="$1?v=${ASSET_JS_HASH}"`);
+}
+
 function injectRuntimeSnippets(html, csrfToken = '', nonce = '') {
-  let result = injectCsrfIntoHtml(injectWhatsappIntoHtml(injectGa4IntoHtml(html)), csrfToken);
+  let result = injectCsrfIntoHtml(injectWhatsappIntoHtml(injectGa4IntoHtml(injectAssetVersionsIntoHtml(html))), csrfToken);
   if (nonce) result = injectNonceIntoHtml(result, nonce);
   return result;
 }
@@ -2049,7 +2069,7 @@ const server = http.createServer(async (req, res) => {
       }
       const ext = path.extname(filePath);
       const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
-      if (ext === '.css' || ext === '.js') headers['Cache-Control'] = 'public, max-age=86400';
+      if (ext === '.css' || ext === '.js') headers['Cache-Control'] = 'public, max-age=31536000, immutable';
       if (ext === '.html') {
         const body = Buffer.from(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
         sendCompressed(req, res, headers, body);
