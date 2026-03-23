@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const zlib = require('zlib');
+const net = require('net');
 const { URL } = require('url');
 const busboy = require('busboy');
 
@@ -23,6 +24,10 @@ const COMPANY_ID = process.env.PAPERCLIP_COMPANY_ID;
 const STRIPE_SECRET_KEY = (process.env.STRIPE_SECRET_KEY || '').trim();
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
+const ADMIN_ALLOWED_IPS = String(process.env.ADMIN_ALLOWED_IPS || '127.0.0.1,::1')
+  .split(',')
+  .map((entry) => entry.trim())
+  .filter(Boolean);
 const GA4_MEASUREMENT_ID = (process.env.GA4_MEASUREMENT_ID || '').trim();
 const GOOGLE_ADS_ID = (process.env.GOOGLE_ADS_ID || '').trim();
 const GOOGLE_ADS_CONVERSION_LABEL = (process.env.GOOGLE_ADS_CONVERSION_LABEL || '').trim();
@@ -283,7 +288,55 @@ function validateCsrfToken(req, res) {
 
 function getClientIp(req) {
   const raw = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
-  return /^[\da-fA-F.:]+$/.test(raw) ? raw : (req.socket.remoteAddress || 'unknown');
+  const sanitized = /^[\da-fA-F.:]+$/.test(raw) ? raw : (req.socket.remoteAddress || 'unknown');
+  const ipv4Mapped = sanitized.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+  return ipv4Mapped ? ipv4Mapped[1] : sanitized;
+}
+
+function ipToInt(ip) {
+  const parts = String(ip).split('.');
+  if (parts.length !== 4) return null;
+  let value = 0;
+  for (const part of parts) {
+    if (!/^\d+$/.test(part)) return null;
+    const n = Number(part);
+    if (!Number.isInteger(n) || n < 0 || n > 255) return null;
+    value = (value << 8) | n;
+  }
+  return value >>> 0;
+}
+
+function isIpv4InCidr(ip, cidr) {
+  const [base, prefixRaw] = String(cidr).split('/');
+  const prefix = Number(prefixRaw);
+  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) return false;
+  const ipNum = ipToInt(ip);
+  const baseNum = ipToInt(base);
+  if (ipNum === null || baseNum === null) return false;
+  if (prefix === 0) return true;
+  const mask = (0xFFFFFFFF << (32 - prefix)) >>> 0;
+  return (ipNum & mask) === (baseNum & mask);
+}
+
+function isAdminIpAllowed(ip) {
+  if (!ip || ip === 'unknown') return false;
+  const kind = net.isIP(ip);
+  for (const rule of ADMIN_ALLOWED_IPS) {
+    if (rule === ip) return true;
+    if (kind === 4 && rule.includes('/') && isIpv4InCidr(ip, rule)) return true;
+  }
+  return false;
+}
+
+function logAdminAudit(req, outcome, detail = '') {
+  const clientIp = getClientIp(req);
+  const forwardedFor = String(req.headers['x-forwarded-for'] || '').trim();
+  const userAgent = String(req.headers['user-agent'] || '').replace(/[\r\n\t]+/g, ' ').trim();
+  const safeDetail = String(detail || '').replace(/[\r\n\t]+/g, ' ').trim();
+  const safeXff = forwardedFor.replace(/[\r\n\t]+/g, ' ').trim();
+  const detailPart = safeDetail ? ` detail=${safeDetail}` : '';
+  const xffPart = safeXff ? ` xff="${safeXff}"` : '';
+  console.log(`[audit][admin] outcome=${outcome} ip=${clientIp} method=${req.method} path=${req.url}${detailPart}${xffPart} ua="${userAgent}"`);
 }
 
 function consumeRateLimit(rule, ip) {
@@ -975,19 +1028,20 @@ function handleLegalPage(req, res, pathname, nonce = '') {
 
 async function handleAdmin(req, res) {
   if (!ADMIN_PASSWORD) {
+    logAdminAudit(req, 'admin_disabled', 'ADMIN_PASSWORD_missing');
     res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end('ADMIN_PASSWORD is not configured');
     return;
   }
 
   if (!isAdminAuthorized(req)) {
-    const clientIp = getClientIp(req);
-    console.warn(`[security] Admin auth failed from ${clientIp || 'unknown'}`);
+    logAdminAudit(req, 'auth_failed');
     await new Promise((resolve) => setTimeout(resolve, 300));
     sendAdminAuthChallenge(res);
     return;
   }
 
+  logAdminAudit(req, 'auth_success');
   const html = renderAdminPage();
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
   res.end(html);
@@ -2063,8 +2117,15 @@ const server = http.createServer(async (req, res) => {
   }
   if (req.method === 'GET' && url.pathname === '/admin') {
     const clientIp = getClientIp(req);
+    if (!isAdminIpAllowed(clientIp)) {
+      logAdminAudit(req, 'ip_denied', 'ip_not_in_allowlist');
+      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
+      res.end('Forbidden');
+      return;
+    }
     const rate = consumeRateLimit(RATE_LIMIT_RULES['/admin'], clientIp);
     if (rate.limited) {
+      logAdminAudit(req, 'rate_limited', `retry_after=${rate.retryAfterSec}`);
       res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
       res.end('Demasiadas solicitudes. Intentalo mas tarde.');
       return;
@@ -2150,6 +2211,7 @@ server.listen(PORT, '127.0.0.1', () => {
   console.log(`Landing page: http://127.0.0.1:${PORT}`);
   console.log(`Lead submit:  POST http://127.0.0.1:${PORT}/submit-lead`);
   console.log(`Admin panel:  GET  http://127.0.0.1:${PORT}/admin (Basic Auth configured)`);
+  console.log(`Admin allowlist: ${ADMIN_ALLOWED_IPS.join(', ') || '(empty - deny all)'}`);
   console.log(`GA4:          ${GA4_MEASUREMENT_ID || '(disabled)'}`);
   if (!ADMIN_PASSWORD) console.warn('WARN: ADMIN_PASSWORD is not set; /admin will return 503');
   console.log(`Paperclip:    ${PAPERCLIP_API}`);
