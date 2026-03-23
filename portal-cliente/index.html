@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/portal-cliente/styles.css" />
 </head>
 <body>
@@ -19,10 +20,12 @@
     <section class="card" id="login-step">
       <img src="/logo.svg" alt="LexReclama" class="brand-logo" />
       <h1>Consulta tu caso</h1>
-      <p class="muted">Introduce tu número de caso para recibir un código de acceso.</p>
+      <p class="muted" style="margin-top:6px;margin-bottom:20px;">Introduce tu número de caso para recibir un código de acceso.</p>
       <form id="login-form" class="stack">
-        <label for="case-id">Número de caso</label>
-        <input id="case-id" name="caseId" type="text" placeholder="Ej. LEX-1234" autocomplete="off" required />
+        <div>
+          <label for="case-id">Número de caso</label>
+          <input id="case-id" name="caseId" type="text" placeholder="Ej. LEX-1234" autocomplete="off" required />
+        </div>
         <button type="submit">Solicitar código de acceso</button>
       </form>
       <p class="legal">Solo tendrás acceso a tu propio caso. Código válido 10 minutos.</p>
@@ -32,8 +35,8 @@
     <!-- ── Step 2: 2FA ── -->
     <section class="card" id="code-step" hidden>
       <button type="button" class="link" id="back-to-login">← Cambiar número de caso</button>
-      <h2>Código enviado</h2>
-      <p class="muted" id="code-help"></p>
+      <h2 style="margin-top:16px;">Código enviado</h2>
+      <p class="muted" id="code-help" style="margin-top:6px;margin-bottom:20px;"></p>
       <form id="code-form" class="stack">
         <label>Código de 6 dígitos</label>
         <div class="otp-grid" id="otp-grid" role="group" aria-label="Código de verificación">
@@ -56,9 +59,18 @@
     <!-- ── Step 3: App ── -->
     <section class="app" id="portal-app" hidden>
       <header class="app-header">
-        <div>
-          <p class="eyebrow">Área privada</p>
-          <h2>Mis casos</h2>
+        <div class="app-header-brand">
+          <div class="app-header-mark" aria-hidden="true">
+            <svg width="18" height="15" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2.376 32V6.8H7.128V27.68H18.648V32H2.376Z" fill="white"/>
+              <rect opacity="0.4" x="21.72" y="4" width="1" height="32" fill="white"/>
+              <path d="M29.096 32V6.8H40.04C41.624 6.8 43.004 7.076 44.18 7.628C45.356 8.18 46.268 8.96 46.916 9.968C47.564 10.976 47.888 12.164 47.888 13.532V13.964C47.888 15.476 47.528 16.7 46.808 17.636C46.088 18.572 45.2 19.256 44.144 19.688V20.336C45.104 20.384 45.848 20.714 46.376 21.326C46.904 21.938 47.168 22.748 47.168 23.756V32H42.416V24.44C42.416 23.864 42.266 23.396 41.966 23.036C41.666 22.676 41.168 22.496 40.472 22.496H33.848V32H29.096ZM33.848 18.176H39.536C40.664 18.176 41.546 17.87 42.182 17.258C42.818 16.646 43.136 15.836 43.136 14.828V14.468C43.136 13.46 42.824 12.65 42.2 12.038C41.576 11.426 40.688 11.12 39.536 11.12H33.848V18.176Z" fill="white"/>
+            </svg>
+          </div>
+          <div>
+            <p class="eyebrow">Área privada</p>
+            <h2 style="font-size:1.2rem;">Mis casos</h2>
+          </div>
         </div>
         <button type="button" class="ghost" id="logout-btn">Cerrar sesión</button>
       </header>
