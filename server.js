@@ -1104,7 +1104,7 @@ async function handleSubmitLead(req, res) {
   // Silently discard test leads so they don't pollute the claims manager queue.
   const testLeadReason = detectTestLeadReason(leadData.value);
   if (testLeadReason) {
-    console.log(`[test-lead] silently discarded (${testLeadReason}): ${leadData.value.email}`);
+    console.log(`[test-lead] silently discarded (${testLeadReason}): ${maskEmail(leadData.value.email)}`);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ ok: true, issueId: null, identifier: null, deduplicated: false, test: true }));
     return;
