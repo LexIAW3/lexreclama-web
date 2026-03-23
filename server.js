@@ -1137,7 +1137,7 @@ async function handleSubmitLead(req, res) {
   } catch (err) {
     console.error('Lead submission error:', err.message);
     res.writeHead(500);
-    res.end(JSON.stringify({ error: err.message }));
+    res.end(JSON.stringify({ error: 'No se pudo procesar la solicitud en este momento.' }));
   }
 }
 
@@ -1469,7 +1469,7 @@ async function handleCreateCheckoutSession(req, res) {
   } catch (err) {
     console.error('Stripe checkout session error:', err.message);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: err.message }));
+    res.end(JSON.stringify({ error: 'No se pudo iniciar el proceso de pago. Inténtalo de nuevo en unos minutos.' }));
   }
 }
 
@@ -1529,7 +1529,7 @@ async function handleConfirmCheckout(req, res) {
   } catch (err) {
     console.error('Confirm checkout error:', err.message);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: err.message }));
+    res.end(JSON.stringify({ error: 'No se pudo confirmar el pago en este momento.' }));
   }
 }
 
