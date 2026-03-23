@@ -708,22 +708,22 @@ function generateNonce() {
 
 const COMPRESSIBLE_EXTS = new Set(['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg']);
 
-function sendCompressed(req, res, headers, body) {
+function sendCompressed(req, res, headers, body, statusCode = 200) {
   const accept = String(req.headers['accept-encoding'] || '');
   if (accept.includes('br') && typeof zlib.brotliCompress === 'function') {
     zlib.brotliCompress(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }, (err, compressed) => {
-      if (err) { res.writeHead(200, headers); res.end(body); return; }
-      res.writeHead(200, { ...headers, 'Content-Encoding': 'br', 'Vary': 'Accept-Encoding' });
+      if (err) { res.writeHead(statusCode, headers); res.end(body); return; }
+      res.writeHead(statusCode, { ...headers, 'Content-Encoding': 'br', 'Vary': 'Accept-Encoding' });
       res.end(compressed);
     });
   } else if (accept.includes('gzip')) {
     zlib.gzip(body, { level: 6 }, (err, compressed) => {
-      if (err) { res.writeHead(200, headers); res.end(body); return; }
-      res.writeHead(200, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' });
+      if (err) { res.writeHead(statusCode, headers); res.end(body); return; }
+      res.writeHead(statusCode, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' });
       res.end(compressed);
     });
   } else {
-    res.writeHead(200, headers);
+    res.writeHead(statusCode, headers);
     res.end(body);
   }
 }
@@ -1699,6 +1699,7 @@ async function sendPortalCodeEmail(email, caseId, code) {
 }
 
 async function handlePortalRequestCode(req, res) {
+  sweepPortalState();
   const caseId = normalizeCaseIdentifier(req.parsedBody?.caseId);
   if (!isCaseIdentifierValid(caseId)) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -1897,25 +1898,8 @@ function send404(req, res, csrfToken = '', nonce = '') {
       return;
     }
     const body = Buffer.from(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
-    // Use sendCompressed but override status to 404
-    const accept = String(req?.headers?.['accept-encoding'] || '');
     const headers = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' };
-    if (accept.includes('br') && typeof zlib.brotliCompress === 'function') {
-      zlib.brotliCompress(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }, (e, c) => {
-        if (e) { res.writeHead(404, headers); res.end(body); return; }
-        res.writeHead(404, { ...headers, 'Content-Encoding': 'br', 'Vary': 'Accept-Encoding' });
-        res.end(c);
-      });
-    } else if (accept.includes('gzip')) {
-      zlib.gzip(body, { level: 6 }, (e, c) => {
-        if (e) { res.writeHead(404, headers); res.end(body); return; }
-        res.writeHead(404, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' });
-        res.end(c);
-      });
-    } else {
-      res.writeHead(404, headers);
-      res.end(body);
-    }
+    sendCompressed(req, res, headers, body, 404);
   });
 }
 
@@ -2084,6 +2068,19 @@ const server = http.createServer(async (req, res) => {
     });
   });
 });
+
+// Periodic sweep of all in-memory Maps to prevent unbounded growth.
+// Belt-and-suspenders: individual handlers also call sweep at their entry points.
+setInterval(() => {
+  sweepPortalState();
+  sweepCsrfTokens();
+  const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
+  for (const [key, hits] of rateLimitMap) {
+    const valid = hits.filter((t) => t > cutoff);
+    if (valid.length === 0) rateLimitMap.delete(key);
+    else rateLimitMap.set(key, valid);
+  }
+}, 30 * 60 * 1000).unref(); // .unref() so the interval doesn't keep the process alive
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Landing page: http://127.0.0.1:${PORT}`);
