@@ -554,11 +554,6 @@ html[data-theme='light'] .topbar {
   width: auto;
 }
 
-/* Dark mode: invert black letterforms to white, preserve blue accent */
-html[data-theme='dark'] .logo-img {
-  filter: invert(1) hue-rotate(180deg);
-}
-
 .nav-links {
   list-style: none;
   display: flex;
@@ -5198,11 +5193,6 @@ input:focus, select:focus, textarea:focus {
   pointer-events: none;
 }
 
-/* Dark mode footer */
-html[data-theme='dark'] .footer {
-  background: rgba(10, 14, 36, 0.68) !important;
-  border-top-color: rgba(255, 255, 255, 0.055) !important;
-}
 
 /* COOKIE BANNER — enforce clear, light treatment */
 .cookie-banner {
@@ -5224,14 +5214,6 @@ html[data-theme='dark'] .footer {
   }
 }
 
-html[data-theme='dark'] .contact-modal-dialog {
-  background: rgba(16, 22, 52, 0.92);
-  border-color: rgba(255, 255, 255, 0.09);
-  box-shadow:
-    0 32px 80px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(var(--accent-rgb), 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
 
 /* Footer logo in light mode: ensure readable contrast */
 html[data-theme='light'] .footer .logo {
