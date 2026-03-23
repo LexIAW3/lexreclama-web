@@ -131,6 +131,7 @@ const RATE_LIMIT_RULES = {
   '/api/portal/verify-code': { scope: 'portal-verify-code', max: 20 },
   '/api/portal/logout': { scope: 'portal-logout', max: 30 },
   '/api/portal/cases': { scope: 'portal-cases', max: 60 },
+  '/api/portal/documents': { scope: 'portal-documents', max: 80 },
   '/api/portal/me': { scope: 'portal-me', max: 120 },
 };
 
@@ -1708,7 +1709,37 @@ function mapIssueToPortalCase(issue, messages = []) {
     steps,
     activeStep,
     messages,
+    documents: [],
+    nextAction: status === 'blocked'
+      ? 'Necesitamos documentación adicional para seguir avanzando. Te avisaremos con instrucciones concretas.'
+      : status === 'done'
+        ? 'Tu reclamación está cerrada. Puedes descargar los documentos finales desde esta área.'
+        : 'Nuestro equipo está revisando tu expediente. El siguiente hito se reflejará aquí en cuanto se complete.',
   };
+}
+
+async function readIssueDocumentsIndex(issueId) {
+  const folder = path.join(DOCUMENTS_DIR, String(issueId || '').trim());
+  const indexPath = path.join(folder, 'index.json');
+  try {
+    const raw = await fs.promises.readFile(indexPath, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((doc) => {
+      const fileId = String(doc?.fileId || '').trim();
+      const originalPath = String(doc?.originalPath || '').trim();
+      return {
+        fileId,
+        name: String(doc?.filename || 'Documento'),
+        mimeType: String(doc?.mimeType || 'application/octet-stream'),
+        size: Number(doc?.size || 0),
+        createdAt: String(doc?.createdAt || ''),
+        originalPath,
+      };
+    }).filter((doc) => doc.fileId && doc.originalPath.startsWith(folder));
+  } catch {
+    return [];
+  }
 }
 
 async function fetchIssueByIdentifier(caseId) {
@@ -1904,7 +1935,17 @@ async function handlePortalMe(req, res) {
   const apiMessages = await fetchIssueComments(auth.session.issueId);
   const localMessages = portalMessages.get(auth.session.caseId) || [];
   const allMessages = [...apiMessages.slice(0, 5), ...localMessages].slice(-8);
+  const rawDocuments = await readIssueDocumentsIndex(auth.session.issueId);
+  const documents = rawDocuments.map((doc) => ({
+    id: doc.fileId,
+    name: doc.name,
+    mimeType: doc.mimeType,
+    size: doc.size,
+    createdAt: doc.createdAt,
+    url: `/api/portal/cases/${encodeURIComponent(auth.session.caseId)}/documents/${encodeURIComponent(doc.fileId)}`,
+  }));
   const portalCase = mapIssueToPortalCase(issue, allMessages.length ? allMessages : [{ author: 'Despacho', body: 'Tu caso esta en seguimiento. Te notificaremos cualquier cambio.' }]);
+  portalCase.documents = documents;
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
@@ -1963,6 +2004,62 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ ok: true }));
+}
+
+async function handlePortalCaseDocumentDownload(req, res, caseIdRaw, fileIdRaw) {
+  const auth = getPortalSessionFromRequest(req);
+  if (!auth) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
+    return;
+  }
+  const caseId = normalizeCaseIdentifier(caseIdRaw);
+  if (caseId !== auth.session.caseId) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'No autorizado para este caso' }));
+    return;
+  }
+
+  const fileId = String(fileIdRaw || '').trim();
+  if (!/^[a-zA-Z0-9-]{8,}$/.test(fileId)) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Documento invalido' }));
+    return;
+  }
+
+  const docs = await readIssueDocumentsIndex(auth.session.issueId);
+  const selected = docs.find((doc) => doc.fileId === fileId);
+  if (!selected) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Documento no encontrado' }));
+    return;
+  }
+  const normalizedFile = path.normalize(selected.originalPath);
+  const issueFolder = path.normalize(path.join(DOCUMENTS_DIR, String(auth.session.issueId)));
+  if (!normalizedFile.startsWith(issueFolder)) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Ruta no autorizada' }));
+    return;
+  }
+
+  let stat;
+  try {
+    stat = await fs.promises.stat(normalizedFile);
+    if (!stat.isFile()) throw new Error('not_file');
+  } catch {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Archivo no disponible' }));
+    return;
+  }
+
+  const safeName = String(selected.name || 'documento').replace(/[\r\n"\\]/g, '_').slice(0, 180);
+  res.writeHead(200, {
+    'Content-Type': selected.mimeType || 'application/octet-stream',
+    'Content-Length': String(stat.size),
+    'Content-Disposition': `attachment; filename="${safeName}"`,
+    'Cache-Control': 'private, no-store',
+  });
+  fs.createReadStream(normalizedFile).pipe(res);
 }
 
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
@@ -2050,6 +2147,26 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     await handlePortalMe(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname.startsWith('/api/portal/cases/') && url.pathname.includes('/documents/')) {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/portal/documents'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
+      return;
+    }
+    const match = url.pathname.match(/^\/api\/portal\/cases\/([^/]+)\/documents\/([^/]+)$/);
+    if (!match) {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Ruta no encontrada' }));
+      return;
+    }
+    const caseId = decodeURIComponent(match[1]);
+    const fileId = decodeURIComponent(match[2]);
+    await handlePortalCaseDocumentDownload(req, res, caseId, fileId);
     return;
   }
 

@@ -21,6 +21,11 @@
       <img src="/logo.svg" alt="LexReclama" class="brand-logo" />
       <h1>Consulta tu caso</h1>
       <p class="muted" style="margin-top:6px;margin-bottom:20px;">Introduce tu número de caso para recibir un código de acceso.</p>
+      <ol class="mini-steps" aria-label="Pasos de acceso">
+        <li><span>1</span> Introduces tu número de caso</li>
+        <li><span>2</span> Validas el código de seguridad</li>
+        <li><span>3</span> Accedes al estado y documentos</li>
+      </ol>
       <form id="login-form" class="stack">
         <div>
           <label for="case-id">Número de caso</label>
@@ -75,6 +80,16 @@
         <button type="button" class="ghost" id="logout-btn">Cerrar sesión</button>
       </header>
 
+      <div id="portal-loading" class="loading-state" hidden>
+        <p class="loading-title">Actualizando información del caso…</p>
+        <p class="muted">Esto tarda solo unos segundos.</p>
+      </div>
+
+      <div class="notice" id="portal-notice" hidden>
+        <strong id="notice-title"></strong>
+        <p id="notice-text"></p>
+      </div>
+
       <div class="cases" id="case-list"></div>
 
       <!-- Empty state (shown when 0 cases) -->
@@ -98,21 +113,39 @@
         <p id="detail-status"></p>
         <p id="detail-updated" class="muted"></p>
 
-        <h4>Progreso del caso</h4>
-        <ul class="steps-list" id="detail-steps"></ul>
+        <nav class="detail-tabs" aria-label="Secciones del caso">
+          <button type="button" class="detail-tab active" data-tab="overview">Resumen</button>
+          <button type="button" class="detail-tab" data-tab="documents">Documentos</button>
+          <button type="button" class="detail-tab" data-tab="messages">Mensajes</button>
+        </nav>
 
-        <h4>Mensajes</h4>
-        <ul class="messages" id="detail-messages"></ul>
+        <section id="tab-overview" class="tab-panel">
+          <h4>Progreso del caso</h4>
+          <ul class="steps-list" id="detail-steps"></ul>
+          <h4>Próximo paso</h4>
+          <p class="next-step" id="detail-next-step"></p>
+        </section>
 
-        <h4>Escribe al despacho</h4>
-        <form id="message-form" class="stack">
-          <label for="message-input">Mensaje al despacho</label>
-          <textarea id="message-input" maxlength="1000" rows="4" placeholder="Escribe tu mensaje o duda sobre el caso…"></textarea>
-          <div class="char-counter" role="status" aria-live="polite" aria-atomic="true"><span id="char-count">0</span>/1000</div>
-          <button type="submit" id="send-btn" disabled>Enviar mensaje al despacho</button>
-        </form>
-        <div class="toast" id="message-toast" role="status" aria-live="polite">✓ Mensaje enviado. Te responderemos en 24–48h.</div>
-        <p id="message-error" class="error" role="alert" hidden></p>
+        <section id="tab-documents" class="tab-panel" hidden>
+          <h4>Documentos</h4>
+          <ul class="documents-list" id="detail-documents"></ul>
+          <p class="empty-inline" id="detail-documents-empty" hidden>Aún no hay documentos disponibles para descargar.</p>
+        </section>
+
+        <section id="tab-messages" class="tab-panel" hidden>
+          <h4>Mensajes</h4>
+          <ul class="messages" id="detail-messages"></ul>
+
+          <h4>Escribe al despacho</h4>
+          <form id="message-form" class="stack">
+            <label for="message-input">Mensaje al despacho</label>
+            <textarea id="message-input" maxlength="1000" rows="4" placeholder="Escribe tu mensaje o duda sobre el caso…"></textarea>
+            <div class="char-counter" role="status" aria-live="polite" aria-atomic="true"><span id="char-count">0</span>/1000</div>
+            <button type="submit" id="send-btn" disabled>Enviar mensaje al despacho</button>
+          </form>
+          <div class="toast" id="message-toast" role="status" aria-live="polite">✓ Mensaje enviado. Te responderemos en 24–48h.</div>
+          <p id="message-error" class="error" role="alert" hidden></p>
+        </section>
       </article>
     </section>
 

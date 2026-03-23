@@ -3,9 +3,15 @@ const state = {
   expiresAtMs: 0,
   timer:       null,
   activeCase:  null,
+  cases:       [],
+  activeTab:   'overview',
 };
 
-const portalRequestCodeMessage = (caseId) => `Si el caso ${caseId} existe, recibiras un codigo en el email registrado.`;
+const portalRequestCodeMessage = (caseId, maskedEmail) => (
+  maskedEmail
+    ? `Hemos enviado un código a ${maskedEmail} para el caso ${caseId}.`
+    : `Si el caso ${caseId} existe, recibirás un código en el email registrado.`
+);
 
 const el = {
   loginStep:    document.querySelector('#login-step'),
@@ -39,6 +45,17 @@ const el = {
   detailBack:   document.querySelector('#detail-back'),
   backToLogin:  document.querySelector('#back-to-login'),
   logoutBtn:    document.querySelector('#logout-btn'),
+  loading:      document.querySelector('#portal-loading'),
+  notice:       document.querySelector('#portal-notice'),
+  noticeTitle:  document.querySelector('#notice-title'),
+  noticeText:   document.querySelector('#notice-text'),
+  nextStep:     document.querySelector('#detail-next-step'),
+  detailDocs:   document.querySelector('#detail-documents'),
+  detailDocsEmpty: document.querySelector('#detail-documents-empty'),
+  detailTabs:   Array.from(document.querySelectorAll('.detail-tab')),
+  tabOverview:  document.querySelector('#tab-overview'),
+  tabDocuments: document.querySelector('#tab-documents'),
+  tabMessages:  document.querySelector('#tab-messages'),
 };
 
 /* ─── Helpers ─── */
@@ -78,6 +95,49 @@ function clearErrors() {
 function setError(target, msg) {
   target.textContent = msg;
   target.hidden = !msg;
+}
+
+function friendlyError(err) {
+  const message = String(err?.message || '');
+  if (/demasiadas solicitudes/i.test(message)) return 'Hemos recibido demasiadas solicitudes. Espera un minuto y vuelve a intentarlo.';
+  if (/sesion invalida|expirada/i.test(message)) return 'Tu sesión ha caducado. Vuelve a iniciar sesión.';
+  if (/servidor/i.test(message)) return 'No hemos podido conectar con el portal. Inténtalo de nuevo en unos segundos.';
+  return message || 'Ha ocurrido un error inesperado.';
+}
+
+function formatBytes(bytes) {
+  const value = Number(bytes || 0);
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 * 1024) return `${Math.round(value / 1024)} KB`;
+  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function setLoading(isLoading) {
+  if (!el.loading) return;
+  el.loading.hidden = !isLoading;
+}
+
+function setNotice(title, text) {
+  if (!title || !text) {
+    el.notice.hidden = true;
+    return;
+  }
+  el.noticeTitle.textContent = title;
+  el.noticeText.textContent = text;
+  el.notice.hidden = false;
+}
+
+function setActiveTab(tab) {
+  state.activeTab = tab;
+  const isOverview = tab === 'overview';
+  const isDocuments = tab === 'documents';
+  const isMessages = tab === 'messages';
+  el.tabOverview.hidden = !isOverview;
+  el.tabDocuments.hidden = !isDocuments;
+  el.tabMessages.hidden = !isMessages;
+  el.detailTabs.forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
 }
 
 /* ─── Badge color mapping ─── */
@@ -228,6 +288,60 @@ function renderMessages(messages) {
   });
 }
 
+function renderDocuments(documents) {
+  el.detailDocs.innerHTML = '';
+  const docs = Array.isArray(documents) ? documents : [];
+  if (docs.length === 0) {
+    el.detailDocsEmpty.hidden = false;
+    return;
+  }
+
+  el.detailDocsEmpty.hidden = true;
+  docs.forEach((doc) => {
+    const li = document.createElement('li');
+    const meta = document.createElement('div');
+    meta.className = 'doc-meta';
+    const name = document.createElement('span');
+    name.className = 'doc-name';
+    name.textContent = doc.name || 'Documento';
+    const info = document.createElement('span');
+    info.className = 'doc-info';
+    const when = doc.createdAt
+      ? new Date(doc.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+      : 'Fecha no disponible';
+    info.textContent = `${when} · ${formatBytes(doc.size)} · ${doc.mimeType || 'Archivo'}`;
+    meta.append(name, info);
+
+    const link = document.createElement('a');
+    link.className = 'doc-link';
+    link.href = doc.url || '#';
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = 'Descargar';
+
+    li.append(meta, link);
+    el.detailDocs.appendChild(li);
+  });
+}
+
+function updatePortalNotice(c) {
+  if (!c) {
+    setNotice('', '');
+    return;
+  }
+  const totalMessages = Array.isArray(c.messages) ? c.messages.length : 0;
+  const hasPendingDocs = !Array.isArray(c.documents) || c.documents.length === 0;
+  if (hasPendingDocs) {
+    setNotice('Pendiente de documentación', 'Tu expediente sigue en curso. Te avisaremos aquí cuando subamos nuevos documentos.');
+    return;
+  }
+  if (totalMessages > 0) {
+    setNotice('Canal abierto con tu gestor', 'Puedes escribirnos desde la pestaña Mensajes. Respondemos en 24-48h laborables.');
+    return;
+  }
+  setNotice('', '');
+}
+
 function renderCaseDetail(c) {
   state.activeCase = c;
   el.detail.hidden = false;
@@ -244,6 +358,10 @@ function renderCaseDetail(c) {
 
   renderSteps(c.steps || [], c.activeStep || null);
   renderMessages(c.messages || []);
+  renderDocuments(c.documents || []);
+  el.nextStep.textContent = c.nextAction || 'Revisando documentación y preparando el siguiente avance del expediente.';
+  updatePortalNotice(c);
+  setActiveTab(state.activeTab || 'overview');
 
   el.messageInput.value = '';
   el.charCount.textContent = '0';
@@ -253,15 +371,17 @@ function renderCaseDetail(c) {
 
 function renderCases(cases) {
   el.caseList.innerHTML = '';
+  state.cases = Array.isArray(cases) ? cases : [];
 
-  if (!cases || cases.length === 0) {
+  if (state.cases.length === 0) {
     el.caseEmpty.hidden = false;
     el.detail.hidden    = true;
+    setNotice('', '');
     return;
   }
 
   el.caseEmpty.hidden = true;
-  cases.forEach((c) => {
+  state.cases.forEach((c) => {
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'case-card';
@@ -285,16 +405,27 @@ function renderCases(cases) {
     pMeta.textContent = `Actualizado el ${updated}`;
 
     card.append(spanId, spanBadge, pTitle, pMeta);
-    card.addEventListener('click', () => renderCaseDetail(c));
+    card.addEventListener('click', () => {
+      renderCaseDetail(c);
+      Array.from(el.caseList.querySelectorAll('.case-card')).forEach((node) => node.classList.remove('active'));
+      card.classList.add('active');
+      card.setAttribute('aria-selected', 'true');
+    });
     el.caseList.appendChild(card);
   });
 
-  renderCaseDetail(cases[0]);
+  renderCaseDetail(state.cases[0]);
+  const firstCard = el.caseList.querySelector('.case-card');
+  if (firstCard) {
+    firstCard.classList.add('active');
+    firstCard.setAttribute('aria-selected', 'true');
+  }
 }
 
 /* ─── Session ─── */
 
 async function loadSession() {
+  setLoading(true);
   try {
     const data = await api('/api/portal/me');
     renderCases(data.cases || []);
@@ -302,6 +433,8 @@ async function loadSession() {
     return true;
   } catch {
     return false;
+  } finally {
+    setLoading(false);
   }
 }
 
@@ -326,14 +459,14 @@ el.loginForm.addEventListener('submit', async (event) => {
       method: 'POST',
       body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
     });
-    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId);
+    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId, data.maskedEmail);
     clearOtp();
     el.verifyBtn.hidden = false;
     startCountdown(Date.now() + (data.expiresInSec * 1000));
     showStep('code');
     el.otpCells[0].focus();
   } catch (err) {
-    setError(el.loginError, err.message);
+    setError(el.loginError, friendlyError(err));
   } finally {
     btn.disabled = false;
   }
@@ -354,7 +487,7 @@ el.codeForm.addEventListener('submit', async (event) => {
     });
     await loadSession();
   } catch (err) {
-    setError(el.codeError, err.message);
+    setError(el.codeError, friendlyError(err));
     clearOtp();
     el.otpCells[0].focus();
     el.verifyBtn.disabled = true;
@@ -371,13 +504,13 @@ el.resendBtn.addEventListener('click', async () => {
       method: 'POST',
       body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
     });
-    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId);
+    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId, data.maskedEmail);
     clearOtp();
     el.verifyBtn.hidden = false;
     startCountdown(Date.now() + (data.expiresInSec * 1000));
     el.otpCells[0].focus();
   } catch (err) {
-    setError(el.codeError, err.message);
+    setError(el.codeError, friendlyError(err));
     el.resendBtn.disabled = false;
   }
 });
@@ -402,7 +535,7 @@ el.messageForm.addEventListener('submit', async (event) => {
     setTimeout(() => el.messageToast.classList.remove('visible'), 3000);
     await loadSession();
   } catch (err) {
-    setError(el.messageError, err.message);
+    setError(el.messageError, friendlyError(err));
     el.sendBtn.disabled = false;
   }
 });
@@ -432,6 +565,10 @@ el.logoutBtn.addEventListener('click', async () => {
   }).catch(() => null);
   el.logoutBtn.disabled = false;
   showStep('login');
+});
+
+el.detailTabs.forEach((btn) => {
+  btn.addEventListener('click', () => setActiveTab(btn.dataset.tab || 'overview'));
 });
 
 /* ─── Boot ─── */
