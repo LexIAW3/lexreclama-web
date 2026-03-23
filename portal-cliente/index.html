@@ -11,7 +11,9 @@
   <link rel="stylesheet" href="/portal-cliente/styles.css" />
 </head>
 <body>
-  <main class="portal-shell">
+<a href="#main-content" class="skip-link">Ir al contenido principal</a>
+
+  <main id="main-content" class="portal-shell">
 
     <!-- ── Step 1: Login ── -->
     <section class="card" id="login-step">
@@ -24,7 +26,7 @@
         <button type="submit">Solicitar código de acceso</button>
       </form>
       <p class="legal">Solo tendrás acceso a tu propio caso. Código válido 10 minutos.</p>
-      <p id="login-error" class="error" hidden></p>
+      <p id="login-error" class="error" role="alert" hidden></p>
     </section>
 
     <!-- ── Step 2: 2FA ── -->
@@ -46,7 +48,7 @@
           <span id="countdown" class="muted">Válido 10:00</span>
           <button type="button" class="link" id="resend-btn" disabled>Reenviar código</button>
         </div>
-        <button type="submit" id="verify-btn" disabled>Verificar</button>
+        <button type="submit" id="verify-btn" disabled>Verificar código</button>
       </form>
       <p id="code-error" class="error" hidden></p>
     </section>
@@ -92,12 +94,13 @@
 
         <h4>Escribe al despacho</h4>
         <form id="message-form" class="stack">
+          <label for="message-input">Mensaje al despacho</label>
           <textarea id="message-input" maxlength="1000" rows="4" placeholder="Escribe tu mensaje o duda sobre el caso…"></textarea>
           <div class="char-counter"><span id="char-count">0</span>/1000</div>
-          <button type="submit" id="send-btn" disabled>Enviar mensaje</button>
+          <button type="submit" id="send-btn" disabled>Enviar mensaje al despacho</button>
         </form>
-        <div class="toast" id="message-toast">✓ Mensaje enviado. Te responderemos en 24–48h.</div>
-        <p id="message-error" class="error" hidden></p>
+        <div class="toast" id="message-toast" role="status" aria-live="polite">✓ Mensaje enviado. Te responderemos en 24–48h.</div>
+        <p id="message-error" class="error" role="alert" hidden></p>
       </article>
     </section>
 

@@ -56,6 +56,8 @@
   <!-- GA4_SNIPPET -->
 </head>
 <body class="service-page">
+<a href="#main-content" class="skip-link">Ir al contenido principal</a>
+
 
   <nav class="nav" id="main-nav" aria-label="Navegación principal">
     <div class="nav-inner">
@@ -89,7 +91,7 @@
     </div>
   </div>
 
-  <main>
+  <main id="main-content">
     <section class="contacto section" id="contacto">
       <div class="container">
         <div class="contacto-inner">
@@ -200,7 +202,7 @@
               <span id="submit-loading" class="hidden">Enviando…</span>
             </button>
 
-            <div id="form-success" class="form-success hidden">
+            <div id="form-success" class="form-success hidden" role="status" aria-live="polite">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               <div>
                 <strong>¡Recibido!</strong>
@@ -208,7 +210,7 @@
               </div>
             </div>
 
-            <div id="form-error" class="form-error hidden">
+            <div id="form-error" class="form-error hidden" role="alert">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               <span>Error al enviar. Escríbenos directamente a <a href="mailto:info@lexreclama.es">info@lexreclama.es</a></span>
             </div>
