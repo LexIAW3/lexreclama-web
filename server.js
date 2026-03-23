@@ -133,6 +133,9 @@ const RATE_LIMIT_RULES = {
   '/api/portal/cases': { scope: 'portal-cases', max: 60 },
   '/api/portal/documents': { scope: 'portal-documents', max: 80 },
   '/api/portal/me': { scope: 'portal-me', max: 120 },
+  '/robots.txt': { scope: 'robots-txt', max: 300 },
+  '/sitemap.xml': { scope: 'sitemap-xml', max: 240 },
+  '/dynamic-pages': { scope: 'dynamic-pages', max: 180 },
 };
 
 const CSRF_COOKIE_NAME = 'lex_csrf_token';
@@ -2208,16 +2211,37 @@ const server = http.createServer(async (req, res) => {
   }
   if (req.method === 'GET' && handleLegalPage(req, res, url.pathname, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/robots.txt'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
+      res.end('Too many requests');
+      return;
+    }
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
     res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${SITE_URL}/sitemap.xml\n`);
     return;
   }
   if (req.method === 'GET' && url.pathname === '/sitemap.xml') {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/sitemap.xml'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/xml; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
+      res.end('<error>Too many requests</error>');
+      return;
+    }
     const sitemapHeaders = { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' };
     sendCompressed(req, res, sitemapHeaders, Buffer.from(buildSitemapXml()));
     return;
   }
   if (req.method === 'GET' && (normalizedPath === '/blog/' || normalizedPath in PILLAR_PAGES)) {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/dynamic-pages'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
+      res.end('Demasiadas solicitudes');
+      return;
+    }
     // Prefer static HTML file if it exists; fall back to generated placeholder
     const staticCandidate = path.join(STATIC_DIR, normalizedPath, 'index.html');
     const htmlHeaders = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' };
