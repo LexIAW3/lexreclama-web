@@ -126,6 +126,7 @@ const RATE_LIMIT_RULES = {
   '/api/portal/verify-code': { scope: 'portal-verify-code', max: 20 },
   '/api/portal/logout': { scope: 'portal-logout', max: 30 },
   '/api/portal/cases': { scope: 'portal-cases', max: 60 },
+  '/api/portal/me': { scope: 'portal-me', max: 120 },
 };
 
 const CSRF_COOKIE_NAME = 'lex_csrf_token';
@@ -1987,6 +1988,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/portal/me') {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/portal/me'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
+      return;
+    }
     await handlePortalMe(req, res);
     return;
   }

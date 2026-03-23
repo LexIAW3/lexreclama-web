@@ -96,7 +96,7 @@
         <form id="message-form" class="stack">
           <label for="message-input">Mensaje al despacho</label>
           <textarea id="message-input" maxlength="1000" rows="4" placeholder="Escribe tu mensaje o duda sobre el caso…"></textarea>
-          <div class="char-counter"><span id="char-count">0</span>/1000</div>
+          <div class="char-counter" role="status" aria-live="polite" aria-atomic="true"><span id="char-count">0</span>/1000</div>
           <button type="submit" id="send-btn" disabled>Enviar mensaje al despacho</button>
         </form>
         <div class="toast" id="message-toast" role="status" aria-live="polite">✓ Mensaje enviado. Te responderemos en 24–48h.</div>

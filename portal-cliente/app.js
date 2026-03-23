@@ -267,12 +267,24 @@ function renderCases(cases) {
     card.className = 'case-card';
 
     const updated = new Date(c.updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-    card.innerHTML = `
-      <span class="case-id">${c.identifier}</span>
-      <span class="badge ${badgeClass(c.statusLabel)}">${c.statusLabel}</span>
-      <p class="case-title">${c.title}</p>
-      <p class="case-meta">Actualizado el ${updated}</p>
-    `;
+
+    const spanId   = document.createElement('span');
+    spanId.className = 'case-id';
+    spanId.textContent = c.identifier;
+
+    const spanBadge = document.createElement('span');
+    spanBadge.className = `badge ${badgeClass(c.statusLabel)}`;
+    spanBadge.textContent = c.statusLabel;
+
+    const pTitle = document.createElement('p');
+    pTitle.className = 'case-title';
+    pTitle.textContent = c.title;
+
+    const pMeta = document.createElement('p');
+    pMeta.className = 'case-meta';
+    pMeta.textContent = `Actualizado el ${updated}`;
+
+    card.append(spanId, spanBadge, pTitle, pMeta);
     card.addEventListener('click', () => renderCaseDetail(c));
     el.caseList.appendChild(card);
   });
@@ -413,10 +425,12 @@ el.backToLogin.addEventListener('click', () => {
 /* ─── Event: Logout ─── */
 
 el.logoutBtn.addEventListener('click', async () => {
+  el.logoutBtn.disabled = true;
   await api('/api/portal/logout', {
     method: 'POST',
     body: JSON.stringify({ csrfToken: readCsrfToken() }),
   }).catch(() => null);
+  el.logoutBtn.disabled = false;
   showStep('login');
 });
 
