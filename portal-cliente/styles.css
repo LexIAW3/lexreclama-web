@@ -317,6 +317,24 @@ button.link {
 }
 .toast.visible { opacity: 1; }
 
+/* ─── Footer legal ─── */
+.portal-footer {
+  text-align: center;
+  padding: 20px 16px 28px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.portal-footer a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.portal-footer a:hover { color: var(--accent); }
+
 /* ─── Responsive ─── */
 @media (min-width: 768px) {
   .portal-shell { padding-top: 56px; }

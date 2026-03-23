@@ -59,8 +59,10 @@ function computeFileHash(filePath) {
     return 'dev';
   }
 }
-const ASSET_CSS_HASH = computeFileHash(path.join(__dirname, 'styles.min.css'));
-const ASSET_JS_HASH  = computeFileHash(path.join(__dirname, 'app.min.js'));
+const ASSET_CSS_HASH        = computeFileHash(path.join(__dirname, 'styles.min.css'));
+const ASSET_JS_HASH         = computeFileHash(path.join(__dirname, 'app.min.js'));
+const ASSET_PORTAL_CSS_HASH = computeFileHash(path.join(__dirname, 'portal-cliente', 'styles.css'));
+const ASSET_PORTAL_JS_HASH  = computeFileHash(path.join(__dirname, 'portal-cliente', 'app.js'));
 const STRIPE_API = 'https://api.stripe.com/v1';
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -582,7 +584,9 @@ function injectCsrfIntoHtml(html, token) {
 function injectAssetVersionsIntoHtml(html) {
   return html
     .replace(/href="(\/styles\.min\.css)"/g, `href="$1?v=${ASSET_CSS_HASH}"`)
-    .replace(/src="(\/app\.min\.js)"/g, `src="$1?v=${ASSET_JS_HASH}"`);
+    .replace(/src="(\/app\.min\.js)"/g, `src="$1?v=${ASSET_JS_HASH}"`)
+    .replace(/href="(\/portal-cliente\/styles\.css)"/g, `href="$1?v=${ASSET_PORTAL_CSS_HASH}"`)
+    .replace(/src="(\/portal-cliente\/app\.js)"/g, `src="$1?v=${ASSET_PORTAL_JS_HASH}"`);
 }
 
 function injectRuntimeSnippets(html, csrfToken = '', nonce = '') {
