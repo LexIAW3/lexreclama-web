@@ -96,15 +96,39 @@ El interesado puede ejercer los derechos de **Acceso, Rectificación, Cancelaci�
 
 Puede presentar reclamación ante la **Agencia Española de Protección de Datos (AEPD)** — www.aepd.es
 
-## 2.7. Medidas de seguridad
+## 2.7. Portal Cliente (app.lexreclama.es)
 
-\[NOMBRE DEL DESPACHO] ha adoptado las medidas técnicas y organizativas necesarias para garantizar la seguridad de los datos personales conforme al artículo 32 RGPD.
+El Portal Cliente es un área privada desde la que los clientes con expediente activo pueden consultar el estado de su caso y comunicarse con el Despacho.
 
-## 2.8. Delegado de Protección de Datos (DPO)
+**Datos tratados en el Portal:**
+
+* **Dato de acceso:** número de expediente (identificador del caso asignado al cliente).
+* **Correo electrónico:** utilizado exclusivamente para el envío del código de verificación de doble factor (2FA). No se muestra ni almacena en el Portal.
+* **Estado del expediente:** información sobre el estado procesal del caso, documentos aportados, próximos pasos y mensajes intercambiados con el Despacho.
+* **Mensajes del cliente:** textos enviados a través del formulario del Portal, que se incorporan al expediente.
+
+**Finalidad y base legitimadora:** Prestación del servicio contratado y comunicación con el cliente (Art. 6.1.b RGPD — ejecución del contrato).
+
+**Autenticación y sesión:**
+
+El acceso al Portal se realiza mediante doble factor (número de expediente + código OTP de 6 dígitos enviado al email del cliente). Tras la autenticación, se genera una cookie de sesión técnica (`lex_portal_session`) con las siguientes características:
+
+* Almacenada exclusivamente en el servidor (no accesible por JavaScript del navegador — atributo `HttpOnly`).
+* Válida durante 12 horas desde el inicio de sesión.
+* Transmitida únicamente a través de conexión cifrada (HTTPS — atributo `Secure`).
+* Vinculada exclusivamente al expediente del cliente autenticado; ningún cliente puede acceder a expedientes de otros.
+
+**Conservación de datos del Portal:** Los mensajes enviados a través del Portal se incorporan al expediente del cliente y se conservan conforme a los plazos generales indicados en el apartado 2.4.
+
+## 2.8. Medidas de seguridad
+
+\[NOMBRE DEL DESPACHO] ha adoptado las medidas técnicas y organizativas necesarias para garantizar la seguridad de los datos personales conforme al artículo 32 RGPD, entre ellas: cifrado de comunicaciones (TLS/HTTPS), control de acceso autenticado con doble factor en el Portal Cliente, limitación de intentos de acceso, expiración automática de sesiones, protección CSRF en todos los formularios, y cabeceras de seguridad HTTP (CSP, HSTS, X-Frame-Options).
+
+## 2.9. Delegado de Protección de Datos (DPO)
 
 Dado que el Despacho trata de forma habitual datos relativos a procedimientos judiciales y datos en el ejercicio de funciones de asesoramiento jurídico, se ha designado un DPO contactable en: **\[EMAIL DPO]**
 
-*Última actualización: marzo de 2026*
+*Última actualización: marzo de 2026 (rev. CISO — sección 2.7 Portal Cliente añadida)*
 
 ***
 
@@ -118,13 +142,14 @@ Una cookie es un pequeño archivo de texto que se instala en el dispositivo del 
 
 ## 3.2. Cookies utilizadas
 
-| Cookie           | Tipo              | Finalidad                              | Duración | Titular    |
-| ---------------- | ----------------- | -------------------------------------- | -------- | ---------- |
-| `session_id`     | Técnica/necesaria | Mantener la sesión                     | Sesión   | Propia     |
-| `csrf_token`     | Técnica/necesaria | Seguridad CSRF                         | Sesión   | Propia     |
-| `cookie_consent` | Técnica/necesaria | Guardar preferencias de cookies        | 12 meses | Propia     |
-| `_ga`            | Analítica         | Google Analytics — usuarios únicos     | 2 años   | Google LLC |
-| `_gid`           | Analítica         | Google Analytics — distinguir usuarios | 24 horas | Google LLC |
+| Cookie                 | Tipo              | Finalidad                                                   | Duración | Titular    |
+| ---------------------- | ----------------- | ----------------------------------------------------------- | -------- | ---------- |
+| `lex_csrf_token`       | Técnica/necesaria | Protección CSRF en formularios y envíos de datos            | 12 horas | Propia     |
+| `lex_portal_session`   | Técnica/necesaria | Sesión autenticada en el Portal Cliente (app.lexreclama.es) | 12 horas | Propia     |
+| `_ga`                  | Analítica         | Google Analytics — usuarios únicos                          | 2 años   | Google LLC |
+| `_gid`                 | Analítica         | Google Analytics — distinguir usuarios                      | 24 horas | Google LLC |
+
+**Nota sobre preferencias de cookies:** Las preferencias de consentimiento del usuario se almacenan en el almacenamiento local del navegador (`localStorage`), no como cookie. Este dato no se transmite al servidor.
 
 **En el lanzamiento inicial se utilizan exclusivamente cookies técnicas necesarias.** Las cookies analíticas se implementarán previa actualización de esta política y obtención del consentimiento.
 
@@ -149,7 +174,7 @@ Para cookies no necesarias se solicitará consentimiento previo mediante banner.
 
 El uso de Google Analytics puede implicar transferencias a EE.UU. bajo cláusulas contractuales tipo de la Comisión Europea. Si se implementan estas cookies se informará debidamente al usuario.
 
-*Última actualización: marzo de 2026*
+*Última actualización: marzo de 2026 (rev. CISO — tabla de cookies actualizada con nombres reales; añadida lex_portal_session y lex_csrf_token)*
 
 ***
 
