@@ -35,8 +35,8 @@ const WHATSAPP_NUMBER = (process.env.WHATSAPP_NUMBER || '').trim();
 const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
 const BREVO_LIST_ID = Number.parseInt(process.env.BREVO_LIST_ID || '3', 10);
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
-const GESTOR_AGENT_ID = '603134d1-2f20-4c99-9bec-92547dc99b43';
-const GOAL_ID = '7d4f1e3f-6909-45cd-9aed-e1cfbfb4333d';
+const GESTOR_AGENT_ID = (process.env.PAPERCLIP_GESTOR_AGENT_ID || '').trim();
+const GOAL_ID = (process.env.PAPERCLIP_GOAL_ID || '').trim();
 const PRIVACY_POLICY_VERSION = '2026-03';
 const PRIMARY_HOST = 'lexreclama.es';
 const SECONDARY_HOST = 'lexreclama.com';
@@ -515,12 +515,12 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   ${renderGa4Snippet(nonce)}
 </head>
 <body>
-  <nav class="nav">
+  <nav class="nav" aria-label="Navegación principal">
     <div class="nav-inner">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
+      <a href="/" class="logo" aria-label="LexReclama — inicio">LexReclama<span>.</span></a>
       <div>
         <a class="btn btn-sm" href="/reclamacion-deudas/">Deudas</a>
-        <a class="btn btn-sm" href="/clausulas-bancarias/">Clausulas</a>
+        <a class="btn btn-sm" href="/clausulas-bancarias/">Cláusulas</a>
         <a class="btn btn-sm" href="/recurrir-multas/">Multas</a>
         <a class="btn btn-sm" href="/blog/">Blog</a>
       </div>
@@ -535,11 +535,11 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   </main>
   <footer class="footer">
     <div class="container footer-inner">
-      <a href="/" class="logo">LexReclama<span>.</span></a>
+      <a href="/" class="logo" aria-label="LexReclama — inicio">LexReclama<span>.</span></a>
       <div class="footer-links">
         <a href="/aviso-legal">Aviso legal</a>
-        <a href="/politica-privacidad">Politica de privacidad</a>
-        <a href="/politica-cookies">Politica de cookies</a>
+        <a href="/politica-privacidad">Política de privacidad</a>
+        <a href="/politica-cookies">Política de cookies</a>
         <a href="/condiciones">Condiciones generales</a>
       </div>
       <p class="footer-copy">© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
@@ -672,14 +672,14 @@ function renderBlogIndex(nonce = '') {
   const articles = listBlogArticles();
   const items = articles.length
     ? `<ul>${articles.map((slug) => `<li><a href="/blog/${slug}/">${escapeHtml(formatSlug(slug))}</a></li>`).join('')}</ul>`
-    : '<p>Todavia no hay articulos publicados.</p>';
+    : '<p>Todavía no hay artículos publicados.</p>';
 
   return renderContentShell({
     pageTitle: 'Blog legal',
-    metaDescription: 'Hub de contenido legal sobre reclamaciones de deudas, clausulas bancarias y multas.',
+    metaDescription: 'Hub de contenido legal sobre reclamaciones de deudas, cláusulas bancarias y multas.',
     heading: 'Blog de reclamaciones legales',
     intro: 'Hub de contenido',
-    bodyHtml: `<p>Articulos disponibles:</p>${items}`,
+    bodyHtml: `<p>Artículos disponibles:</p>${items}`,
     canonicalPath: '/blog/',
     nonce,
   });
@@ -2086,8 +2086,9 @@ const server = http.createServer(async (req, res) => {
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
   const csrfToken = getOrCreateCsrfToken(req, res);
   const nonce = generateNonce();
-  // CORS only for safe read-only requests; POST endpoints are same-origin only
-  if (req.method === 'GET' || req.method === 'HEAD') {
+  // CORS: allow cross-origin only for public static assets (no API/portal routes)
+  const isApiPath = url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin');
+  if ((req.method === 'GET' || req.method === 'HEAD') && !isApiPath) {
     res.setHeader('Access-Control-Allow-Origin', '*');
   }
   res.setHeader('X-Content-Type-Options', 'nosniff');
