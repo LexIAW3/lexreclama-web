@@ -124,6 +124,7 @@ const RATE_LIMIT_RULES = {
   '/submit-lead': { scope: 'submit-lead', max: 5 },
   '/api/lead': { scope: 'api-lead', max: 8 },
   '/admin': { scope: 'admin-login', max: 10 },
+  '/api/admin/portal-test-code': { scope: 'admin-portal-test-code', max: 20 },
   '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
   '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
   '/api/subscribe': { scope: 'api-subscribe', max: 12 },
@@ -1809,6 +1810,35 @@ async function sendPortalCodeEmail(email, caseId, code) {
   return res.ok;
 }
 
+async function handleAdminPortalTestCode(req, res, url) {
+  const caseId = normalizeCaseIdentifier(url.searchParams.get('caseId'));
+  if (!isCaseIdentifierValid(caseId)) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Numero de caso invalido' }));
+    return;
+  }
+  const issue = await fetchIssueByIdentifier(caseId);
+  if (!issue) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Expediente no encontrado' }));
+    return;
+  }
+  const code = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+  const salt = crypto.randomBytes(8).toString('hex');
+  const hash = crypto.createHash('sha256').update(`${salt}:${code}`).digest('hex');
+  portalAuthCodes.set(caseId, {
+    issueId: issue.id,
+    email: extractClientEmail(issue) || 'test@lexreclama.es',
+    codeHash: hash,
+    salt,
+    attempts: 0,
+    used: false,
+    expiresAtMs: Date.now() + PORTAL_CODE_TTL_MS,
+  });
+  res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+  res.end(JSON.stringify({ ok: true, caseId, code, expiresInSec: Math.floor(PORTAL_CODE_TTL_MS / 1000) }));
+}
+
 async function handlePortalRequestCode(req, res) {
   sweepPortalState();
   const caseId = normalizeCaseIdentifier(req.parsedBody?.caseId);
@@ -2273,6 +2303,26 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     await handleAdmin(req, res);
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/admin/portal-test-code') {
+    const clientIp = getClientIp(req);
+    if (!isAdminIpAllowed(clientIp)) {
+      res.writeHead(403, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+      res.end(JSON.stringify({ error: 'Forbidden' }));
+      return;
+    }
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/admin/portal-test-code'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
+      return;
+    }
+    if (!isAdminAuthorized(req)) {
+      sendAdminAuthChallenge(res);
+      return;
+    }
+    await handleAdminPortalTestCode(req, res, url);
     return;
   }
 
