@@ -117,6 +117,7 @@ const rateLimitMap = new Map();
 const RATE_LIMIT_RULES = {
   '/submit-lead': { scope: 'submit-lead', max: 5 },
   '/api/lead': { scope: 'api-lead', max: 8 },
+  '/admin': { scope: 'admin-login', max: 10 },
   '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
   '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
   '/api/subscribe': { scope: 'api-subscribe', max: 12 },
@@ -973,6 +974,9 @@ async function handleAdmin(req, res) {
   }
 
   if (!isAdminAuthorized(req)) {
+    const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    console.warn(`[security] Admin auth failed from ${clientIp || 'unknown'}`);
+    await new Promise((resolve) => setTimeout(resolve, 300));
     sendAdminAuthChallenge(res);
     return;
   }
@@ -2029,6 +2033,13 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (req.method === 'GET' && url.pathname === '/admin') {
+    const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/admin'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
+      res.end('Demasiadas solicitudes. Intentalo mas tarde.');
+      return;
+    }
     await handleAdmin(req, res);
     return;
   }
