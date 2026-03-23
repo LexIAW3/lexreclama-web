@@ -279,6 +279,11 @@ function validateCsrfToken(req, res) {
   })();
 }
 
+function getClientIp(req) {
+  const raw = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+  return /^[\da-fA-F.:]+$/.test(raw) ? raw : (req.socket.remoteAddress || 'unknown');
+}
+
 function consumeRateLimit(rule, ip) {
   const now = Date.now();
   const windowStart = now - RATE_LIMIT_WINDOW_MS;
@@ -974,7 +979,7 @@ async function handleAdmin(req, res) {
   }
 
   if (!isAdminAuthorized(req)) {
-    const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    const clientIp = getClientIp(req);
     console.warn(`[security] Admin auth failed from ${clientIp || 'unknown'}`);
     await new Promise((resolve) => setTimeout(resolve, 300));
     sendAdminAuthChallenge(res);
@@ -1982,7 +1987,7 @@ const server = http.createServer(async (req, res) => {
     || url.pathname === '/api/portal/logout'
     || url.pathname.startsWith('/api/portal/cases/')
   )) {
-    const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    const clientIp = getClientIp(req);
     const rateLimitPath = url.pathname.startsWith('/api/portal/cases/') ? '/api/portal/cases' : url.pathname;
     const rule = RATE_LIMIT_RULES[rateLimitPath];
     const rate = consumeRateLimit(rule, clientIp);
@@ -2033,7 +2038,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
   if (req.method === 'GET' && url.pathname === '/admin') {
-    const clientIp = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+    const clientIp = getClientIp(req);
     const rate = consumeRateLimit(RATE_LIMIT_RULES['/admin'], clientIp);
     if (rate.limited) {
       res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
