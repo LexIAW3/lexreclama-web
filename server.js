@@ -59,10 +59,15 @@ function computeFileHash(filePath) {
     return 'dev';
   }
 }
-const ASSET_CSS_HASH        = computeFileHash(path.join(__dirname, 'styles.min.css'));
-const ASSET_JS_HASH         = computeFileHash(path.join(__dirname, 'app.min.js'));
-const ASSET_PORTAL_CSS_HASH = computeFileHash(path.join(__dirname, 'portal-cliente', 'styles.css'));
-const ASSET_PORTAL_JS_HASH  = computeFileHash(path.join(__dirname, 'portal-cliente', 'app.js'));
+// Each entry: [attr, url-path, fs-path]  — single source of truth for all assets.
+const ASSET_VERSIONS = [
+  ['href', '/styles.min.css',            path.join(__dirname, 'styles.min.css')],
+  ['src',  '/app.min.js',                path.join(__dirname, 'app.min.js')],
+  ['href', '/portal-cliente/styles.css', path.join(__dirname, 'portal-cliente', 'styles.css')],
+  ['src',  '/portal-cliente/app.js',     path.join(__dirname, 'portal-cliente', 'app.js')],
+].map(([attr, url, file]) => ({ attr, url, hash: computeFileHash(file) }));
+// Named shorthand used in renderContentShell template literal.
+const ASSET_CSS_HASH = ASSET_VERSIONS[0].hash;
 const STRIPE_API = 'https://api.stripe.com/v1';
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
@@ -582,11 +587,14 @@ function injectCsrfIntoHtml(html, token) {
 }
 
 function injectAssetVersionsIntoHtml(html) {
-  return html
-    .replace(/href="(\/styles\.min\.css)"/g, `href="$1?v=${ASSET_CSS_HASH}"`)
-    .replace(/src="(\/app\.min\.js)"/g, `src="$1?v=${ASSET_JS_HASH}"`)
-    .replace(/href="(\/portal-cliente\/styles\.css)"/g, `href="$1?v=${ASSET_PORTAL_CSS_HASH}"`)
-    .replace(/src="(\/portal-cliente\/app\.js)"/g, `src="$1?v=${ASSET_PORTAL_JS_HASH}"`);
+  let result = html;
+  for (const { attr, url, hash } of ASSET_VERSIONS) {
+    result = result.replace(
+      new RegExp(`${attr}="(${url.replace(/[.]/g, '\\.')})"`, 'g'),
+      `${attr}="$1?v=${hash}"`,
+    );
+  }
+  return result;
 }
 
 function injectRuntimeSnippets(html, csrfToken = '', nonce = '') {
@@ -2075,16 +2083,28 @@ const server = http.createServer(async (req, res) => {
 
 // Periodic sweep of all in-memory Maps to prevent unbounded growth.
 // Belt-and-suspenders: individual handlers also call sweep at their entry points.
-setInterval(() => {
-  sweepPortalState();
+function sweepAllMaps() {
+  sweepPortalState(); // clears expired portalAuthCodes + portalSessions
   sweepCsrfTokens();
+
+  // portalMessages: remove entries whose caseId has no active session.
+  // Messages are a display cache — canonical data lives in the API.
+  const activeCaseIds = new Set([...portalSessions.values()].map((s) => s.caseId));
+  for (const caseId of portalMessages.keys()) {
+    if (!activeCaseIds.has(caseId)) portalMessages.delete(caseId);
+  }
+
+  // rateLimitMap: delete fully-expired keys (consumeRateLimit compacts per use,
+  // but dead keys from IPs that never return would accumulate indefinitely).
   const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
   for (const [key, hits] of rateLimitMap) {
     const valid = hits.filter((t) => t > cutoff);
     if (valid.length === 0) rateLimitMap.delete(key);
     else rateLimitMap.set(key, valid);
   }
-}, 30 * 60 * 1000).unref(); // .unref() so the interval doesn't keep the process alive
+}
+
+setInterval(sweepAllMaps, 30 * 60 * 1000).unref();
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`Landing page: http://127.0.0.1:${PORT}`);
