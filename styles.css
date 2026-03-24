@@ -1557,7 +1557,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 .faq-list {
   margin-top: 48px;
   display: grid;
-  gap: 8px;
+  gap: 12px;
 }
 
 /* Native <details> accordion */
@@ -1580,7 +1580,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px 24px;
+  padding: 22px 24px;
   cursor: pointer;
   list-style: none;
   font-family: var(--font-display);
@@ -1619,12 +1619,11 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 }
 
 .faq-body {
-  padding: 0 24px 22px;
+  padding: 20px 24px 28px;
   color: var(--muted);
   font-size: 0.93rem;
   line-height: 1.76;
   border-top: 1px solid var(--border);
-  padding-top: 18px;
 }
 
 .faq-body a {
@@ -3679,8 +3678,8 @@ span.badge-red {
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  background: var(--step-num-bg);
-  color: var(--step-num-text);
+  background: var(--accent);
+  color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -3707,7 +3706,7 @@ span.badge-red {
 
 /* Related articles */
 .related-articles {
-  margin-top: 84px;
+  margin-top: 52px;
   padding: 28px;
   border: 1px solid var(--border);
   border-radius: var(--r);
@@ -3743,7 +3742,7 @@ span.badge-red {
 
 @media (max-width: 700px) {
   .related-articles {
-    margin-top: 56px;
+    margin-top: 36px;
     padding: 22px 18px;
   }
 }
