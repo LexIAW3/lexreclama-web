@@ -935,6 +935,7 @@ async function submitBlogSubscribe(event) {
     const empty = !nombre;
     nombreError.classList.toggle('visible', empty);
     nombreInput.classList.toggle('field-invalid', empty);
+    nombreInput.setAttribute('aria-invalid', empty ? 'true' : 'false');
     if (empty) valid = false;
   }
 
@@ -942,6 +943,7 @@ async function submitBlogSubscribe(event) {
     const invalid = !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     emailError.classList.toggle('visible', invalid);
     emailInput.classList.toggle('field-invalid', invalid);
+    emailInput.setAttribute('aria-invalid', invalid ? 'true' : 'false');
     if (invalid) valid = false;
   }
 
@@ -972,7 +974,7 @@ async function submitBlogSubscribe(event) {
     okEl.classList.remove('hidden');
     form.reset();
     document.querySelectorAll('.blog-subscribe-field-error').forEach(el => el.classList.remove('visible'));
-    document.querySelectorAll('.field-invalid').forEach(el => el.classList.remove('field-invalid'));
+    document.querySelectorAll('.field-invalid').forEach(el => { el.classList.remove('field-invalid'); el.setAttribute('aria-invalid', 'false'); });
     trackGtagEvent('generate_lead', { event_category: 'newsletter', event_label: 'blog_subscribe' });
   } catch (err) {
     console.error('Blog subscribe error:', err);
