@@ -1333,6 +1333,15 @@ async function createIssueForLead(leadData, paymentMeta = { paid: false }) {
   const data = await apiRes.json();
   if (!apiRes.ok) throw new Error(data.error || `HTTP ${apiRes.status}`);
 
+  try {
+    const sent = await sendLeadConfirmationEmail(leadData, data.identifier || data.id || 'tu expediente');
+    if (!sent) {
+      console.warn(`[lead-email] confirmation not sent for ${maskEmail(leadData.email)} (identifier: ${data.identifier || 'n/a'})`);
+    }
+  } catch (err) {
+    console.error(`[lead-email] confirmation failed for ${maskEmail(leadData.email)}: ${err.message}`);
+  }
+
   recentLeads.unshift({
     createdAt: new Date().toISOString(),
     nombre: leadData.nombre,
@@ -1808,6 +1817,48 @@ async function sendPortalCodeEmail(email, caseId, code) {
     subject: `Codigo de acceso para ${caseId}`,
     htmlContent: `<p>Tu codigo de acceso para <strong>${escapeHtml(caseId)}</strong> es:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${escapeHtml(code)}</p><p>Caduca en 10 minutos y solo se puede usar una vez.</p>`,
   };
+  const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  return res.ok;
+}
+
+function isValidEmailAddress(email) {
+  const value = String(email || '').trim().toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+async function sendLeadConfirmationEmail(leadData, identifier) {
+  const email = String(leadData?.email || '').trim().toLowerCase();
+  if (!BREVO_API_KEY) return false;
+  if (!isValidEmailAddress(email)) return false;
+  if (detectTestLeadReason(leadData)) return false;
+
+  const caseIdentifier = String(identifier || 'tu expediente').trim();
+  const subject = `Tu reclamación en LexReclama — Referencia ${caseIdentifier}`;
+  const htmlContent = [
+    `<p>Hola ${escapeHtml(leadData?.nombre || 'cliente')},</p>`,
+    `<p>Hemos recibido correctamente tu reclamación (<strong>${escapeHtml(leadData?.tipoLabel || 'Consulta legal')}</strong>).</p>`,
+    `<p>Tu referencia de expediente es <strong>${escapeHtml(caseIdentifier)}</strong>.</p>`,
+    '<p>Puedes seguir el estado de tu caso en el portal cliente: <a href="https://app.lexreclama.es">https://app.lexreclama.es</a></p>',
+    '<p>Plazo estimado para análisis inicial: <strong>3-5 días hábiles</strong>.</p>',
+    '<p>Gracias por confiar en LexReclama.</p>',
+    '<p>El equipo de LexReclama<br/>info@lexreclama.es</p>',
+  ].join('');
+
+  const body = {
+    sender: { name: 'LexReclama', email: 'no-reply@lexreclama.es' },
+    to: [{ email }],
+    subject,
+    htmlContent,
+  };
+
   const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
     method: 'POST',
     headers: {
