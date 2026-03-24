@@ -1155,6 +1155,12 @@ function normalizeApiLeadPayload(body) {
   if (!nombre || !email || !tipoReclamacion) {
     return { ok: false, error: 'Campos requeridos: nombre, email y tipo_reclamacion' };
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, error: 'Dirección de email inválida' };
+  }
+  if (nombre.length > 120) return { ok: false, error: 'Nombre demasiado largo' };
+  if (email.length > 254) return { ok: false, error: 'Email demasiado largo' };
+  if (descripcion.length > 4000) return { ok: false, error: 'Descripción demasiado larga (máx. 4000 caracteres)' };
 
   const payload = {
     ...body,
