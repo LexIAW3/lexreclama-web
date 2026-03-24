@@ -392,6 +392,7 @@ function renderCases(cases) {
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'case-card';
+    card.setAttribute('aria-label', `Caso ${c.identifier}: ${c.title} — Estado: ${c.statusLabel}`);
 
     const updated = new Date(c.updatedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -454,6 +455,20 @@ el.messageInput.addEventListener('input', () => {
   el.sendBtn.disabled = len === 0;
 });
 
+/* ─── Helper: request OTP code ─── */
+
+async function doRequestCode() {
+  const data = await api('/api/portal/request-code', {
+    method: 'POST',
+    body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
+  });
+  el.codeHelp.textContent = portalRequestCodeMessage(state.caseId, data.maskedEmail);
+  clearOtp();
+  el.verifyBtn.hidden = false;
+  startCountdown(Date.now() + (data.expiresInSec * 1000));
+  return data;
+}
+
 /* ─── Event: Login form ─── */
 
 el.loginForm.addEventListener('submit', async (event) => {
@@ -463,14 +478,7 @@ el.loginForm.addEventListener('submit', async (event) => {
   btn.disabled = true;
   state.caseId = String(el.caseInput.value || '').trim().toUpperCase();
   try {
-    const data = await api('/api/portal/request-code', {
-      method: 'POST',
-      body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
-    });
-    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId, data.maskedEmail);
-    clearOtp();
-    el.verifyBtn.hidden = false;
-    startCountdown(Date.now() + (data.expiresInSec * 1000));
+    await doRequestCode();
     showStep('code');
     el.otpCells[0].focus();
   } catch (err) {
@@ -508,14 +516,7 @@ el.resendBtn.addEventListener('click', async () => {
   el.resendBtn.disabled = true;
   clearErrors();
   try {
-    const data = await api('/api/portal/request-code', {
-      method: 'POST',
-      body: JSON.stringify({ caseId: state.caseId, csrfToken: readCsrfToken() }),
-    });
-    el.codeHelp.textContent = portalRequestCodeMessage(state.caseId, data.maskedEmail);
-    clearOtp();
-    el.verifyBtn.hidden = false;
-    startCountdown(Date.now() + (data.expiresInSec * 1000));
+    await doRequestCode();
     el.otpCells[0].focus();
   } catch (err) {
     setError(el.codeError, friendlyError(err));
