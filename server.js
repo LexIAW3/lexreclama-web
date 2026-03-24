@@ -2367,7 +2367,13 @@ const server = http.createServer(async (req, res) => {
       }
       const ext = path.extname(filePath);
       const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
-      if (ext === '.css' || ext === '.js') headers['Cache-Control'] = 'public, max-age=31536000, immutable';
+      if (ext === '.css' || ext === '.js') {
+        headers['Cache-Control'] = 'public, max-age=31536000, immutable';
+      } else if (ext && ext !== '.html') {
+        // Non-hashed static assets (logos, favicons, images, fonts, docs) should be cacheable,
+        // but with a shorter TTL so branding/content updates propagate quickly.
+        headers['Cache-Control'] = 'public, max-age=86400';
+      }
       if (ext === '.html') {
         const body = Buffer.from(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
         sendCompressed(req, res, headers, body);
