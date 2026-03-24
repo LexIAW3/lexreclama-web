@@ -151,7 +151,11 @@ function parseCookies(req) {
     if (idx === -1) return acc;
     const key = pair.slice(0, idx).trim();
     const value = pair.slice(idx + 1).trim();
-    acc[key] = decodeURIComponent(value);
+    try {
+      acc[key] = decodeURIComponent(value);
+    } catch {
+      acc[key] = value;
+    }
     return acc;
   }, {});
 }
