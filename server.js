@@ -719,7 +719,23 @@ function buildSitemapXml() {
     .map((slug) => `/blog/${slug}/`)
     .filter((urlPath) => !BLOG_REDIRECTS[urlPath]);
   const urls = [...staticUrls, ...blogUrls];
-  const body = urls.map((urlPath) => `  <url><loc>${SITE_URL}${urlPath}</loc></url>`).join('\n');
+
+  function urlLastMod(urlPath) {
+    // Map URL path → local HTML file to read mtime
+    const filePath = urlPath === '/'
+      ? path.join(STATIC_DIR, 'index.html')
+      : path.join(STATIC_DIR, urlPath.replace(/^\//, ''), 'index.html');
+    try {
+      const mtime = fs.statSync(filePath).mtime;
+      return mtime.toISOString().slice(0, 10); // YYYY-MM-DD
+    } catch {
+      return new Date().toISOString().slice(0, 10);
+    }
+  }
+
+  const body = urls
+    .map((urlPath) => `  <url><loc>${SITE_URL}${urlPath}</loc><lastmod>${urlLastMod(urlPath)}</lastmod></url>`)
+    .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
 }
 
