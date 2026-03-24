@@ -2444,7 +2444,7 @@ const server = http.createServer(async (req, res) => {
   // Security: block dotfiles (e.g. /.env, /.gitignore) and server-side source files
   const segments = url.pathname.split('/');
   const hasDotSegment = segments.some((s) => s.startsWith('.') && s.length > 1);
-  const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md']);
+  const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html']);
   const lastSegment = segments[segments.length - 1] || '';
   // Block internal file types — sources/drafts/configs/logs are not public assets
   const hasBlockedExtension = lastSegment.endsWith('.md')
