@@ -1816,6 +1816,7 @@ async function sendPortalCodeEmail(email, caseId, code) {
     to: [{ email }],
     subject: `Codigo de acceso para ${caseId}`,
     htmlContent: `<p>Tu codigo de acceso para <strong>${escapeHtml(caseId)}</strong> es:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${escapeHtml(code)}</p><p>Caduca en 10 minutos y solo se puede usar una vez.</p>`,
+    textContent: `Tu codigo de acceso para ${caseId} es: ${code}\n\nCaduca en 10 minutos y solo se puede usar una vez.`,
   };
   const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
     method: 'POST',
@@ -1852,11 +1853,28 @@ async function sendLeadConfirmationEmail(leadData, identifier) {
     '<p>El equipo de LexReclama<br/>info@lexreclama.es</p>',
   ].join('');
 
+  const textContent = [
+    `Hola ${leadData?.nombre || 'cliente'},`,
+    '',
+    `Hemos recibido correctamente tu reclamación (${leadData?.tipoLabel || 'Consulta legal'}).`,
+    `Tu referencia de expediente es: ${caseIdentifier}`,
+    '',
+    'Puedes seguir el estado de tu caso en el portal cliente:',
+    'https://app.lexreclama.es',
+    '',
+    'Plazo estimado para análisis inicial: 3-5 días hábiles.',
+    '',
+    'Gracias por confiar en LexReclama.',
+    'El equipo de LexReclama',
+    'info@lexreclama.es',
+  ].join('\n');
+
   const body = {
     sender: { name: 'LexReclama', email: 'no-reply@lexreclama.es' },
     to: [{ email }],
     subject,
     htmlContent,
+    textContent,
   };
 
   const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
