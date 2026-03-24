@@ -1825,7 +1825,7 @@ function extractClientEmail(issue) {
 async function sendPortalCodeEmail(email, caseId, code) {
   if (!BREVO_API_KEY) return false;
   const body = {
-    sender: { name: 'LexReclama', email: 'no-reply@lexreclama.es' },
+    sender: { name: 'LexReclama', email: 'info@lexreclama.es' },
     to: [{ email }],
     subject: `Codigo de acceso para ${caseId}`,
     htmlContent: `<p>Tu codigo de acceso para <strong>${escapeHtml(caseId)}</strong> es:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${escapeHtml(code)}</p><p>Caduca en 10 minutos y solo se puede usar una vez.</p>`,
@@ -1883,7 +1883,7 @@ async function sendLeadConfirmationEmail(leadData, identifier) {
   ].join('\n');
 
   const body = {
-    sender: { name: 'LexReclama', email: 'no-reply@lexreclama.es' },
+    sender: { name: 'LexReclama', email: 'info@lexreclama.es' },
     to: [{ email }],
     subject,
     htmlContent,
