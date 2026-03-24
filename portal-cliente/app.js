@@ -73,10 +73,19 @@ async function api(path, options = {}) {
   if (opts.body && opts.headers['Content-Type'] === undefined) {
     opts.headers['Content-Type'] = 'application/json';
   }
-  const res  = await fetch(path, opts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Error de servidor');
-  return data;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
+  try {
+    const res  = await fetch(path, { ...opts, signal: controller.signal });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Error de servidor');
+    return data;
+  } catch (err) {
+    if (err.name === 'AbortError') throw new Error('La solicitud tardó demasiado. Inténtalo de nuevo.');
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function showStep(step) {
