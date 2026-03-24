@@ -762,19 +762,19 @@ function sectionSlice(fullText, startMarker, endMarker) {
 
 const LEGAL_TEXTS = readLegalTexts();
 const LEGAL_PAGES = {
-  '/aviso-legal': {
+  '/aviso-legal/': {
     title: 'Aviso Legal',
     body: sectionSlice(LEGAL_TEXTS, '# 1. AVISO LEGAL', '# 2. POLÍTICA DE PRIVACIDAD'),
   },
-  '/politica-privacidad': {
+  '/politica-privacidad/': {
     title: 'Política de Privacidad',
     body: sectionSlice(LEGAL_TEXTS, '# 2. POLÍTICA DE PRIVACIDAD', '# 3. POLÍTICA DE COOKIES'),
   },
-  '/politica-cookies': {
+  '/politica-cookies/': {
     title: 'Política de Cookies',
     body: sectionSlice(LEGAL_TEXTS, '# 3. POLÍTICA DE COOKIES', '# 4. CONDICIONES GENERALES DE CONTRATACIÓN'),
   },
-  '/condiciones': {
+  '/condiciones/': {
     title: 'Condiciones Generales de Contratación',
     body: sectionSlice(LEGAL_TEXTS, '# 4. CONDICIONES GENERALES DE CONTRATACIÓN', '# 5. TEXTOS DE CONSENTIMIENTO — FORMULARIO DE CONTACTO / INTAKE'),
   },
@@ -807,9 +807,10 @@ function sendCompressed(req, res, headers, body, statusCode = 200) {
 }
 
 function safeEqual(a, b) {
-  const left = Buffer.from(a);
-  const right = Buffer.from(b);
-  if (left.length !== right.length) return false;
+  // Hash both values to a fixed-length digest so the comparison is constant-time
+  // regardless of input length — avoids timing side-channel that leaks password length.
+  const left = crypto.createHash('sha256').update(String(a)).digest();
+  const right = crypto.createHash('sha256').update(String(b)).digest();
   return crypto.timingSafeEqual(left, right);
 }
 
@@ -2249,7 +2250,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
   }
-  if (req.method === 'GET' && handleLegalPage(req, res, url.pathname, nonce)) return;
+  if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
     const clientIp = getClientIp(req);
     const rate = consumeRateLimit(RATE_LIMIT_RULES['/robots.txt'], clientIp);
