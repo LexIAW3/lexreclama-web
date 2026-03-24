@@ -1946,6 +1946,7 @@ async function handleAdminPortalTestCode(req, res, url) {
     attempts: 0,
     used: false,
     expiresAtMs: Date.now() + PORTAL_CODE_TTL_MS,
+    adminTest: true,
   });
   res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
   res.end(JSON.stringify({ ok: true, caseId, code, expiresInSec: Math.floor(PORTAL_CODE_TTL_MS / 1000) }));
@@ -1957,6 +1958,18 @@ async function handlePortalRequestCode(req, res) {
   if (!isCaseIdentifierValid(caseId)) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Numero de caso invalido' }));
+    return;
+  }
+
+  // If an active admin test code exists for this caseId, don't overwrite it.
+  const existingAdminCode = portalAuthCodes.get(caseId);
+  if (existingAdminCode && existingAdminCode.adminTest && !existingAdminCode.used && existingAdminCode.expiresAtMs > Date.now()) {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      ok: true,
+      maskedEmail: maskEmail(existingAdminCode.email),
+      expiresInSec: Math.floor((existingAdminCode.expiresAtMs - Date.now()) / 1000),
+    }));
     return;
   }
 
