@@ -136,7 +136,9 @@ function setActiveTab(tab) {
   el.tabDocuments.hidden = !isDocuments;
   el.tabMessages.hidden = !isMessages;
   el.detailTabs.forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.tab === tab);
+    const isActive = btn.dataset.tab === tab;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
   });
 }
 
@@ -314,7 +316,12 @@ function renderDocuments(documents) {
 
     const link = document.createElement('a');
     link.className = 'doc-link';
-    link.href = doc.url || '#';
+    // Only allow https: URLs — reject javascript: or data: protocols (XSS mitigation).
+    const safeUrl = (() => {
+      if (!doc.url) return '#';
+      try { return new URL(doc.url).protocol === 'https:' ? doc.url : '#'; } catch { return '#'; }
+    })();
+    link.href = safeUrl;
     link.target = '_blank';
     link.rel = 'noopener';
     link.textContent = 'Descargar';
@@ -431,8 +438,9 @@ async function loadSession() {
     renderCases(data.cases || []);
     showStep('app');
     return true;
-  } catch {
-    return false;
+  } catch (err) {
+    // Re-throw so callers (codeForm, messageForm) can surface the error to the user.
+    throw err;
   } finally {
     setLoading(false);
   }
@@ -563,6 +571,13 @@ el.logoutBtn.addEventListener('click', async () => {
     method: 'POST',
     body: JSON.stringify({ csrfToken: readCsrfToken() }),
   }).catch(() => null);
+  // Reset in-memory state so no case data lingers if another person
+  // uses the same browser tab after logout.
+  state.caseId = '';
+  state.activeCase = null;
+  state.cases = [];
+  if (state.timer !== null) { window.clearInterval(state.timer); state.timer = null; }
+  el.caseInput.value = '';
   el.logoutBtn.disabled = false;
   showStep('login');
 });

@@ -113,26 +113,26 @@
         <p id="detail-status"></p>
         <p id="detail-updated" class="muted"></p>
 
-        <nav class="detail-tabs" aria-label="Secciones del caso">
-          <button type="button" class="detail-tab active" data-tab="overview">Resumen</button>
-          <button type="button" class="detail-tab" data-tab="documents">Documentos</button>
-          <button type="button" class="detail-tab" data-tab="messages">Mensajes</button>
+        <nav class="detail-tabs" role="tablist" aria-label="Secciones del caso">
+          <button type="button" class="detail-tab active" data-tab="overview" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-btn-overview">Resumen</button>
+          <button type="button" class="detail-tab" data-tab="documents" role="tab" aria-selected="false" aria-controls="tab-documents" id="tab-btn-documents">Documentos</button>
+          <button type="button" class="detail-tab" data-tab="messages" role="tab" aria-selected="false" aria-controls="tab-messages" id="tab-btn-messages">Mensajes</button>
         </nav>
 
-        <section id="tab-overview" class="tab-panel">
+        <section id="tab-overview" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-overview">
           <h4>Progreso del caso</h4>
           <ul class="steps-list" id="detail-steps"></ul>
           <h4>Próximo paso</h4>
           <p class="next-step" id="detail-next-step"></p>
         </section>
 
-        <section id="tab-documents" class="tab-panel" hidden>
+        <section id="tab-documents" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-documents" hidden>
           <h4>Documentos</h4>
           <ul class="documents-list" id="detail-documents"></ul>
           <p class="empty-inline" id="detail-documents-empty" hidden>Aún no hay documentos disponibles para descargar.</p>
         </section>
 
-        <section id="tab-messages" class="tab-panel" hidden>
+        <section id="tab-messages" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-messages" hidden>
           <h4>Mensajes</h4>
           <ul class="messages" id="detail-messages"></ul>
 
