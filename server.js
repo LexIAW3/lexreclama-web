@@ -2446,8 +2446,11 @@ const server = http.createServer(async (req, res) => {
   const hasDotSegment = segments.some((s) => s.startsWith('.') && s.length > 1);
   const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md']);
   const lastSegment = segments[segments.length - 1] || '';
-  // Block markdown and log files — internal content sources/drafts, not public assets
-  const hasBlockedExtension = lastSegment.endsWith('.md') || lastSegment.endsWith('.log');
+  // Block internal file types — sources/drafts/configs/logs are not public assets
+  const hasBlockedExtension = lastSegment.endsWith('.md')
+    || lastSegment.endsWith('.log')
+    || lastSegment.endsWith('.conf')
+    || lastSegment.endsWith('.sh');
   if (hasDotSegment || BLOCKED_FILENAMES.has(lastSegment) || hasBlockedExtension) {
     send404(req, res, csrfToken, nonce); return;
   }
