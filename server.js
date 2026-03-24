@@ -1208,6 +1208,13 @@ function normalizeLeadPayload(body) {
   if (!nombre || !email || !tipo || !privacidadAceptada || !consentimientoTimestamp || !versionPolitica) {
     return { ok: false, error: 'Campos requeridos: nombre, email, tipo y consentimiento RGPD' };
   }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, error: 'Dirección de email inválida' };
+  }
+  if (nombre.length > 120) return { ok: false, error: 'Nombre demasiado largo' };
+  if (email.length > 254) return { ok: false, error: 'Email demasiado largo' };
+  if (telefono.length > 30) return { ok: false, error: 'Teléfono demasiado largo' };
+  if (descripcion.length > 4000) return { ok: false, error: 'Descripción demasiado larga (máx. 4000 caracteres)' };
   if (idempotencyKey && idempotencyKey.length > 128) {
     return { ok: false, error: 'idempotencyKey inválida' };
   }
