@@ -2245,7 +2245,7 @@ const server = http.createServer(async (req, res) => {
       "connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com",
       `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://js.stripe.com`,
       `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
-      "font-src 'self' https://fonts.gstatic.com data:",
+      "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
       "frame-src https://js.stripe.com https://checkout.stripe.com",
       "upgrade-insecure-requests",
