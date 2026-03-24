@@ -271,7 +271,7 @@ img, svg { display: block; }
   color: #fff;
   font-weight: 600;
   text-decoration: none;
-  border-radius: 0 0 var(--radius) 0;
+  border-radius: 0 0 var(--r-sm) 0;
   transition: top 0.1s;
 }
 .skip-link:focus {
