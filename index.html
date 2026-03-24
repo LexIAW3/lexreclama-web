@@ -427,15 +427,15 @@
         <div class="calc-panel active" id="panel-deuda">
           <div class="calc-fields">
             <div class="field">
-              <label>Importe de la deuda (€)</label>
+              <label for="deuda-importe">Importe de la deuda (€)</label>
               <input type="number" id="deuda-importe" placeholder="5000" min="0" />
             </div>
             <div class="field">
-              <label>Tiempo impagada (meses)</label>
+              <label for="deuda-meses">Tiempo impagada (meses)</label>
               <input type="number" id="deuda-meses" placeholder="6" min="0" />
             </div>
             <div class="field">
-              <label>¿Tienes documentación? (contrato, facturas…)</label>
+              <label for="deuda-docs">¿Tienes documentación? (contrato, facturas…)</label>
               <select id="deuda-docs">
                 <option value="si">Sí, tengo documentación</option>
                 <option value="parcial">Parcial</option>
@@ -450,7 +450,7 @@
         <div class="calc-panel" id="panel-banco">
           <div class="calc-fields">
             <div class="field">
-              <label>Tipo de reclamación</label>
+              <label for="banco-tipo">Tipo de reclamación</label>
               <select id="banco-tipo">
                 <option value="gastos">Gastos hipotecarios</option>
                 <option value="suelo">Cláusula suelo</option>
@@ -459,7 +459,7 @@
               </select>
             </div>
             <div class="field">
-              <label>¿Cuándo firmaste la hipoteca?</label>
+              <label for="calc-banco-anio-firma">¿Cuándo firmaste la hipoteca?</label>
               <select id="calc-banco-anio-firma">
                 <option value="antes-2000">Antes de 2000</option>
                 <option value="2000-2007">2000-2007</option>
@@ -469,19 +469,19 @@
               </select>
             </div>
             <div class="field banco-field" id="campo-hipoteca">
-              <label>Importe de la hipoteca (€)</label>
+              <label for="banco-hipoteca">Importe de la hipoteca (€)</label>
               <input type="number" id="banco-hipoteca" placeholder="150000" min="0" />
             </div>
             <div class="field banco-field hidden" id="campo-suelo-anios">
-              <label>Años con cláusula suelo</label>
+              <label for="banco-anios">Años con cláusula suelo</label>
               <input type="number" id="banco-anios" placeholder="8" min="0" max="30" />
             </div>
             <div class="field banco-field hidden" id="campo-suelo-cuota">
-              <label>Cuota mensual hipotecaria (€)</label>
+              <label for="banco-cuota">Cuota mensual hipotecaria (€)</label>
               <input type="number" id="banco-cuota" placeholder="600" min="0" />
             </div>
             <div class="field banco-field hidden" id="campo-comision">
-              <label>Comisión de apertura pagada (€)</label>
+              <label for="banco-comision">Comisión de apertura pagada (€)</label>
               <input type="number" id="banco-comision" placeholder="1500" min="0" />
             </div>
           </div>
@@ -492,11 +492,11 @@
         <div class="calc-panel" id="panel-multa">
           <div class="calc-fields">
             <div class="field">
-              <label>Importe de la multa (€)</label>
+              <label for="multa-importe">Importe de la multa (€)</label>
               <input type="number" id="multa-importe" placeholder="200" min="0" />
             </div>
             <div class="field">
-              <label>Tipo de multa</label>
+              <label for="multa-tipo">Tipo de multa</label>
               <select id="multa-tipo">
                 <option value="trafico">Tráfico (DGT)</option>
                 <option value="municipal">Municipal / Ayuntamiento</option>
@@ -505,7 +505,7 @@
               </select>
             </div>
             <div class="field">
-              <label>¿Tienes motivos para recurrir?</label>
+              <label for="multa-motivo">¿Tienes motivos para recurrir?</label>
               <select id="multa-motivo">
                 <option value="fuerte">Sí, tengo pruebas claras</option>
                 <option value="posible">Puede que sí</option>
