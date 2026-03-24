@@ -538,10 +538,10 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
     <div class="container footer-inner">
       <a href="/" class="logo" aria-label="LexReclama — inicio">LexReclama<span>.</span></a>
       <div class="footer-links">
-        <a href="/aviso-legal">Aviso legal</a>
-        <a href="/politica-privacidad">Política de privacidad</a>
-        <a href="/politica-cookies">Política de cookies</a>
-        <a href="/condiciones">Condiciones generales</a>
+        <a href="/aviso-legal/">Aviso legal</a>
+        <a href="/politica-privacidad/">Política de privacidad</a>
+        <a href="/politica-cookies/">Política de cookies</a>
+        <a href="/condiciones/">Condiciones generales</a>
       </div>
       <p class="footer-copy">© 2026 LexReclama · <a href="mailto:hola@lexreclama.es">hola@lexreclama.es</a></p>
     </div>
