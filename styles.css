@@ -6155,6 +6155,13 @@ html[data-theme='light'] .hvp-card--main {
   color: var(--danger, #dc2626);
 }
 
+.file-upload-error {
+  margin: 0.4rem 0 0;
+  font-size: 0.82rem;
+  color: var(--danger, #dc2626);
+  line-height: 1.4;
+}
+
 /* ─── RADIO GROUP ────────────────────────────────────────── */
 .radio-group {
   display: flex;

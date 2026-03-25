@@ -481,6 +481,10 @@ const BLOG_ARTICLES_CACHE_TTL_MS = 60 * 1000; // 60 s
 let blogArticlesCache = null;
 let blogArticlesCachedAtMs = 0;
 
+const SITEMAP_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min
+let sitemapCache = null;
+let sitemapCachedAtMs = 0;
+
 function listBlogArticles() {
   const now = Date.now();
   if (blogArticlesCache && now - blogArticlesCachedAtMs < BLOG_ARTICLES_CACHE_TTL_MS) {
@@ -707,7 +711,7 @@ function renderPillarPage(pathname, nonce = '') {
   });
 }
 
-function buildSitemapXml() {
+function buildSitemapXmlUncached() {
   // Legal pages are noindex — excluded from sitemap (crawl budget, Google guidelines)
   const staticUrls = [
     '/',
@@ -743,6 +747,16 @@ function buildSitemapXml() {
     .map((urlPath) => `  <url><loc>${SITE_URL}${urlPath}</loc><lastmod>${urlLastMod(urlPath)}</lastmod></url>`)
     .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+}
+
+function buildSitemapXml() {
+  const now = Date.now();
+  if (sitemapCache && now - sitemapCachedAtMs < SITEMAP_CACHE_TTL_MS) {
+    return sitemapCache;
+  }
+  sitemapCache = buildSitemapXmlUncached();
+  sitemapCachedAtMs = now;
+  return sitemapCache;
 }
 
 const MAX_BODY_BYTES = 50 * 1024; // 50 KB
@@ -1077,7 +1091,6 @@ async function handleAdmin(req, res) {
 
 async function uploadDocumentToOcr(issueId, file) {
   try {
-    const FormDataNode = (await import('node:buffer')).Buffer; // just to ensure node exists
     // Build multipart manually using node's built-in capabilities
     const boundary = `----FormBoundary${crypto.randomBytes(16).toString('hex')}`;
     const CRLF = '\r\n';
@@ -1849,7 +1862,7 @@ async function sendPortalCodeEmail(email, caseId, code) {
   const body = {
     sender: { name: 'LexReclama', email: 'info@lexreclama.es' },
     to: [{ email }],
-    subject: `Codigo de acceso para ${caseId}`,
+    subject: `Código de acceso para ${caseId}`,
     htmlContent: `<p>Tu codigo de acceso para <strong>${escapeHtml(caseId)}</strong> es:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${escapeHtml(code)}</p><p>Caduca en 10 minutos y solo se puede usar una vez.</p>`,
     textContent: `Tu codigo de acceso para ${caseId} es: ${code}\n\nCaduca en 10 minutos y solo se puede usar una vez.`,
   };

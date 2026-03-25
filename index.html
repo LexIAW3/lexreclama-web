@@ -103,9 +103,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2" crossorigin />
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" onload="this.rel='stylesheet'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" /></noscript>
   <script>document.documentElement.setAttribute('data-theme', 'light');</script>
   <link rel="stylesheet" href="/styles.min.css" />
@@ -177,6 +175,9 @@
       <a href="#contacto" class="btn btn-primary">Consulta gratuita</a>
     </div>
   </nav>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content">
 
   <!-- HERO -->
   <section class="hero">
@@ -442,7 +443,7 @@
               </select>
             </div>
           </div>
-          <button id="btn-calc-deuda" class="btn btn-primary">Calcular</button>
+          <button type="button" id="btn-calc-deuda" class="btn btn-primary">Calcular</button>
         </div>
 
         <!-- BANCO -->
@@ -484,7 +485,7 @@
               <input type="number" id="banco-comision" placeholder="1500" min="0" />
             </div>
           </div>
-          <button id="btn-calc-banco" class="btn btn-primary">Calcular</button>
+          <button type="button" id="btn-calc-banco" class="btn btn-primary">Calcular</button>
         </div>
 
         <!-- MULTA -->
@@ -512,7 +513,7 @@
               </select>
             </div>
           </div>
-          <button id="btn-calc-multa" class="btn btn-primary">Calcular</button>
+          <button type="button" id="btn-calc-multa" class="btn btn-primary">Calcular</button>
         </div>
 
         <!-- RESULTADO -->
@@ -929,6 +930,7 @@
               <input type="file" id="file-input" name="files" multiple accept=".pdf,.jpg,.jpeg,.png" class="file-input-hidden" aria-hidden="true" data-file-input />
             </div>
             <ul id="file-list" class="file-list" aria-live="polite" data-file-list></ul>
+            <p class="file-upload-error hidden" role="alert" data-file-error></p>
           </div>
 
           <div class="field">
@@ -989,6 +991,8 @@
       </div>
     </div>
   </section>
+
+  </main><!-- end main-content -->
 
   <!-- FOOTER PRE-CTA -->
   <div class="footer-pre-cta">

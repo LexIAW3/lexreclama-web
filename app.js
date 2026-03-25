@@ -134,6 +134,7 @@ function renderFileList(state) {
   list.querySelectorAll('.file-item-remove').forEach(btn => {
     btn.addEventListener('click', () => {
       state.files.splice(Number(btn.dataset.index), 1);
+      clearFileError(state);
       renderFileList(state);
     });
   });
@@ -141,6 +142,20 @@ function renderFileList(state) {
 
 function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showFileError(state, message) {
+  const el = state?.errorEl;
+  if (!el) return;
+  el.textContent = message;
+  el.classList.remove('hidden');
+}
+
+function clearFileError(state) {
+  const el = state?.errorEl;
+  if (!el) return;
+  el.textContent = '';
+  el.classList.add('hidden');
 }
 
 function addFiles(state, newFiles) {
@@ -159,7 +174,11 @@ function addFiles(state, newFiles) {
     }
     state.files.push(file);
   }
-  if (errors.length) alert(errors.join('\n'));
+  if (errors.length) {
+    showFileError(state, errors.join(' · '));
+  } else {
+    clearFileError(state);
+  }
   renderFileList(state);
 }
 
@@ -190,9 +209,10 @@ function initFileUpload(root = document) {
     const dropZone = container.querySelector('[data-file-drop-zone]');
     const fileInput = container.querySelector('[data-file-input]');
     const fileList = container.querySelector('[data-file-list]');
+    const fileError = container.querySelector('[data-file-error]');
     if (!dropZone || !fileInput || !fileList) return;
 
-    const state = { files: [], inputEl: fileInput, listEl: fileList };
+    const state = { files: [], inputEl: fileInput, listEl: fileList, errorEl: fileError };
     fileUploadStates.set(container, state);
     container.dataset.fileUploadReady = '1';
 
