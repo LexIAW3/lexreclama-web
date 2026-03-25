@@ -53,6 +53,27 @@ is_expected_ocr_server() {
   [[ "$body" == *'"ok":true'* ]]
 }
 
+# Returns true (exit 0) if the running OCR server is serving stale code:
+# i.e. server.js was modified AFTER the server process started. LEX-599
+ocr_server_is_stale() {
+  local server_js
+  server_js="$(dirname "$SCRIPT_DIR")/ocr-server/server.js"
+  local pid
+  pid="$(lsof -tiTCP:"$OCR_PORT" -sTCP:LISTEN 2>/dev/null | head -1 || true)"
+  [[ -z "$pid" ]] && return 1  # not running — not "stale", just down
+
+  local proc_start
+  proc_start="$(stat -c %Y /proc/"$pid" 2>/dev/null || true)"
+  [[ -z "$proc_start" ]] && return 1  # can't determine start time
+
+  local file_mtime
+  file_mtime="$(stat -c %Y "$server_js" 2>/dev/null || true)"
+  [[ -z "$file_mtime" ]] && return 1  # can't determine file mtime
+
+  # Stale if server.js is newer than the process start (with 5 s tolerance)
+  (( file_mtime > proc_start + 5 ))
+}
+
 free_port() {
   local port="$1"
   local pids
@@ -152,6 +173,9 @@ elif web_server_is_stale; then
 fi
 
 if ! is_expected_ocr_server; then
+  restart_ocr_server || status=1
+elif ocr_server_is_stale; then
+  log "OCR server is stale (server.js modified after process start). Restarting to apply new code."
   restart_ocr_server || status=1
 fi
 
