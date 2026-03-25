@@ -17,6 +17,7 @@ const BLOG_DIR = path.join(__dirname, 'blog');
 const LEGAL_TEXTS_PATH = path.join(__dirname, 'legal-texts.md');
 const PAPERCLIP_API = process.env.PAPERCLIP_API_URL || 'http://127.0.0.1:3100';
 const OCR_SERVER = process.env.OCR_SERVER_URL || 'http://127.0.0.1:3200';
+const OCR_SHARED_SECRET = String(process.env.OCR_SHARED_SECRET || process.env.PAPERCLIP_API_KEY || process.env.PAPERCLIP_SUBMIT_KEY || '').trim();
 const DOCUMENTS_DIR = path.join(__dirname, '..', 'documents');
 const SITE_URL = 'https://www.lexreclama.es';
 const SUBMIT_API_KEY = process.env.PAPERCLIP_SUBMIT_KEY;
@@ -1110,6 +1111,7 @@ async function uploadDocumentToOcr(issueId, file) {
       headers: {
         'Content-Type': `multipart/form-data; boundary=${boundary}`,
         'Content-Length': String(fullBody.length),
+        ...(OCR_SHARED_SECRET ? { 'x-ocr-shared-secret': OCR_SHARED_SECRET } : {}),
       },
       body: fullBody,
     });
