@@ -6,7 +6,6 @@ const SUBSCRIBE_ENDPOINT = '/api/subscribe';
 const API_LEAD_ENDPOINT = '/api/lead';
 const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
-const CONTACT_PHONE_DISPLAY = '+34 900 000 000';
 const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
 const CSRF_INPUT_NAME = 'csrfToken';
 
@@ -1125,7 +1124,7 @@ function createContactModalElement() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <div>
               <strong>¡Recibido!</strong>
-              <p>Solicitud recibida. Si te urge, llámanos al ${CONTACT_PHONE_DISPLAY}.</p>
+              <p>Solicitud recibida. Nos pondremos en contacto en 24-48 h hábiles.</p>
             </div>
           </div>
 

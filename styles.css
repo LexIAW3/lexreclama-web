@@ -6177,7 +6177,7 @@ html[data-theme='light'] .hvp-card--main {
 .file-upload-error {
   margin: 0.4rem 0 0;
   font-size: 0.82rem;
-  color: var(--danger, #dc2626);
+  color: var(--error);
   line-height: 1.4;
 }
 
