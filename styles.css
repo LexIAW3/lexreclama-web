@@ -1828,6 +1828,17 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   color: rgba(255, 255, 255, 0.75);
 }
 
+.blog-subscribe-consent .checkbox-label {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+}
+
+.blog-subscribe-consent .checkbox-label a {
+  color: var(--white);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .blog-subscribe-field-error {
   font-size: 0.78rem;
   color: var(--error);
@@ -1915,6 +1926,14 @@ html[data-theme='light'] .blog-subscribe-bullets li::before {
 
 html[data-theme='light'] .blog-subscribe-row label {
   color: rgba(10, 10, 10, 0.76);
+}
+
+html[data-theme='light'] .blog-subscribe-consent .checkbox-label {
+  color: rgba(10, 10, 10, 0.72);
+}
+
+html[data-theme='light'] .blog-subscribe-consent .checkbox-label a {
+  color: #1d4ed8;
 }
 
 html[data-theme='light'] .blog-subscribe-antispam {

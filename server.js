@@ -1601,16 +1601,25 @@ function normalizeSubscribePayload(payload) {
   const email = String(payload?.email || '').trim().toLowerCase();
   const nombre = String(payload?.nombre || '').trim();
   const tipoReclamacion = String(payload?.tipo_reclamacion || '').trim().toLowerCase();
+  const privacidadAceptada = payload?.privacidadAceptada === true || String(payload?.privacidadAceptada || '').toLowerCase() === 'true';
+  const consentimientoTimestamp = String(payload?.consentimientoTimestamp || '').trim();
+  const versionPolitica = String(payload?.versionPolitica || '').trim();
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   if (!emailOk) return { ok: false, error: 'Email no válido' };
   if (nombre.length > 120) return { ok: false, error: 'Nombre demasiado largo' };
   if (tipoReclamacion.length > 80) return { ok: false, error: 'Tipo de reclamación demasiado largo' };
+  if (!privacidadAceptada || !consentimientoTimestamp || !versionPolitica) {
+    return { ok: false, error: 'Debes aceptar la política de privacidad para suscribirte' };
+  }
   return {
     ok: true,
     value: {
       email,
       nombre,
       tipoReclamacion,
+      privacidadAceptada,
+      consentimientoTimestamp,
+      versionPolitica,
     },
   };
 }
@@ -1621,6 +1630,9 @@ async function subscribeContactInBrevo(payload) {
   const attributes = {};
   if (payload.nombre) attributes.NOMBRE = payload.nombre;
   if (payload.tipoReclamacion) attributes.TIPO_RECLAMACION = payload.tipoReclamacion;
+  attributes.PRIVACIDAD_ACEPTADA = 'true';
+  attributes.CONSENTIMIENTO_TIMESTAMP = payload.consentimientoTimestamp;
+  attributes.VERSION_POLITICA = payload.versionPolitica;
 
   const body = {
     email: payload.email,

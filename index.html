@@ -719,6 +719,13 @@
             <input type="email" id="blog-subscribe-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
             <span class="blog-subscribe-field-error" id="blog-subscribe-email-error">Introduce un email válido para recibir la guía.</span>
           </div>
+          <div class="blog-subscribe-consent">
+            <label class="checkbox-label" for="blog-subscribe-privacidad">
+              <input type="checkbox" id="blog-subscribe-privacidad" name="privacidad" required />
+              <span>He leído y acepto la <a href="/politica-privacidad/" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.</span>
+            </label>
+            <span class="blog-subscribe-field-error" id="blog-subscribe-privacidad-error">Debes aceptar la Política de Privacidad para suscribirte.</span>
+          </div>
           <input type="hidden" id="blog-subscribe-tipo" name="tipo_reclamacion" value="banco" />
           <button type="submit" class="btn btn-primary" id="blog-subscribe-btn">
             <span id="blog-subscribe-btn-text">Enviarme la guía gratuita →</span>

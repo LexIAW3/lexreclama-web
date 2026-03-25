@@ -944,12 +944,15 @@ async function submitBlogSubscribe(event) {
   // Inline validation
   const nombreInput = document.getElementById('blog-subscribe-nombre');
   const emailInput = document.getElementById('blog-subscribe-email');
+  const privacidadInput = document.getElementById('blog-subscribe-privacidad');
   const nombreError = document.getElementById('blog-subscribe-nombre-error');
   const emailError = document.getElementById('blog-subscribe-email-error');
+  const privacidadError = document.getElementById('blog-subscribe-privacidad-error');
   let valid = true;
 
   const nombre = (nombreInput?.value || '').trim();
   const email = (emailInput?.value || '').trim();
+  const privacidadAceptada = !!privacidadInput?.checked;
 
   if (nombreInput && nombreError) {
     const empty = !nombre;
@@ -967,6 +970,14 @@ async function submitBlogSubscribe(event) {
     if (invalid) valid = false;
   }
 
+  if (privacidadInput && privacidadError) {
+    const invalid = !privacidadAceptada;
+    privacidadError.classList.toggle('visible', invalid);
+    privacidadInput.classList.toggle('field-invalid', invalid);
+    privacidadInput.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+    if (invalid) valid = false;
+  }
+
   if (!valid) return;
 
   subscribeSubmissionInFlight = true;
@@ -981,6 +992,9 @@ async function submitBlogSubscribe(event) {
     email,
     nombre,
     tipo_reclamacion: (document.getElementById('blog-subscribe-tipo')?.value || '').trim(),
+    privacidadAceptada,
+    consentimientoTimestamp: new Date().toISOString(),
+    versionPolitica: PRIVACY_POLICY_VERSION,
     csrfToken: getCsrfToken(),
   };
 
