@@ -121,6 +121,7 @@ function detectTestLeadReason(leadData) {
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const rateLimitMap = new Map();
 const RATE_LIMIT_RULES = {
+  '/health': { scope: 'health', max: 60, windowMs: 60 * 1000 },
   '/submit-lead': { scope: 'submit-lead', max: 5 },
   '/api/lead': { scope: 'api-lead', max: 8 },
   '/admin': { scope: 'admin-login', max: 10 },
@@ -350,13 +351,14 @@ function logAdminAudit(req, outcome, detail = '') {
 
 function consumeRateLimit(rule, ip) {
   const now = Date.now();
-  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const windowMs = Number.isFinite(rule?.windowMs) && rule.windowMs > 0 ? rule.windowMs : RATE_LIMIT_WINDOW_MS;
+  const windowStart = now - windowMs;
   const key = `${rule.scope}:${ip || 'unknown'}`;
   const current = rateLimitMap.get(key) || [];
   const validHits = current.filter((timestamp) => timestamp > windowStart);
   if (validHits.length >= rule.max) {
     const oldest = validHits[0];
-    const retryAfterSec = Math.max(1, Math.ceil((oldest + RATE_LIMIT_WINDOW_MS - now) / 1000));
+    const retryAfterSec = Math.max(1, Math.ceil((oldest + windowMs - now) / 1000));
     rateLimitMap.set(key, validHits);
     return { limited: true, retryAfterSec };
   }
@@ -2239,6 +2241,22 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const normalizedPath = normalizePathname(url.pathname);
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/health') {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/health'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    if (req.method === 'HEAD') {
+      res.end();
+      return;
+    }
+    res.end(JSON.stringify({ ok: true, uptime: Math.floor(process.uptime()) }));
+    return;
+  }
   const csrfToken = getOrCreateCsrfToken(req, res);
   const nonce = generateNonce();
   // CORS: allow cross-origin only for public static assets (no API/portal routes)
@@ -2364,11 +2382,6 @@ const server = http.createServer(async (req, res) => {
       await handlePortalCaseMessage(req, res, caseId);
       return;
     }
-  }
-  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-    res.end(JSON.stringify({ ok: true, uptime: Math.floor(process.uptime()) }));
-    return;
   }
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
