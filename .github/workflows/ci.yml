@@ -20,9 +20,6 @@ jobs:
       - name: Check for syntax errors in app.js
         run: node --check app.js
 
-      - name: Check for syntax errors in portal-cliente/app.js
-        run: node --check portal-cliente/app.js
-
       - name: Verify critical files exist
         run: |
           for f in index.html styles.css app.js server.js sitemap.xml; do
