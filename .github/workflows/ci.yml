@@ -47,10 +47,12 @@ jobs:
           error=0
           for f in $(find . -name "*.html" -not -path "./node_modules/*" -not -path "./.github/*"); do
             if ! grep -q "<!DOCTYPE html>" "$f" && ! grep -q "<!doctype html>" "$f"; then
-              echo "WARNING: $f missing DOCTYPE"
+              echo "ERROR: $f missing DOCTYPE"
+              error=1
             fi
             if grep -q "TODO\|FIXME\|PLACEHOLDER" "$f"; then
-              echo "WARNING: $f contains TODO/FIXME/PLACEHOLDER"
+              echo "ERROR: $f contains TODO/FIXME/PLACEHOLDER"
+              error=1
             fi
           done
           exit $error
