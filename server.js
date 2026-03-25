@@ -2365,6 +2365,11 @@ const server = http.createServer(async (req, res) => {
       return;
     }
   }
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    res.end(JSON.stringify({ ok: true, uptime: Math.floor(process.uptime()) }));
+    return;
+  }
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
     const clientIp = getClientIp(req);
