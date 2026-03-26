@@ -298,10 +298,13 @@ function validateCsrfToken(req, res) {
 }
 
 function getClientIp(req) {
-  const raw = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
-  const sanitized = /^[\da-fA-F.:]+$/.test(raw) ? raw : (req.socket.remoteAddress || 'unknown');
-  const ipv4Mapped = sanitized.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-  return ipv4Mapped ? ipv4Mapped[1] : sanitized;
+  const headerRealIp = String(req.headers['x-real-ip'] || '').trim();
+  const headerForwardedFor = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  const socketIp = String(req.socket.remoteAddress || '').trim();
+  const candidate = headerRealIp || headerForwardedFor || socketIp || 'unknown';
+  const ipv4Mapped = candidate.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
+  const normalized = ipv4Mapped ? ipv4Mapped[1] : candidate;
+  return net.isIP(normalized) ? normalized : 'unknown';
 }
 
 function ipToInt(ip) {
