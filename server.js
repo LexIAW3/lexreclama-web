@@ -33,6 +33,10 @@ const GA4_MEASUREMENT_ID = (process.env.GA4_MEASUREMENT_ID || '').trim();
 const GOOGLE_ADS_ID = (process.env.GOOGLE_ADS_ID || '').trim();
 const GOOGLE_ADS_CONVERSION_LABEL = (process.env.GOOGLE_ADS_CONVERSION_LABEL || '').trim();
 const WHATSAPP_NUMBER = (process.env.WHATSAPP_NUMBER || '').trim();
+const WHATSAPP_BUSINESS_TOKEN = (process.env.WHATSAPP_BUSINESS_TOKEN || '').trim();
+const WHATSAPP_PHONE_NUMBER_ID = (process.env.WHATSAPP_PHONE_NUMBER_ID || '').trim();
+const WHATSAPP_TEMPLATE_NAME = (process.env.WHATSAPP_TEMPLATE_NAME || 'lexreclama_bienvenida').trim();
+const WHATSAPP_TEMPLATE_LANG = (process.env.WHATSAPP_TEMPLATE_LANG || 'es').trim();
 const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
 const BREVO_LIST_ID = Number.parseInt(process.env.BREVO_LIST_ID || '3', 10);
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
@@ -1395,6 +1399,14 @@ async function createIssueForLead(leadData, paymentMeta = { paid: false }) {
     console.error(`[lead-email] confirmation failed for ${maskEmail(leadData.email)}: ${err.message}`);
   }
 
+  // Paso 2 del flujo de contacto: mensaje de acompañamiento por WhatsApp Business (D+0)
+  if (leadData.telefono) {
+    const waSent = await sendWhatsAppWelcome(leadData);
+    if (!waSent) {
+      console.warn(`[whatsapp] welcome not sent for ${maskEmail(leadData.email)} (identifier: ${data.identifier || 'n/a'})`);
+    }
+  }
+
   recentLeads.unshift({
     createdAt: new Date().toISOString(),
     nombre: leadData.nombre,
@@ -1898,6 +1910,73 @@ async function sendPortalCodeEmail(email, caseId, code) {
 function isValidEmailAddress(email) {
   const value = String(email || '').trim().toLowerCase();
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+/**
+ * Normaliza un número de teléfono español al formato E.164 (+34XXXXXXXXX).
+ * Devuelve null si el número no es válido o no se puede normalizar.
+ */
+function normalizePhoneForWhatsApp(raw) {
+  if (!raw) return null;
+  // Strip spaces, dashes, dots, parentheses
+  let digits = String(raw).replace(/[\s\-().+]/g, '');
+  if (!digits) return null;
+  // If already has country code (e.g. 0034... or 34...)
+  if (digits.startsWith('0034')) digits = digits.slice(4);
+  else if (digits.startsWith('34') && digits.length === 11) digits = digits.slice(2);
+  // Spanish mobile/landline: 9 digits starting with 6, 7, 8 or 9
+  if (!/^[6789]\d{8}$/.test(digits)) return null;
+  return `34${digits}`;
+}
+
+/**
+ * Envía el mensaje de acompañamiento de WhatsApp Business (Paso 2 del flujo de contacto).
+ * Usa Meta WhatsApp Business Cloud API con el template pre-aprobado.
+ * No lanza excepciones — registra el error y devuelve false en caso de fallo.
+ */
+async function sendWhatsAppWelcome(leadData) {
+  if (!WHATSAPP_BUSINESS_TOKEN || !WHATSAPP_PHONE_NUMBER_ID) return false;
+  const to = normalizePhoneForWhatsApp(leadData?.telefono);
+  if (!to) return false;
+  if (detectTestLeadReason(leadData)) return false;
+
+  const nombre = String(leadData?.nombre || 'cliente').trim();
+  const body = {
+    messaging_product: 'whatsapp',
+    to,
+    type: 'template',
+    template: {
+      name: WHATSAPP_TEMPLATE_NAME,
+      language: { code: WHATSAPP_TEMPLATE_LANG },
+      components: [
+        {
+          type: 'body',
+          parameters: [{ type: 'text', text: nombre }],
+        },
+      ],
+    },
+  };
+
+  try {
+    const res = await fetch(
+      `https://graph.facebook.com/v19.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${WHATSAPP_BUSINESS_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      },
+    );
+    if (res.ok) return true;
+    const err = await res.json().catch(() => ({}));
+    console.error(`[whatsapp] send failed for +${to}: HTTP ${res.status} — ${err?.error?.message || 'unknown'}`);
+    return false;
+  } catch (err) {
+    console.error(`[whatsapp] send exception for +${to}: ${err.message}`);
+    return false;
+  }
 }
 
 async function sendLeadConfirmationEmail(leadData, identifier) {
