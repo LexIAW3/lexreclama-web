@@ -2396,7 +2396,7 @@ body.contact-modal-open {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #0f1b3d;
+  color: var(--text);
   font-size: 0.95rem;
 }
 
@@ -2408,18 +2408,18 @@ body.contact-modal-open {
   justify-content: center;
   border-radius: 999px;
   font-size: 0.95rem;
-  background: #e8f0ff;
+  background: var(--surface-2);
 }
 
 .cookie-copy p {
   margin: 0;
   font-size: 0.84rem;
   line-height: 1.55;
-  color: #3f4f73;
+  color: var(--muted);
 }
 
 .cookie-copy a {
-  color: #0f4db8;
+  color: var(--accent);
   text-underline-offset: 2px;
 }
 
