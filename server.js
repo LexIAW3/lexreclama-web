@@ -448,6 +448,7 @@ const MIME = {
   '.png':  'image/png',
   '.jpg':  'image/jpeg',
   '.webp': 'image/webp',
+  '.pdf':  'application/pdf',
 };
 
 const PILLAR_PAGES = {
