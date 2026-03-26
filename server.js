@@ -1766,7 +1766,11 @@ async function handleSubscribe(req, res) {
 
   try {
     await subscribeContactInBrevo(parsed.value);
-    await sendLeadMagnetEmail(parsed.value);
+    try {
+      await sendLeadMagnetEmail(parsed.value);
+    } catch (emailErr) {
+      console.error(`[lead-magnet] email send failed for ${parsed.value.email}: ${emailErr.message}`);
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     const response = { success: true };
     if (parsed.value.leadMagnet === 'guia-bancaria') {
