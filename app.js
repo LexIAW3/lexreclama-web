@@ -700,6 +700,7 @@ function ensureContactLinks() {
 }
 
 /* ─── LEAD FORM SUBMISSION ────────────────────────────────── */
+// SYNC: debe coincidir con PAID_CLAIM_TYPES en server.js
 function requiresUpfrontPayment(tipo) {
   return tipo === 'deuda' || tipo === 'multa';
 }

@@ -2189,7 +2189,9 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
       body: JSON.stringify({
         body: `## Mensaje desde portal cliente\n\nCaso: **${caseId}**\n\n${message}`,
       }),
-    }).catch(() => null);
+    }).catch((err) => {
+      console.warn(`[portal] mensaje de ${caseId} no sincronizado a Paperclip: ${err.message}`);
+    });
   }
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
