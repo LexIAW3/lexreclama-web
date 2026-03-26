@@ -2,6 +2,7 @@ const state = {
   caseId:      '',
   expiresAtMs: 0,
   timer:       null,
+  toastTimer:  null,
   activeCase:  null,
   cases:       [],
   activeTab:   'overview',
@@ -424,9 +425,12 @@ function renderCases(cases) {
     card.append(spanId, spanBadge, pTitle, pMeta);
     card.addEventListener('click', () => {
       renderCaseDetail(c);
-      Array.from(el.caseList.querySelectorAll('.case-card')).forEach((node) => node.classList.remove('active'));
+      Array.from(el.caseList.querySelectorAll('.case-card')).forEach((node) => {
+        node.classList.remove('active');
+        node.removeAttribute('aria-current');
+      });
       card.classList.add('active');
-      card.setAttribute('aria-selected', 'true');
+      card.setAttribute('aria-current', 'true');
     });
     el.caseList.appendChild(card);
   });
@@ -435,7 +439,7 @@ function renderCases(cases) {
   const firstCard = el.caseList.querySelector('.case-card');
   if (firstCard) {
     firstCard.classList.add('active');
-    firstCard.setAttribute('aria-selected', 'true');
+    firstCard.setAttribute('aria-current', 'true');
   }
 }
 
@@ -550,7 +554,8 @@ el.messageForm.addEventListener('submit', async (event) => {
     el.messageInput.value  = '';
     el.charCount.textContent = '0';
     el.messageToast.classList.add('visible');
-    setTimeout(() => el.messageToast.classList.remove('visible'), 3000);
+    clearTimeout(state.toastTimer);
+    state.toastTimer = setTimeout(() => el.messageToast.classList.remove('visible'), 3000);
     await loadSession();
   } catch (err) {
     setError(el.messageError, friendlyError(err));
@@ -599,4 +604,4 @@ el.detailTabs.forEach((btn) => {
 /* ─── Boot ─── */
 
 initOtpCells();
-loadSession().then((ok) => { if (!ok) showStep('login'); });
+loadSession().then((ok) => { if (!ok) showStep('login'); }).catch(() => showStep('login'));
