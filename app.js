@@ -8,10 +8,25 @@ const COOKIE_CONSENT_KEY = 'lex_cookie_consent_v1';
 const PRIVACY_POLICY_VERSION = '2026-03';
 const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
 const CSRF_INPUT_NAME = 'csrfToken';
+const LEAD_MAGNET_SLUG = 'guia-bancaria';
+const LEAD_MAGNET_FALLBACK_PATH = '/assets/downloads/lex-guia-reclamar-banco.pdf';
 
 let leadSubmissionInFlight = false;
 let currentLeadIdempotency = null;
 let subscribeSubmissionInFlight = false;
+
+function triggerLeadMagnetDownload(downloadUrl) {
+  const url = String(downloadUrl || LEAD_MAGNET_FALLBACK_PATH).trim();
+  if (!url) return;
+  const a = document.createElement('a');
+  a.href = url;
+  a.setAttribute('download', '');
+  a.rel = 'noopener noreferrer';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
 
 function readCookie(name) {
   const escaped = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -992,6 +1007,7 @@ async function submitBlogSubscribe(event) {
     email,
     nombre,
     tipo_reclamacion: (document.getElementById('blog-subscribe-tipo')?.value || '').trim(),
+    leadMagnet: LEAD_MAGNET_SLUG,
     privacidadAceptada,
     consentimientoTimestamp: new Date().toISOString(),
     versionPolitica: PRIVACY_POLICY_VERSION,
@@ -1005,7 +1021,10 @@ async function submitBlogSubscribe(event) {
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json().catch(() => ({}));
     okEl.classList.remove('hidden');
+    okEl.textContent = '¡Perfecto! Te hemos enviado la guía por email y la descarga empieza ahora.';
+    triggerLeadMagnetDownload(data.downloadUrl);
     form.reset();
     document.querySelectorAll('.blog-subscribe-field-error').forEach(el => el.classList.remove('visible'));
     document.querySelectorAll('.field-invalid').forEach(el => { el.classList.remove('field-invalid'); el.setAttribute('aria-invalid', 'false'); });

@@ -39,7 +39,10 @@ const WHATSAPP_TEMPLATE_NAME = (process.env.WHATSAPP_TEMPLATE_NAME || 'lexreclam
 const WHATSAPP_TEMPLATE_LANG = (process.env.WHATSAPP_TEMPLATE_LANG || 'es').trim();
 const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
 const BREVO_LIST_ID = Number.parseInt(process.env.BREVO_LIST_ID || '3', 10);
+const BREVO_LEAD_MAGNET_TEMPLATE_ID = Number.parseInt(process.env.BREVO_LEAD_MAGNET_TEMPLATE_ID || '', 10);
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
+const LEAD_MAGNET_PDF_PATH = '/assets/downloads/lex-guia-reclamar-banco.pdf';
+const LEAD_MAGNET_DOWNLOAD_URL = (process.env.LEAD_MAGNET_DOWNLOAD_URL || `${SITE_URL}${LEAD_MAGNET_PDF_PATH}`).trim();
 const GESTOR_AGENT_ID = (process.env.PAPERCLIP_GESTOR_AGENT_ID || '').trim();
 const GOAL_ID = (process.env.PAPERCLIP_GOAL_ID || '').trim();
 const PRIVACY_POLICY_VERSION = '2026-03';
@@ -1619,12 +1622,17 @@ function normalizeSubscribePayload(payload) {
   const privacidadAceptada = payload?.privacidadAceptada === true || String(payload?.privacidadAceptada || '').toLowerCase() === 'true';
   const consentimientoTimestamp = String(payload?.consentimientoTimestamp || '').trim();
   const versionPolitica = String(payload?.versionPolitica || '').trim();
+  const leadMagnet = String(payload?.leadMagnet || '').trim().toLowerCase();
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   if (!emailOk) return { ok: false, error: 'Email no válido' };
   if (nombre.length > 120) return { ok: false, error: 'Nombre demasiado largo' };
   if (tipoReclamacion.length > 80) return { ok: false, error: 'Tipo de reclamación demasiado largo' };
+  if (leadMagnet.length > 80) return { ok: false, error: 'Lead magnet no válido' };
   if (!privacidadAceptada || !consentimientoTimestamp || !versionPolitica) {
     return { ok: false, error: 'Debes aceptar la política de privacidad para suscribirte' };
+  }
+  if (leadMagnet && leadMagnet !== 'guia-bancaria') {
+    return { ok: false, error: 'Lead magnet no soportado' };
   }
   return {
     ok: true,
@@ -1632,6 +1640,7 @@ function normalizeSubscribePayload(payload) {
       email,
       nombre,
       tipoReclamacion,
+      leadMagnet,
       privacidadAceptada,
       consentimientoTimestamp,
       versionPolitica,
@@ -1682,6 +1691,62 @@ async function subscribeContactInBrevo(payload) {
   throw new Error(brevoErr?.message || `Brevo HTTP ${brevoRes.status}`);
 }
 
+async function sendLeadMagnetEmail(payload) {
+  if (!BREVO_API_KEY) throw new Error('BREVO_API_KEY no configurada');
+  if (payload.leadMagnet !== 'guia-bancaria') return;
+
+  const body = {
+    sender: { name: 'LexReclama', email: 'info@lexreclama.es' },
+    to: [{ email: payload.email }],
+  };
+
+  if (Number.isInteger(BREVO_LEAD_MAGNET_TEMPLATE_ID) && BREVO_LEAD_MAGNET_TEMPLATE_ID > 0) {
+    body.templateId = BREVO_LEAD_MAGNET_TEMPLATE_ID;
+    body.params = {
+      NOMBRE: payload.nombre || 'cliente',
+      DOWNLOAD_URL: LEAD_MAGNET_DOWNLOAD_URL,
+    };
+  } else {
+    body.subject = 'Tu guía gratuita para reclamar cláusulas bancarias';
+    body.htmlContent = [
+      `<p>Hola ${escapeHtml(payload.nombre || 'cliente')},</p>`,
+      '<p>Gracias por solicitar la guía gratuita de LexReclama.</p>',
+      `<p><a href="${escapeHtml(LEAD_MAGNET_DOWNLOAD_URL)}" target="_blank" rel="noopener noreferrer"><strong>Descargar guía en PDF</strong></a></p>`,
+      '<p>Si quieres, también podemos revisar tu caso sin coste y sin compromiso.</p>',
+      '<p>Equipo LexReclama<br/>info@lexreclama.es</p>',
+    ].join('');
+    body.textContent = [
+      `Hola ${payload.nombre || 'cliente'},`,
+      '',
+      'Gracias por solicitar la guia gratuita de LexReclama.',
+      `Descargala aqui: ${LEAD_MAGNET_DOWNLOAD_URL}`,
+      '',
+      'Si quieres, tambien podemos revisar tu caso sin coste y sin compromiso.',
+      '',
+      'Equipo LexReclama',
+      'info@lexreclama.es',
+    ].join('\n');
+  }
+
+  const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+    method: 'POST',
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json',
+      accept: 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (res.ok) return;
+  let brevoErr = {};
+  try {
+    brevoErr = await res.json();
+  } catch {
+    brevoErr = {};
+  }
+  throw new Error(brevoErr?.message || `Brevo email HTTP ${res.status}`);
+}
+
 async function handleSubscribe(req, res) {
   const parsed = normalizeSubscribePayload(req.parsedBody);
   if (!parsed.ok) {
@@ -1701,8 +1766,13 @@ async function handleSubscribe(req, res) {
 
   try {
     await subscribeContactInBrevo(parsed.value);
+    await sendLeadMagnetEmail(parsed.value);
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ success: true }));
+    const response = { success: true };
+    if (parsed.value.leadMagnet === 'guia-bancaria') {
+      response.downloadUrl = LEAD_MAGNET_PDF_PATH;
+    }
+    res.end(JSON.stringify(response));
   } catch (err) {
     const message = String(err?.message || 'Error al suscribirse').toLowerCase();
     const status = message.includes('brevo_api_key no configurada') ? 503 : 502;
