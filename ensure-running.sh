@@ -115,6 +115,7 @@ restart_web_server() {
   HTTPS_ENABLED="${HTTPS_ENABLED:-true}" \
   BREVO_API_KEY="${BREVO_API_KEY:-}" \
   BREVO_LIST_ID="${BREVO_LIST_ID:-3}" \
+  OCR_SHARED_SECRET="${OCR_SHARED_SECRET:?OCR_SHARED_SECRET must be set in .env — see LEX-605}" \
   PORT="$WEB_PORT" \
   nohup node /home/paperclip/despacho/web/server.js >> /tmp/web-server.log 2>&1 &
 
@@ -148,6 +149,7 @@ restart_ocr_server() {
   PAPERCLIP_COMPANY_ID=624b9ad4-76e3-4a63-91a4-29d4b646fca9 \
   PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:?PAPERCLIP_API_KEY must be set in .env — see LEX-508}" \
   ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+  OCR_SHARED_SECRET="${OCR_SHARED_SECRET:?OCR_SHARED_SECRET must be set in .env — see LEX-605}" \
   PORT="$OCR_PORT" \
   nohup /home/paperclip/despacho/ocr-server/start.sh >> /tmp/ocr-server.log 2>&1 &
 
