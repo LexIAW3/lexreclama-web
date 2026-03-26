@@ -2512,7 +2512,11 @@ const server = http.createServer(async (req, res) => {
   const hasBlockedExtension = lastSegment.endsWith('.md')
     || lastSegment.endsWith('.log')
     || lastSegment.endsWith('.conf')
-    || lastSegment.endsWith('.sh');
+    || lastSegment.endsWith('.sh')
+    || lastSegment.endsWith('.php')
+    || lastSegment.endsWith('.asp')
+    || lastSegment.endsWith('.aspx')
+    || lastSegment.endsWith('.jsp');
   if (hasDotSegment || BLOCKED_FILENAMES.has(lastSegment) || hasBlockedExtension) {
     send404(req, res, csrfToken, nonce); return;
   }
