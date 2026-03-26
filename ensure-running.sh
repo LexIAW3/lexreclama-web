@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # Ensures the web, OCR and LexPanel services are running. Safe to run from cron.
 set -euo pipefail
+umask 027  # LEX-611: logs created with 640, dirs with 750
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 WEB_PORT=8080
 WEB_BASE_URL="http://127.0.0.1:$WEB_PORT"
 OCR_PORT=3200
 OCR_BASE_URL="http://127.0.0.1:$OCR_PORT"
-LOG_FILE="/tmp/lexreclama-watchdog.log"
+LOG_FILE="/home/paperclip/logs/lexreclama-watchdog.log"
 
 # Load optional secrets from .env (BREVO_API_KEY etc.)
 if [[ -f "$SCRIPT_DIR/.env" ]]; then
@@ -117,7 +118,7 @@ restart_web_server() {
   BREVO_LIST_ID="${BREVO_LIST_ID:-3}" \
   OCR_SHARED_SECRET="${OCR_SHARED_SECRET:?OCR_SHARED_SECRET must be set in .env — see LEX-605}" \
   PORT="$WEB_PORT" \
-  nohup node /home/paperclip/despacho/web/server.js >> /tmp/web-server.log 2>&1 &
+  nohup node /home/paperclip/despacho/web/server.js >> /home/paperclip/logs/web-server.log 2>&1 &
 
   local new_pid=$!
   sleep 1
@@ -145,13 +146,16 @@ restart_ocr_server() {
 
   free_port "$OCR_PORT"
 
-  PAPERCLIP_API_URL=http://127.0.0.1:3100 \
-  PAPERCLIP_COMPANY_ID=624b9ad4-76e3-4a63-91a4-29d4b646fca9 \
-  PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:?PAPERCLIP_API_KEY must be set in .env — see LEX-508}" \
-  ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
-  OCR_SHARED_SECRET="${OCR_SHARED_SECRET:?OCR_SHARED_SECRET must be set in .env — see LEX-605}" \
-  PORT="$OCR_PORT" \
-  nohup /home/paperclip/despacho/ocr-server/start.sh >> /tmp/ocr-server.log 2>&1 &
+  nohup env -i \
+    HOME="/home/paperclip" \
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+    PAPERCLIP_API_URL=http://127.0.0.1:3100 \
+    PAPERCLIP_COMPANY_ID=624b9ad4-76e3-4a63-91a4-29d4b646fca9 \
+    PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:?PAPERCLIP_API_KEY must be set in .env — see LEX-508}" \
+    ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+    OCR_SHARED_SECRET="${OCR_SHARED_SECRET:?OCR_SHARED_SECRET must be set in .env — see LEX-605}" \
+    PORT="$OCR_PORT" \
+    /home/paperclip/despacho/ocr-server/start.sh >> /home/paperclip/logs/ocr-server.log 2>&1 &
 
   local new_pid=$!
   sleep 1
