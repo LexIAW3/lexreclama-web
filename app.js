@@ -1085,17 +1085,17 @@ function createContactModalElement() {
           <div class="form-row">
             <div class="field">
               <label for="modal-nombre">Nombre</label>
-              <input type="text" id="modal-nombre" name="nombre" placeholder="Tu nombre" required />
+              <input type="text" id="modal-nombre" name="nombre" placeholder="Tu nombre" required autocomplete="name" />
             </div>
             <div class="field">
               <label for="modal-email">Email</label>
-              <input type="email" id="modal-email" name="email" placeholder="tu@email.com" required />
+              <input type="email" id="modal-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
             </div>
           </div>
 
           <div class="field">
             <label for="modal-telefono">Teléfono</label>
-            <input type="tel" id="modal-telefono" name="telefono" placeholder="+34 600 000 000" />
+            <input type="tel" id="modal-telefono" name="telefono" placeholder="+34 600 000 000" autocomplete="tel" />
           </div>
 
           <div class="field">
