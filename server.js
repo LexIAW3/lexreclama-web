@@ -933,7 +933,7 @@ function renderAdminPage() {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin · Lex</title>
-  <style>
+  <style nonce="${nonce}">
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f6f7fb; color: #111827; }
     .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
     .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); overflow: hidden; }
@@ -1080,7 +1080,7 @@ function handleLegalPage(req, res, pathname, nonce = '') {
   return true;
 }
 
-async function handleAdmin(req, res) {
+async function handleAdmin(req, res, nonce = '') {
   if (!ADMIN_PASSWORD) {
     logAdminAudit(req, 'admin_disabled', 'ADMIN_PASSWORD_missing');
     res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
@@ -2631,7 +2631,7 @@ const server = http.createServer(async (req, res) => {
       res.end('Demasiadas solicitudes. Intentalo mas tarde.');
       return;
     }
-    await handleAdmin(req, res);
+    await handleAdmin(req, res, nonce);
     return;
   }
   if (req.method === 'GET' && url.pathname === '/api/admin/portal-test-code') {
