@@ -549,7 +549,7 @@ html[data-theme='light'] .topbar {
 .nav {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-nav);
   border-bottom: 1px solid var(--border);
   background: var(--nav-bg);
   backdrop-filter: blur(22px) saturate(1.6);
@@ -2102,7 +2102,7 @@ body.contact-modal-open {
 .contact-modal {
   position: fixed;
   inset: 0;
-  z-index: 240;
+  z-index: var(--z-modal);
   display: grid;
   place-items: center;
   padding: 18px;
@@ -2422,7 +2422,7 @@ body.contact-modal-open {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 200;
+  z-index: calc(var(--z-modal) - 1);
   border-top: 1px solid rgba(18, 24, 42, 0.14);
   background: var(--cookie-bg);
   box-shadow: 0 -8px 28px rgba(18, 24, 42, 0.08);
@@ -4456,13 +4456,13 @@ html[data-theme='light'] .contact-modal-form::before {
     margin: 0 auto;
   }
 
-  .hvp-card--main { transform: none !important; }
-  .hvp-row { transform: none !important; }
+  .hvp-card--main { transform: none; }
+  .hvp-row { transform: none; }
 }
 
 @media (max-width: 600px) {
   .home-page .hero h1 {
-    font-size: clamp(2.6rem, 10vw, 3.8rem) !important;
+    font-size: clamp(2.6rem, 10vw, 3.8rem);
   }
 
   .hvp-amount { font-size: 2rem; }
@@ -4519,7 +4519,7 @@ html[data-theme='light'] .cta-banner-inner {
   width: 0%;
   height: 2px;
   background: var(--grad-accent);
-  z-index: 10000;
+  z-index: var(--z-overlay);
   pointer-events: none;
   transition: width 0.08s linear;
 }
@@ -5523,25 +5523,6 @@ html[data-theme='light'] .cta-banner-inner::before {
   transition: animation-play-state var(--dur-fast) var(--ease-out);
 }
 
-/* SCROLL PROGRESS: usa var(--z-overlay) del token map */
-.scroll-progress {
-  z-index: var(--z-overlay) !important;
-}
-
-/* NAV: usa var(--z-nav) */
-.nav {
-  z-index: var(--z-nav) !important;
-}
-
-/* MODAL: usa var(--z-modal) */
-.contact-modal {
-  z-index: var(--z-modal) !important;
-}
-
-/* COOKIE BANNER: justo bajo modal */
-.cookie-banner {
-  z-index: calc(var(--z-modal) - 1) !important;
-}
 
 /* WILL-CHANGE: GPU compositing en hover únicamente (evita consumo innecesario de RAM) */
 .area-card,
