@@ -300,9 +300,6 @@ img, svg { display: block; }
 html [data-animate] {
   opacity: 0;
   transform: translateY(22px);
-  transition:
-    opacity  0.72s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html [data-animate].is-visible { opacity: 1; transform: translateY(0); }
