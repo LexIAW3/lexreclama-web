@@ -361,6 +361,7 @@ function logAdminAudit(req, outcome, detail = '') {
 }
 
 function consumeRateLimit(rule, ip) {
+  if (!rule) { console.error('[rate-limit] consumeRateLimit called with undefined rule — no limit applied'); return { limited: false, retryAfterSec: 0 }; }
   const now = Date.now();
   const windowMs = Number.isFinite(rule?.windowMs) && rule.windowMs > 0 ? rule.windowMs : RATE_LIMIT_WINDOW_MS;
   const windowStart = now - windowMs;
