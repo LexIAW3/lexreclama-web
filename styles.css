@@ -930,7 +930,8 @@ html[data-theme='light'] .home-page .hero .aurora-secondary {
 }
 
 .trust-bar-item svg {
-  color: var(--muted-2);
+  color: var(--accent-2);
+  opacity: 0.75;
   flex-shrink: 0;
 }
 
@@ -1444,12 +1445,21 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.7rem;
+  background: rgba(var(--accent-rgb), 0.10);
+  border: 1px solid rgba(var(--accent-rgb), 0.18);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.67rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
-  color: var(--accent-2);
+  color: var(--accent);
   margin-bottom: 16px;
+}
+
+html[data-theme='light'] .cta-banner-eyebrow {
+  background: rgba(var(--accent-rgb), 0.07);
+  border-color: rgba(var(--accent-rgb), 0.18);
 }
 
 .cta-banner h2 {
@@ -1525,8 +1535,19 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 }
 
 .testimonio-card:hover {
-  border-color: var(--border-strong);
+  border-color: rgba(var(--accent-rgb), 0.22);
   transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 12px 36px rgba(0, 0, 0, 0.28),
+    0 0 20px rgba(var(--accent-rgb), 0.06);
+}
+
+html[data-theme='light'] .testimonio-card:hover {
+  border-color: rgba(var(--accent-rgb), 0.20);
+  box-shadow:
+    0 8px 28px rgba(14, 22, 60, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .stars {
@@ -4925,9 +4946,7 @@ html[data-theme='light'] .cta-banner-inner {
   background: var(--border-strong);
 }
 
-/* ---- TRUST BAR: Color the icons ---- */
-
-.trust-bar-item svg { color: var(--accent-2); }
+/* trust-bar-item svg consolidado en línea ~932 */
 
 /* ---- CONTACT: Left side elevated typography ---- */
 
@@ -5270,11 +5289,7 @@ html[data-theme='light'] .footer .logo {
 /* ── LEX DS v5.4 — Light mode fixes, Trust bar, CTA eyebrow ──── */
 
 
-/* TRUST BAR: elevate icons from muted-2 to accent tint */
-.trust-bar-item svg {
-  color: var(--accent) !important;
-  opacity: 0.55;
-}
+
 
 /* Trust bar: subtle separator */
 .trust-bar-divider {
@@ -5289,38 +5304,10 @@ html[data-theme='light'] .footer .logo {
   flex-shrink: 0;
 }
 
-/* CTA BANNER EYEBROW: align with global pill-badge system */
-.cta-banner-eyebrow {
-  background: rgba(var(--accent-rgb), 0.10) !important;
-  border: 1px solid rgba(var(--accent-rgb), 0.18) !important;
-  border-radius: 999px !important;
-  padding: 4px 12px !important;
-  font-size: 0.67rem !important;
-  letter-spacing: 0.10em;
-  color: var(--accent) !important;
-  margin-bottom: 16px !important;
-}
-
-html[data-theme='light'] .cta-banner-eyebrow {
-  background: rgba(var(--accent-rgb), 0.07) !important;
-  border-color: rgba(var(--accent-rgb), 0.18) !important;
-}
+/* cta-banner-eyebrow consolidado en línea ~1443 */
 
 /* TESTIMONIO CARD: accent hover (matches area-card / recurso-card pattern) */
-.testimonio-card:hover {
-  border-color: rgba(var(--accent-rgb), 0.22) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 12px 36px rgba(0, 0, 0, 0.28),
-    0 0 20px rgba(var(--accent-rgb), 0.06) !important;
-}
-
-html[data-theme='light'] .testimonio-card:hover {
-  border-color: rgba(var(--accent-rgb), 0.20) !important;
-  box-shadow:
-    0 8px 28px rgba(14, 22, 60, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
+/* testimonio-card:hover consolidado en línea ~1537 */
 
 /* RECURSO TAG: match eyebrow pill style */
 .recurso-tag {
@@ -6176,11 +6163,6 @@ html[data-theme='light'] .hero-chip {
 /* Fix 2.3 — HVP amount-label margin */
 .hvp-amount-label { margin-top: -4px; }
 
-/* Fix 3.1 — Trust bar icon opacity */
-.trust-bar-item svg {
-  color: var(--accent-2) !important;
-  opacity: 0.75;
-}
 
 
 /* Fix 4.1 — Stats section padding */
