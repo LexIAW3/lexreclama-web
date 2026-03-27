@@ -817,9 +817,12 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 }
 
 .home-page .hero h1 {
-  margin: 24px 0 22px;
-  max-width: 920px;
+  margin: 32px 0 20px;
+  max-width: 720px;
+  font-size: clamp(3.6rem, 7.5vw, 7rem);
+  letter-spacing: var(--tracking-tighter);
   line-height: 1.0;
+  font-weight: 800;
 }
 
 .h1-sub {
@@ -833,18 +836,18 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 }
 
 .hero-sub {
-  max-width: 560px;
+  max-width: 520px;
   color: var(--muted);
-  font-size: 1.08rem;
-  line-height: 1.75;
+  font-size: 1.05rem;
+  line-height: 1.78;
 }
 
 .hero-actions {
-  margin-top: 34px;
+  margin-top: 32px;
   display: flex;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .hero-note {
@@ -1032,7 +1035,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 
 /* === STATS === */
 
-.stats { padding: 24px 0 36px; }
+.stats { padding: 56px 0 72px; }
 
 .stats-grid {
   display: grid;
@@ -4087,32 +4090,10 @@ html[data-theme='light'] .home-page::before { opacity: 0.022; }
 /* Badge: al inicio en vez de centrado */
 .hero-content .hero-badge { align-self: flex-start; }
 
-/* H1: más grande, más impactante */
-.home-page .hero h1 {
-  margin: 24px 0 22px;
-  max-width: 720px;
-  font-size: clamp(3.6rem, 7.5vw, 7rem);
-  letter-spacing: var(--tracking-tighter);
-  line-height: 0.96;
-  font-weight: 800;
-}
-
-/* Subtitle */
-.hero-sub {
-  max-width: 460px;
-  font-size: 1.05rem;
-  line-height: 1.78;
-  color: var(--muted);
-}
+/* home-page .hero h1, .hero-sub, .hero-actions consolidados en bloques base */
 
 /* Hero chips — override justify for split layout */
 .hero-content .hero-chips {
-  justify-content: flex-start;
-}
-
-/* Actions: izquierda */
-.hero-actions {
-  margin-top: 32px;
   justify-content: flex-start;
 }
 
@@ -6136,20 +6117,11 @@ html[data-theme='light'] .hvp-card--main {
 
 /* === LEX DS v7.4 — Visual audit fix (LEX-241/LEX-305) === */
 
-/* Fix 1.1+1.2 — Hero H1 line-height + margin desde badge */
-.home-page .hero h1 { line-height: 1.0; margin: 32px 0 20px; }
-
-/* Fix 1.3 — Hero actions gap */
-.hero-actions { gap: 14px; }
-
 /* Fix 1.4 — Hero chips light mode */
 html[data-theme='light'] .hero-chip {
   background: rgba(14, 22, 60, 0.055);
   border-color: rgba(14, 22, 60, 0.13);
 }
-
-/* Fix 1.5 — Hero subtitle max-width */
-.hero-sub { max-width: 520px; }
 
 
 /* Fix 2.2 — HVP mini-label font-size */
@@ -6159,9 +6131,6 @@ html[data-theme='light'] .hero-chip {
 .hvp-amount-label { margin-top: -4px; }
 
 
-
-/* Fix 4.1 — Stats section padding */
-.stats { padding: 56px 0 72px; }
 
 /* Fix 5.1 — Area card H3 */
 .area-card h3 { font-size: 1.08rem; }
