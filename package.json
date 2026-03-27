@@ -5,11 +5,13 @@
   "scripts": {
     "build:css": "lightningcss --minify --targets '>= 0.25%' styles.css -o styles.min.css",
     "build:js": "esbuild app.js --bundle=false --minify --outfile=app.min.js",
-    "build": "npm run build:css && npm run build:js",
+    "build:portal-css": "lightningcss --minify --targets '>= 0.25%' portal-cliente/styles.css -o portal-cliente/styles.min.css",
+    "build:portal-js": "esbuild portal-cliente/app.js --bundle=false --minify --outfile=portal-cliente/app.min.js",
+    "build": "npm run build:css && npm run build:js && npm run build:portal-css && npm run build:portal-js",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm run build && git add styles.min.css app.min.js"
+    "pre-commit": "npm run build && git add styles.min.css app.min.js portal-cliente/styles.min.css portal-cliente/app.min.js"
   },
   "devDependencies": {
     "esbuild": "^0.27.3",

@@ -77,8 +77,8 @@ function computeFileHash(filePath) {
 const ASSET_VERSIONS = [
   ['href', '/styles.min.css',            path.join(__dirname, 'styles.min.css')],
   ['src',  '/app.min.js',                path.join(__dirname, 'app.min.js')],
-  ['href', '/portal-cliente/styles.css', path.join(__dirname, 'portal-cliente', 'styles.css')],
-  ['src',  '/portal-cliente/app.js',     path.join(__dirname, 'portal-cliente', 'app.js')],
+  ['href', '/portal-cliente/styles.min.css', path.join(__dirname, 'portal-cliente', 'styles.min.css')],
+  ['src',  '/portal-cliente/app.min.js',     path.join(__dirname, 'portal-cliente', 'app.min.js')],
 ].map(([attr, url, file]) => ({ attr, url, hash: computeFileHash(file) }));
 // Named shorthand used in renderContentShell template literal.
 const ASSET_CSS_HASH = ASSET_VERSIONS[0].hash;
