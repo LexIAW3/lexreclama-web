@@ -196,7 +196,10 @@ body:has(#portal-app[hidden]) .portal-footer {
 
 /* ── Typography helpers ────────────────────────────────────────────────────── */
 
-.muted   { color: var(--muted); font-size: 0.9rem; }
+.muted        { color: var(--muted); font-size: 0.9rem; }
+.muted-intro  { margin-top: 6px; margin-bottom: 20px; }
+.step-heading { margin-top: 16px; }
+.app-title    { font-size: 1.2rem; }
 .eyebrow {
   color: var(--accent);
   font-size: 0.72rem;

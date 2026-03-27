@@ -1292,6 +1292,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 }
 
 .result-note { color: var(--muted); font-size: 0.88rem; }
+.text-footnote { font-size: 0.88rem; color: var(--muted-2); }
 
 .result-cta {
   margin-top: 20px;
@@ -3822,6 +3823,12 @@ span.badge-red {
 .euribor-bar { height: 18px; border-radius: 4px; }
 .euribor-bar.high { background: var(--error); }
 .euribor-bar.low  { background: var(--green); }
+/* Widths como clases para evitar style= inline (CSP) */
+.euribor-bar.w-90 { width: 90%; }
+.euribor-bar.w-68 { width: 68%; }
+.euribor-bar.w-28 { width: 28%; }
+.euribor-bar.w-10 { width: 10%; }
+.euribor-bar.w-4  { width:  4%; }
 
 .euribor-val {
   width: 55px;

@@ -22,7 +22,7 @@
     <section class="card" id="login-step">
       <img src="/logo.svg" alt="LexReclama" class="brand-logo" />
       <h1>Consulta tu caso</h1>
-      <p class="muted" style="margin-top:6px;margin-bottom:20px;">Introduce tu número de caso para recibir un código de acceso.</p>
+      <p class="muted muted-intro">Introduce tu número de caso para recibir un código de acceso.</p>
       <ol class="mini-steps" aria-label="Pasos de acceso">
         <li><span>1</span> Introduces tu número de caso</li>
         <li><span>2</span> Validas el código de seguridad</li>
@@ -42,8 +42,8 @@
     <!-- ── Step 2: 2FA ── -->
     <section class="card" id="code-step" hidden>
       <button type="button" class="link" id="back-to-login">← Cambiar número de caso</button>
-      <h2 style="margin-top:16px;">Código enviado</h2>
-      <p class="muted" id="code-help" style="margin-top:6px;margin-bottom:20px;"></p>
+      <h2 class="step-heading">Código enviado</h2>
+      <p class="muted muted-intro" id="code-help"></p>
       <form id="code-form" class="stack">
         <label>Código de 6 dígitos</label>
         <div class="otp-grid" id="otp-grid" role="group" aria-label="Código de verificación">
@@ -76,7 +76,7 @@
           </div>
           <div>
             <p class="eyebrow">Área privada</p>
-            <h2 style="font-size:1.2rem;">Mis casos</h2>
+            <h2 class="app-title">Mis casos</h2>
           </div>
         </div>
         <button type="button" class="ghost" id="logout-btn">Cerrar sesión</button>
