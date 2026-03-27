@@ -642,6 +642,8 @@ html[data-theme='light'] .topbar {
 }
 
 .nav-mobile.open { display: block; }
+/* Support para el patrón dialog/hidden (páginas nuevas): visible cuando se elimina [hidden] */
+.nav-mobile[role="dialog"]:not([hidden]) { display: block; }
 
 .nav-mobile-inner {
   width: min(1160px, 100% - 32px);
