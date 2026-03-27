@@ -1120,20 +1120,16 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   position: relative;
   overflow: hidden;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(0, 0, 0, 0.28);
-  transition:
-    border-color 0.25s ease,
-    transform     0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow    0.25s ease;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .area-card:hover {
-  border-color: rgba(var(--accent-rgb), 0.28) !important;
-  transform: translateY(-3px) !important;
+  border-color: rgba(var(--accent-rgb), 0.35);
+  transform: translateY(-2px);
   box-shadow:
-    0 20px 52px rgba(0, 0, 0, 0.40),
-    0 0 0 1px rgba(var(--accent-rgb), 0.14),
-    0 0 40px rgba(var(--accent-rgb), 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    0 20px 56px rgba(0, 0, 0, 0.40),
+    0 0 0 1px rgba(var(--accent-rgb), 0.16),
+    0 0 32px rgba(var(--accent-rgb), 0.07);
 }
 
 /* Colored accent line per type */
@@ -1161,7 +1157,6 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   background: linear-gradient(90deg, #00d48a 0%, rgba(0,212,138,0.3) 60%, transparent 100%);
 }
 
-/* area-card:hover is now handled above with !important for specificity */
 
 .area-icon { color: var(--accent-2); }
 .area-icon svg { width: 25px; height: 25px; }
@@ -4385,34 +4380,6 @@ html[data-theme='light'] .contact-modal-form::before {
 }
 
 
-/* ---- 4. STATS: value props al estilo Stripe — frases cortas, gradiente ---- */
-
-.stat-value {
-  font-size: clamp(1.05rem, 1.6vw, 1.28rem) !important;
-  letter-spacing: -0.025em !important;
-  line-height: 1.25 !important;
-}
-
-.stat-card {
-  padding: 26px 28px !important;
-}
-
-/* ---- 5. AREA CARDS: gradient border glow en hover ---- */
-
-.area-card {
-  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
-}
-
-.area-card:hover {
-  border-color: rgba(var(--accent-rgb), 0.35) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: var(--shadow), 0 0 0 1px rgba(var(--accent-rgb), 0.12), 0 0 32px rgba(var(--accent-rgb), 0.08) !important;
-}
-
-/* Colored top line on hover (stronger) */
-.area-card[data-type="deuda"]:hover::before { opacity: 1 !important; }
-.area-card[data-type="banco"]:hover::before { opacity: 1 !important; }
-.area-card[data-type="multa"]:hover::before { opacity: 1 !important; }
 
 /* ---- 6. HERO ORB: más dramático ---- */
 
@@ -5083,14 +5050,6 @@ select:focus {
   padding: 112px 0;
 }
 
-/* ---- AREA CARDS: stronger hover glow ---- */
-
-.area-card:hover {
-  box-shadow:
-    0 20px 56px rgba(0,0,0,0.40),
-    0 0 0 1px rgba(var(--accent-rgb), 0.16),
-    0 0 32px rgba(var(--accent-rgb), 0.07) !important;
-}
 
 /* ---- RECURSO CARDS: hover elevation ---- */
 
