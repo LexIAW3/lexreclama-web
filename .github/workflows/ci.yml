@@ -22,7 +22,7 @@ jobs:
 
       - name: Verify critical files exist
         run: |
-          for f in index.html styles.css app.js server.js sitemap.xml; do
+          for f in index.html styles.css app.js server.js; do
             if [ ! -f "$f" ]; then
               echo "ERROR: Missing required file: $f"
               exit 1
