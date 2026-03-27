@@ -342,6 +342,7 @@ h3 { font-size: 1.04rem; letter-spacing: var(--tracking-tight); line-height: 1.4
   font-size: 1.05rem;
   line-height: 1.72;
   max-width: 680px;
+  margin-top: 14px;
 }
 
 /* Eyebrow labels — above section h2s */
@@ -4171,8 +4172,8 @@ html[data-theme='light'] .home-page::before { opacity: 0.022; }
     0 0 0 1px rgba(var(--accent-rgb), 0.12);
   backdrop-filter: blur(28px) saturate(1.8);
   -webkit-backdrop-filter: blur(28px) saturate(1.8);
-  /* Subtle tilt on desktop */
-  transform: rotateY(-4deg) rotateX(2deg);
+  /* Subtle tilt on desktop (reducido desde -4deg/-2deg en v7.4) */
+  transform: rotateY(-2deg) rotateX(1deg);
   transition:
     transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -6150,8 +6151,6 @@ html[data-theme='light'] .hero-chip {
 /* Fix 1.5 — Hero subtitle max-width */
 .hero-sub { max-width: 520px; }
 
-/* Fix 2.1 — HVP tilt reducido */
-.hvp-card--main { transform: rotateY(-2deg) rotateX(1deg); }
 
 /* Fix 2.2 — HVP mini-label font-size */
 .hvp-mini-label { font-size: 0.72rem; }
@@ -6197,8 +6196,6 @@ html[data-theme='light'] .area-card {
   box-shadow: 0 2px 8px rgba(14, 22, 60, 0.06);
 }
 
-/* Fix 10.1 — Section-sub margin-top */
-.section-sub { margin-top: 14px; }
 
 
 /* Fix 10.3 — Home: keep eyebrow pill above section titles */
