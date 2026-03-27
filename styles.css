@@ -737,20 +737,20 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 .home-page .hero::after {
   content: '';
   position: absolute;
-  top: -160px;
+  top: -120px;
   left: 50%;
   transform: translateX(-50%);
-  width: 1600px;
-  height: 1100px;
+  width: 1100px;
+  height: 700px;
   pointer-events: none;
   z-index: 0;
   animation: aurora-pulse 13s ease-in-out infinite;
-  background:
-    radial-gradient(ellipse 55% 45% at 25% 30%,  rgba(var(--accent-rgb), 0.30) 0%, transparent 58%),
-    radial-gradient(ellipse 45% 40% at 72% 22%,  rgba(56, 217, 255, 0.16)       0%, transparent 52%),
-    radial-gradient(ellipse 35% 55% at 10% 70%,  rgba(108, 60, 255, 0.18)        0%, transparent 50%),
-    radial-gradient(ellipse 60% 35% at 80% 65%,  rgba(56, 217, 255, 0.10)        0%, transparent 55%),
-    radial-gradient(ellipse 80% 60% at 50% 50%,  rgba(var(--accent-rgb), 0.09)  0%, transparent 70%);
+  background: radial-gradient(
+    ellipse,
+    rgba(var(--accent-rgb), 0.22) 0%,
+    rgba(56, 217, 255, 0.07) 40%,
+    transparent 70%
+  );
   filter: blur(55px);
 }
 
@@ -897,15 +897,15 @@ html[data-theme='light'] .hero-chip {
   border-color: rgba(14, 22, 60, 0.13);
 }
 
-/* Aurora: much softer on light backgrounds — !important to beat lower-cascade overrides */
+/* Aurora: much softer on light backgrounds */
 html[data-theme='light'] .home-page .hero::after {
   background:
     radial-gradient(ellipse 55% 45% at 25% 30%,  rgba(var(--accent-rgb), 0.09) 0%, transparent 58%),
     radial-gradient(ellipse 45% 40% at 72% 22%,  rgba(56, 217, 255, 0.055)      0%, transparent 52%),
     radial-gradient(ellipse 35% 55% at 10% 70%,  rgba(108, 60, 255, 0.06)        0%, transparent 50%),
     radial-gradient(ellipse 60% 35% at 80% 65%,  rgba(56, 217, 255, 0.04)        0%, transparent 55%),
-    radial-gradient(ellipse 80% 60% at 50% 50%,  rgba(var(--accent-rgb), 0.03)  0%, transparent 70%) !important;
-  opacity: 0.85 !important;
+    radial-gradient(ellipse 80% 60% at 50% 50%,  rgba(var(--accent-rgb), 0.03)  0%, transparent 70%);
+  opacity: 0.85;
 }
 
 html[data-theme='light'] .home-page .hero .aurora-secondary {
@@ -1368,19 +1368,19 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 .step-divider::before {
   content: '';
   display: block;
-  width: 22px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--border), var(--border-strong));
+  width: 28px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.4) 0%, rgba(var(--accent-rgb), 0.2) 100%);
 }
 
 /* Arrowhead */
 .step-divider::after {
   content: '';
   display: block;
-  width: 6px;
-  height: 6px;
-  border-right: 1.5px solid var(--muted-2);
-  border-top: 1.5px solid var(--muted-2);
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid rgba(var(--accent-rgb), 0.55);
+  border-top: 1.5px solid rgba(var(--accent-rgb), 0.55);
   transform: rotate(45deg) translate(-1px, 1px);
   flex-shrink: 0;
 }
@@ -1718,11 +1718,18 @@ html[data-theme='light'] .testimonio-card:hover {
 }
 
 .recurso-tag {
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.14);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent-2);
+  letter-spacing: 0.09em;
+  color: var(--accent);
 }
 
 .recurso-card h3 {
@@ -2009,7 +2016,7 @@ input, select, textarea {
   border: 1px solid var(--border);
   background: var(--field-bg);
   color: var(--text);
-  padding: 10px 12px;
+  padding: 11px 14px;
   font-family: var(--font-body);
   font-size: 0.9rem;
   outline: none; /* overridden by :focus-visible for keyboard users */
@@ -2024,7 +2031,7 @@ input:hover:not(:focus), select:hover:not(:focus), textarea:hover:not(:focus) {
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.13);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
 }
 
 input::placeholder,
@@ -2132,7 +2139,7 @@ body.contact-modal-open {
 }
 
 .contact-modal-body {
-  padding: 26px 24px 22px;
+  padding: 26px 32px 32px;
 }
 
 .contact-modal-sub {
@@ -2144,7 +2151,7 @@ body.contact-modal-open {
   border: 0;
   box-shadow: none;
   background: transparent;
-  padding: 0 !important;
+  padding: 0;
   border-radius: 0;
   overflow: visible;
   backdrop-filter: none;
@@ -2152,7 +2159,7 @@ body.contact-modal-open {
 }
 
 .contact-modal-form::before {
-  content: none !important;
+  content: none;
 }
 
 .contact-modal-link {
@@ -2204,12 +2211,12 @@ body.contact-modal-open {
 .checkbox-label input[type='checkbox'] {
   appearance: none;
   -webkit-appearance: none;
-  width: 18px !important;
-  height: 18px !important;
+  width: 18px;
+  height: 18px;
   min-width: 18px;
   min-height: 18px;
   aspect-ratio: 1 / 1;
-  padding: 0 !important;
+  padding: 0;
   border: 1.5px solid var(--border-strong);
   border-radius: 4px;
   background: var(--field-bg);
@@ -2423,9 +2430,11 @@ body.contact-modal-open {
   right: 0;
   bottom: 0;
   z-index: calc(var(--z-modal) - 1);
-  border-top: 1px solid rgba(18, 24, 42, 0.14);
+  border-top: 1px solid rgba(14, 22, 60, 0.10);
   background: var(--cookie-bg);
-  box-shadow: 0 -8px 28px rgba(18, 24, 42, 0.08);
+  box-shadow:
+    0 -8px 28px rgba(14, 22, 60, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
   padding: 14px 18px 16px;
 }
 
@@ -2562,12 +2571,12 @@ body.contact-modal-open {
 .cookie-switch input[type='checkbox'] {
   appearance: none;
   -webkit-appearance: none;
-  width: 18px !important;
-  height: 18px !important;
+  width: 18px;
+  height: 18px;
   min-width: 18px;
   min-height: 18px;
   aspect-ratio: 1 / 1;
-  padding: 0 !important;
+  padding: 0;
   margin: 0;
   border: 1.5px solid var(--border-strong);
   border-radius: 4px;
@@ -4386,30 +4395,16 @@ html[data-theme='light'] .contacto-form::before {
 }
 
 html[data-theme='light'] .contact-modal-form {
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 html[data-theme='light'] .contact-modal-form::before {
-  content: none !important;
+  content: none;
 }
 
 
-
-/* ---- 6. HERO ORB: más dramático ---- */
-
-.home-page .hero::after {
-  width: 1100px !important;
-  height: 700px !important;
-  top: -120px !important;
-  background: radial-gradient(
-    ellipse,
-    rgba(var(--accent-rgb), 0.22) 0%,
-    rgba(56, 217, 255, 0.07) 40%,
-    transparent 70%
-  ) !important;
-}
 
 /* Second orb: bottom-right warmth */
 .home-page .hero .container::before {
@@ -5009,17 +5004,9 @@ html[data-theme='light'] .trust-icon-wrap {
 .contact-timeline-item--active .ct-text { color: var(--text); }
 .contact-timeline-item--active .ct-text strong { color: var(--accent); }
 
-/* ---- CONTACT FORM: Refined padding ---- */
-
-.contacto-form:not(.contact-modal-form) { padding: 32px !important; }
-
-input, select, textarea {
-  padding: 11px 14px !important;
-}
-
 /* Native select: explicit chevron affordance across all forms */
 select {
-  padding-right: 40px !important;
+  padding-right: 40px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1.5 1.5L7 7L12.5 1.5' stroke='%23929BA8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
@@ -5046,12 +5033,6 @@ select:focus {
 /* ---- RECURSO CARDS: hover elevation ---- */
 
 /* recurso-card:hover consolidado en línea ~1719 */
-
-/* ---- FORM FIELDS: Sharper focus ring ---- */
-
-input:focus, select:focus, textarea:focus {
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16) !important;
-}
 
 /* ---- RESPONSIVE: contact timeline on mobile ---- */
 
@@ -5112,10 +5093,6 @@ input:focus, select:focus, textarea:focus {
   flex-shrink: 0;
 }
 
-/* Improved body breathing room */
-.contact-modal-body {
-  padding: 26px 32px 32px !important;
-}
 
 /* Close button hover state */
 .contact-modal-close:hover {
@@ -5143,8 +5120,8 @@ input:focus, select:focus, textarea:focus {
 
 /* Accent color variant for trust icon wrap */
 .trust-icon-wrap--accent {
-  background: rgba(var(--accent-rgb), 0.10) !important;
-  border-color: rgba(var(--accent-rgb), 0.20) !important;
+  background: rgba(var(--accent-rgb), 0.10);
+  border-color: rgba(var(--accent-rgb), 0.20);
 }
 
 /* ── LEX DS v5.2 — Cookie & Modal Glass ─────────────── */
@@ -5168,14 +5145,6 @@ input:focus, select:focus, textarea:focus {
 }
 
 
-/* COOKIE BANNER — enforce clear, light treatment */
-.cookie-banner {
-  background: var(--cookie-bg) !important;
-  border-color: rgba(14, 22, 60, 0.10) !important;
-  box-shadow:
-    0 -8px 28px rgba(14, 22, 60, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
-}
 
 @media (min-width: 901px) {
   .contact-modal-dialog {
@@ -5184,7 +5153,7 @@ input:focus, select:focus, textarea:focus {
   }
 
   .contact-modal-body {
-    padding: 20px 24px 22px !important;
+    padding: 20px 24px 22px;
   }
 }
 
@@ -5197,25 +5166,8 @@ html[data-theme='light'] .footer .logo {
 /* Footer hover: slightly elevated links */
 .footer-links a:hover,
 .footer-social a:hover {
-  color: var(--accent) !important;
+  color: var(--accent);
   transition: color 0.14s ease;
-}
-
-/* ── LEX DS v5.3 — Step Accents, Section h2 ───── */
-
-/* STEP DIVIDER: gradient accent line + accent arrowhead */
-.step-divider::before {
-  background: linear-gradient(
-    90deg,
-    rgba(var(--accent-rgb), 0.18),
-    rgba(56, 217, 255, 0.35)
-  ) !important;
-  width: 28px !important;
-}
-
-.step-divider::after {
-  border-right-color: rgba(var(--accent-rgb), 0.45) !important;
-  border-top-color:   rgba(var(--accent-rgb), 0.45) !important;
 }
 
 /* SECTION TITLE: gradient underline decoration on primary sections */
@@ -5269,20 +5221,6 @@ html[data-theme='light'] .footer .logo {
 /* TESTIMONIO CARD: accent hover (matches area-card / recurso-card pattern) */
 /* testimonio-card:hover consolidado en línea ~1537 */
 
-/* RECURSO TAG: match eyebrow pill style */
-.recurso-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(var(--accent-rgb), 0.08);
-  border: 1px solid rgba(var(--accent-rgb), 0.14);
-  border-radius: 999px;
-  padding: 3px 10px;
-  font-size: 0.65rem !important;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  color: var(--accent) !important;
-}
 
 html[data-theme='light'] .recurso-tag {
   background: rgba(var(--accent-rgb), 0.07);
@@ -5457,9 +5395,9 @@ html[data-theme='light'] .hvp-notif strong { color: rgba(14, 22, 60, 0.90); }
   font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: -0.012em;
-  color: var(--accent) !important;
-  text-decoration: none !important;
-  border-bottom: none !important; /* override heredado del .area-link base */
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: none; /* override heredado del .area-link base */
   transition:
     background     var(--dur-fast) var(--ease-out),
     border-color   var(--dur-fast) var(--ease-out),
@@ -5475,14 +5413,14 @@ html[data-theme='light'] .hvp-notif strong { color: rgba(14, 22, 60, 0.90); }
 }
 
 html[data-theme='light'] .area-card:first-child .area-link:not(#area-link-banco) {
-  background: rgba(var(--accent-rgb), 0.07) !important;
-  border-color: rgba(var(--accent-rgb), 0.18) !important;
-  color: var(--accent) !important;
+  background: rgba(var(--accent-rgb), 0.07);
+  border-color: rgba(var(--accent-rgb), 0.18);
+  color: var(--accent);
 }
 
 html[data-theme='light'] .area-card:first-child .area-link:not(#area-link-banco):hover {
-  background: rgba(var(--accent-rgb), 0.13) !important;
-  border-color: rgba(var(--accent-rgb), 0.28) !important;
+  background: rgba(var(--accent-rgb), 0.13);
+  border-color: rgba(var(--accent-rgb), 0.28);
 }
 
 /* HVP NOTIF ICON: el SVG hereda color del padre — centrado preciso */
@@ -5640,7 +5578,7 @@ html[data-theme='light'] .area-recovery::after {
 /* Ajuste: stat-card:first-child tiene más padding visual */
 .stat-card:nth-child(1),
 html[data-theme='light'] .stat-card:nth-child(1) {
-  padding: 36px 32px !important;
+  padding: 36px 32px;
 }
 
 /* === ÁREA CARD FEATURED — profundidad interior === */
@@ -5671,27 +5609,6 @@ html[data-theme='light'] .stat-card:nth-child(1) {
 .home-page .areas .section-title,
 .home-page .proceso .section-title {
   font-size: clamp(2rem, 3.8vw, 3.2rem);
-}
-
-/* === PROCESS: connecting line más definida === */
-
-/* La línea que conecta los steps es un elemento decorativo crítico.
-   Aquí la hacemos más visible y accent-colored en dark mode. */
-.step-divider::before {
-  width: 28px;
-  background: linear-gradient(
-    90deg,
-    rgba(var(--accent-rgb), 0.4) 0%,
-    rgba(var(--accent-rgb), 0.2) 100%
-  ) !important;
-  height: 1.5px !important;
-}
-
-.step-divider::after {
-  border-right-color: rgba(var(--accent-rgb), 0.55) !important;
-  border-top-color:   rgba(var(--accent-rgb), 0.55) !important;
-  width: 7px !important;
-  height: 7px !important;
 }
 
 /* === SECTION TITLES: underline gradient en stats === */
@@ -6371,7 +6288,7 @@ html[data-theme='light'] .area-card {
 .blog-article .recurso-card p { margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
 
 /* FAQ section sin borde top en blog */
-.faq-section h2 { border-top: none !important; }
+.faq-section h2 { border-top: none; }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   ACCESIBILIDAD — Movimiento reducido   ━━━ */
 /* WCAG 2.1 SC 2.3.3 — respeta la preferencia del sistema operativo */
