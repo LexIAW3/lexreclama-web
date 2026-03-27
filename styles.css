@@ -40,8 +40,9 @@
   --green:     #009b65;
   --green-dim: rgba(0, 155, 101, 0.1);
   --error:     #c8002e;
-  --warning:   #d97706;
-  --star:      #ffb520;
+  --warning:        #d97706;
+  --star:           #ffb520;
+  --text-on-accent: #ffffff;
 
   /* Radii */
   --r-sm: 8px;
@@ -275,7 +276,7 @@ img, svg { display: block; }
   z-index: 9999;
   padding: 0.5rem 1rem;
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   font-weight: 600;
   text-decoration: none;
   border-radius: 0 0 var(--r-sm) 0;
@@ -397,7 +398,7 @@ h3 { font-size: 1.04rem; letter-spacing: var(--tracking-tight); line-height: 1.4
     #5b72ff 100%
   );
   background-size: 250% auto;
-  color: #fff;
+  color: var(--text-on-accent);
   box-shadow: var(--shadow-glow-sm), inset 0 1px 0 rgba(255,255,255,0.18);
   padding: 13px 24px;
   text-shadow: 0 1px 2px rgba(0,0,0,0.25);
@@ -1236,7 +1237,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 
 .calc-tab.active {
   background: var(--grad-accent);
-  color: #fff;
+  color: var(--text-on-accent);
   box-shadow: var(--shadow-glow-sm);
 }
 
@@ -1791,7 +1792,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
   line-height: 1.25;
   letter-spacing: var(--tracking-tight);
   margin: 0 0 14px;
-  color: #fff;
+  color: var(--text-on-accent);
 }
 
 .blog-subscribe-content p {
@@ -2580,7 +2581,7 @@ body.contact-modal-open {
   height: 52px;
   border-radius: 999px;
   background: #25d366;
-  color: #fff;
+  color: var(--text-on-accent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3343,7 +3344,7 @@ body.contact-modal-open {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #fff;
+  color: var(--text-on-accent);
   background: rgba(0, 0, 0, 0.56);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
@@ -3464,7 +3465,7 @@ body.contact-modal-open {
 .pagination-page--active:hover {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   font-weight: 700;
 }
 
@@ -3692,7 +3693,7 @@ span.badge-red {
 .cta-inline .btn {
   display: inline-block;
   background: var(--grad-accent);
-  color: #fff;
+  color: var(--text-on-accent);
   padding: 12px 28px;
   border-radius: var(--r-sm);
   text-decoration: none;
@@ -3714,7 +3715,7 @@ span.badge-red {
   width: 32px;
   height: 32px;
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   border-radius: 50%;
   display: flex;
   align-items: center;

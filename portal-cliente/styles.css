@@ -36,12 +36,13 @@
   --accent-soft: rgba(53, 82, 232, 0.08);
 
   /* Semantic */
-  --green:      #009b65;
-  --green-soft: rgba(0, 155, 101, 0.10);
-  --amber:      #a06700;
-  --amber-soft: rgba(200, 150, 0, 0.10);
-  --error:      #c8002e;
-  --error-soft: rgba(200, 0, 46, 0.08);
+  --green:          #009b65;
+  --green-soft:     rgba(0, 155, 101, 0.10);
+  --amber:          #a06700;
+  --amber-soft:     rgba(200, 150, 0, 0.10);
+  --error:          #c8002e;
+  --error-soft:     rgba(200, 0, 46, 0.08);
+  --text-on-accent: #ffffff;
 
   /* Radii */
   --r-sm: 8px;
@@ -117,7 +118,7 @@ p { line-height: 1.6; }
   z-index: 9999;
   padding: 8px 16px;
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   border-radius: 0 0 var(--r-sm) var(--r-sm);
   font-size: 0.85rem;
   font-weight: 600;
@@ -127,7 +128,7 @@ p { line-height: 1.6; }
 
 .skip-link:focus {
   top: 0;
-  outline: 2px solid #fff;
+  outline: 2px solid var(--text-on-accent);
   outline-offset: 2px;
 }
 
@@ -295,7 +296,7 @@ button.primary {
   width: 100%;
   padding: 12px 20px;
   background: var(--accent);
-  color: #fff;
+  color: var(--text-on-accent);
   font-size: 0.93rem;
   font-weight: 700;
   letter-spacing: var(--tracking-normal);
@@ -857,6 +858,11 @@ button.link:hover { color: var(--accent-h); text-decoration: underline; text-und
 .toast.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* a11y: WCAG 2.3.3 — mostrar toast sin animación de deslizamiento */
+  .toast { transform: none; transition: opacity var(--dur-fast); }
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────────── */
