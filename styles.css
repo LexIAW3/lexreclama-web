@@ -117,7 +117,7 @@
   --step-num-text:   #1e3498;
   --panel-bg:        rgba(220, 228, 248, 0.75);
   --footer-bg:       #edf1f9;
-  --cookie-bg:       rgba(255, 255, 255, 0.98);
+  --cookie-bg:       #f8fbff;
   --cookie-text:        #253c6f;
   --cookie-text-muted:  #4a5c86;
   --cookie-text-strong: #0f1b3d;
@@ -2389,7 +2389,7 @@ body.contact-modal-open {
   bottom: 0;
   z-index: 200;
   border-top: 1px solid rgba(18, 24, 42, 0.14);
-  background: #f8fbff;
+  background: var(--cookie-bg);
   box-shadow: 0 -8px 28px rgba(18, 24, 42, 0.08);
   padding: 14px 18px 16px;
 }
@@ -4903,7 +4903,7 @@ html[data-theme='light'] .cta-banner-inner {
     radial-gradient(ellipse 58% 85% at 8% 50%,  rgba(53, 82, 232, 0.12) 0%, transparent 55%),
     radial-gradient(ellipse 52% 75% at 92% 50%,  rgba(11, 126, 216, 0.08) 0%, transparent 55%),
     radial-gradient(ellipse 90% 55% at 50% 140%, rgba(53, 82, 232, 0.07) 0%, transparent 55%),
-    #ffffff !important;
+    var(--surface) !important;
 }
 
 /* ---- PROCESS: Step number elevation ---- */
@@ -5237,7 +5237,7 @@ input:focus, select:focus, textarea:focus {
 
 /* COOKIE BANNER — enforce clear, light treatment */
 .cookie-banner {
-  background: #f8fbff !important;
+  background: var(--cookie-bg) !important;
   border-color: rgba(14, 22, 60, 0.10) !important;
   box-shadow:
     0 -8px 28px rgba(14, 22, 60, 0.09),
@@ -5476,10 +5476,10 @@ html[data-theme='light'] .stat-card {
 html[data-theme='light'] .btn-primary {
   background: linear-gradient(
     110deg,
-    #3552e8 0%,
-    #4a67f0 38%,
-    #0b7ed8 65%,
-    #3552e8 100%
+    var(--accent)   0%,
+    var(--accent-h) 38%,
+    var(--accent-2) 65%,
+    var(--accent)   100%
   );
   background-size: 250% auto;
   box-shadow:
@@ -5561,7 +5561,7 @@ html[data-theme='light'] .hvp-card--main .hvp-days {
 html[data-theme='light'] .hvp-card--main .hvp-tag {
   background: rgba(53, 82, 232, 0.10);
   border-color: rgba(53, 82, 232, 0.24);
-  color: #1f3ca8;
+  color: var(--tag-text);
 }
 
 /* SECTION H2: mayor escala en la landing — Stripe/Linear ratio (clamp 2.2→4rem)
