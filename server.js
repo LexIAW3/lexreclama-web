@@ -1273,37 +1273,42 @@ function normalizeLeadPayload(body) {
     return { ok: false, error: 'idempotencyKey inválida' };
   }
 
+  const ALLOWED_TIPOS = ['deuda', 'banco', 'multa', 'otro'];
+  if (!ALLOWED_TIPOS.includes(tipo)) {
+    return { ok: false, error: 'Tipo de reclamación no válido' };
+  }
+
   const tipoLabel = {
     deuda: 'Reclamación de deuda impagada',
     banco: 'Cláusulas bancarias abusivas',
     multa: 'Impugnación de multa',
     otro: 'Consulta general',
-  }[tipo] || tipo;
+  }[tipo];
 
-  // Vertical-specific fields
-  const str = (v) => String(body?.[v] || '').trim();
+  // Vertical-specific fields (all optional; capped to prevent oversized issues)
+  const str = (v, max = 200) => String(body?.[v] || '').trim().slice(0, max);
   let vertical = {};
   if (tipo === 'multa') {
     vertical = {
-      multa_expediente: str('multa_expediente'),
-      multa_importe: str('multa_importe'),
-      multa_fecha: str('multa_fecha'),
-      multa_tipo_infraccion: str('multa_tipo_infraccion'),
-      multa_organismo: str('multa_organismo'),
+      multa_expediente: str('multa_expediente', 60),
+      multa_importe: str('multa_importe', 20),
+      multa_fecha: str('multa_fecha', 20),
+      multa_tipo_infraccion: str('multa_tipo_infraccion', 200),
+      multa_organismo: str('multa_organismo', 100),
     };
   } else if (tipo === 'banco') {
     vertical = {
-      banco_tipo_clausula: str('banco_tipo_clausula'),
-      banco_nombre: str('banco_nombre'),
-      banco_anio_firma: str('banco_anio_firma'),
-      banco_cuota_mensual: str('banco_cuota_mensual'),
+      banco_tipo_clausula: str('banco_tipo_clausula', 80),
+      banco_nombre: str('banco_nombre', 100),
+      banco_anio_firma: str('banco_anio_firma', 6),
+      banco_cuota_mensual: str('banco_cuota_mensual', 20),
     };
   } else if (tipo === 'deuda') {
     vertical = {
-      deuda_tipo_deuda: str('deuda_tipo_deuda'),
-      deuda_importe_reclamado: str('deuda_importe_reclamado'),
-      deuda_nombre_deudor: str('deuda_nombre_deudor'),
-      deuda_tiene_contrato: str('deuda_tiene_contrato'),
+      deuda_tipo_deuda: str('deuda_tipo_deuda', 80),
+      deuda_importe_reclamado: str('deuda_importe_reclamado', 20),
+      deuda_nombre_deudor: str('deuda_nombre_deudor', 200),
+      deuda_tiene_contrato: str('deuda_tiene_contrato', 10),
     };
   }
 
