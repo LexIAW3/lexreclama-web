@@ -2,7 +2,7 @@
 
 Documento elaborado por AbogadoJunior conforme a: LSSI-CE, Reglamento (UE) 2016/679 (RGPD), Ley Orgánica 3/2018 (LOPD-GDD), Directiva ePrivacy 2002/58/CE y normativa española vigente.
 
-> **NOTA:** Los marcadores `[NOMBRE DEL DESPACHO]`, `[DIRECCIÓN]`, `[CIF]`, `[EMAIL DPO]`, `[EMAIL CONTACTO]`, `[CIUDAD]` y `[COLEGIO]` deben completarse con los datos definitivos antes de publicar.
+*Datos identificativos actualizados el 27 de marzo de 2026 (LEX-510).*
 
 ***
 
@@ -12,12 +12,12 @@ Documento elaborado por AbogadoJunior conforme a: LSSI-CE, Reglamento (UE) 2016/
 
 ## 1.1. Datos identificativos del titular
 
-* **Denominación social:** \[NOMBRE DEL DESPACHO]
-* **CIF/NIF:** \[CIF]
-* **Domicilio social:** \[DIRECCIÓN]
-* **Correo electrónico:** \[EMAIL CONTACTO]
+* **Denominación social:** EMINENT BUSINESS SOLUTIONS SL
+* **CIF/NIF:** B26669085
+* **Domicilio social:** Travesía de Gracia, 12, P. 1, 08007 Barcelona
+* **Correo electrónico:** info@lexreclama.es
 * **Actividad:** Servicios jurídicos y de asesoramiento legal
-* **Colegiación:** Ilustre Colegio de Abogados \[COLEGIO]
+* **Colegiación:** Ilustre Colegio de Abogados de Valencia (ICAV), nº 11024
 
 ## 1.2. Objeto y condiciones de uso
 
@@ -29,15 +29,15 @@ El usuario se compromete a no utilizar el Sitio Web con fines ilícitos, no real
 
 ## 1.3. Propiedad intelectual e industrial
 
-Todos los contenidos son propiedad de \[NOMBRE DEL DESPACHO] o de terceros autorizantes. Queda prohibida su reproducción, distribución o comunicación pública sin autorización expresa.
+Todos los contenidos son propiedad de LexReclama o de terceros autorizantes. Queda prohibida su reproducción, distribución o comunicación pública sin autorización expresa.
 
 ## 1.4. Limitación de responsabilidad
 
-\[NOMBRE DEL DESPACHO] no se responsabiliza de: interrupciones del servicio por causas ajenas a su control; errores u omisiones en los contenidos; daños por virus o elementos introducidos por terceros; ni por los contenidos de sitios web enlazados.
+LexReclama no se responsabiliza de: interrupciones del servicio por causas ajenas a su control; errores u omisiones en los contenidos; daños por virus o elementos introducidos por terceros; ni por los contenidos de sitios web enlazados.
 
 ## 1.5. Legislación aplicable y jurisdicción
 
-Este Aviso Legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los Juzgados y Tribunales de \[CIUDAD], con renuncia a cualquier otro fuero.
+Este Aviso Legal se rige por la legislación española. Para cualquier controversia, las partes se someten a los Juzgados y Tribunales de Barcelona, con renuncia a cualquier otro fuero.
 
 *Última actualización: marzo de 2026*
 
@@ -49,11 +49,11 @@ Este Aviso Legal se rige por la legislación española. Para cualquier controver
 
 ## 2.1. Responsable del tratamiento
 
-* **Identidad:** \[NOMBRE DEL DESPACHO]
-* **CIF/NIF:** \[CIF]
-* **Domicilio:** \[DIRECCIÓN]
-* **Email de contacto:** \[EMAIL CONTACTO]
-* **DPO:** \[EMAIL DPO]
+* **Identidad:** EMINENT BUSINESS SOLUTIONS SL
+* **CIF/NIF:** B26669085
+* **Domicilio:** Travesía de Gracia, 12, P. 1, 08007 Barcelona
+* **Email de contacto:** info@lexreclama.es
+* **DPO:** info@lexreclama.es
 
 ## 2.2. Datos personales tratados
 
@@ -92,7 +92,7 @@ En caso de transferencias fuera del Espacio Económico Europeo, se adoptarán la
 
 ## 2.6. Derechos ARCO-POL
 
-El interesado puede ejercer los derechos de **Acceso, Rectificación, Cancelación/Supresión, Oposición, Portabilidad, Limitación del tratamiento y a no ser objeto de decisiones automatizadas**, enviando solicitud escrita con copia del DNI a **\[EMAIL CONTACTO]** o a **\[DIRECCIÓN]**. Plazo de respuesta: **30 días** (prorrogable 2 meses adicionales en casos complejos).
+El interesado puede ejercer los derechos de **Acceso, Rectificación, Cancelación/Supresión, Oposición, Portabilidad, Limitación del tratamiento y a no ser objeto de decisiones automatizadas**, enviando solicitud escrita con copia del DNI a **info@lexreclama.es** o a **Travesía de Gracia, 12, P. 1, 08007 Barcelona**. Plazo de respuesta: **30 días** (prorrogable 2 meses adicionales en casos complejos).
 
 Puede presentar reclamación ante la **Agencia Española de Protección de Datos (AEPD)** — www.aepd.es
 
@@ -122,11 +122,11 @@ El acceso al Portal se realiza mediante doble factor (número de expediente + c�
 
 ## 2.8. Medidas de seguridad
 
-\[NOMBRE DEL DESPACHO] ha adoptado las medidas técnicas y organizativas necesarias para garantizar la seguridad de los datos personales conforme al artículo 32 RGPD, entre ellas: cifrado de comunicaciones (TLS/HTTPS), control de acceso autenticado con doble factor en el Portal Cliente, limitación de intentos de acceso, expiración automática de sesiones, protección CSRF en todos los formularios, y cabeceras de seguridad HTTP (CSP, HSTS, X-Frame-Options).
+LexReclama ha adoptado las medidas técnicas y organizativas necesarias para garantizar la seguridad de los datos personales conforme al artículo 32 RGPD, entre ellas: cifrado de comunicaciones (TLS/HTTPS), control de acceso autenticado con doble factor en el Portal Cliente, limitación de intentos de acceso, expiración automática de sesiones, protección CSRF en todos los formularios, y cabeceras de seguridad HTTP (CSP, HSTS, X-Frame-Options).
 
 ## 2.9. Delegado de Protección de Datos (DPO)
 
-Dado que el Despacho trata de forma habitual datos relativos a procedimientos judiciales y datos en el ejercicio de funciones de asesoramiento jurídico, se ha designado un DPO contactable en: **\[EMAIL DPO]**
+Dado que el Despacho trata de forma habitual datos relativos a procedimientos judiciales y datos en el ejercicio de funciones de asesoramiento jurídico, se ha designado un DPO contactable en: **info@lexreclama.es**
 
 *Última actualización: marzo de 2026 (rev. CISO — sección 2.7 Portal Cliente añadida)*
 
@@ -182,7 +182,7 @@ El uso de Google Analytics puede implicar transferencias a EE.UU. bajo cláusula
 
 ## 4.1. Objeto
 
-Las presentes CGC regulan la relación profesional entre **\[NOMBRE DEL DESPACHO]** (el "Despacho") y sus clientes (el "Cliente") derivada de la contratación de servicios jurídicos. En caso de discrepancia con un contrato específico, prevalecerá éste.
+Las presentes CGC regulan la relación profesional entre **LexReclama (EMINENT BUSINESS SOLUTIONS SL)** (el "Despacho") y sus clientes (el "Cliente") derivada de la contratación de servicios jurídicos. En caso de discrepancia con un contrato específico, prevalecerá éste.
 
 ## 4.2. Descripción de servicios
 
@@ -199,7 +199,7 @@ La relación contractual se formaliza mediante la aceptación expresa de las CGC
 
 Los honorarios se determinan conforme a las tarifas del Despacho, las Normas Orientadoras del Colegio de Abogados competente, la cuantía y complejidad del asunto. Se facilitará presupuesto orientativo previo al inicio.
 
-El pago se realiza por transferencia bancaria. El retraso devengará los intereses de demora legales. El Despacho puede solicitar provisión de fondos inicial.
+El pago se realiza por transferencia bancaria. El retraso devengará los intereses de demora legal. El Despacho puede solicitar provisión de fondos inicial.
 
 En asuntos de reclamación de cantidades puede acordarse fórmula de honorarios vinculada al resultado, detallada en el contrato específico.
 
@@ -236,11 +236,11 @@ Los abogados están sujetos al deber de secreto profesional conforme al art. 542
 
 ## 4.10. Reclamaciones
 
-Comunicación escrita a **\[EMAIL CONTACTO]**. Plazo de respuesta: 30 días. También puede acudir al órgano disciplinario del Colegio de Abogados competente.
+Comunicación escrita a **info@lexreclama.es**. Plazo de respuesta: 30 días. También puede acudir al órgano disciplinario del Colegio de Abogados competente.
 
 ## 4.11. Ley aplicable y jurisdicción
 
-Legislación española. Jurisdicción: Juzgados y Tribunales de **\[CIUDAD]**, salvo fuero imperativo de consumidores.
+Legislación española. Jurisdicción: Juzgados y Tribunales de **Barcelona**, salvo fuero imperativo de consumidores.
 
 *Última actualización: marzo de 2026*
 
@@ -251,7 +251,7 @@ Legislación española. Jurisdicción: Juzgados y Tribunales de **\[CIUDAD]**, s
 ## 5.1. Checkbox obligatorio — Aceptación de Política de Privacidad
 
 ```
-☐ He leído y acepto la Política de Privacidad de [NOMBRE DEL DESPACHO] y autorizo el tratamiento de mis datos personales para atender mi consulta o solicitud de información. *
+☐ He leído y acepto la Política de Privacidad de LexReclama y autorizo el tratamiento de mis datos personales para atender mi consulta o solicitud de información. *
 ```
 
 *(El texto "Política de Privacidad" debe ser hipervínculo a la página correspondiente. Campo obligatorio.)*
@@ -259,7 +259,7 @@ Legislación española. Jurisdicción: Juzgados y Tribunales de **\[CIUDAD]**, s
 ## 5.2. Checkbox opcional — Comunicaciones comerciales
 
 ```
-☐ Acepto recibir comunicaciones comerciales e información sobre los servicios de [NOMBRE DEL DESPACHO]. Puedo revocar este consentimiento en cualquier momento.
+☐ Acepto recibir comunicaciones comerciales e información sobre los servicios de LexReclama. Puedo revocar este consentimiento en cualquier momento.
 ```
 
 *(Desmarcado por defecto. Campo opcional.)*
@@ -274,7 +274,7 @@ Texto a mostrar bajo el formulario (primera capa informativa, Art. 13 RGPD):
 
 |                           |                                                            |
 | ------------------------- | ---------------------------------------------------------- |
-| **Responsable**           | \[NOMBRE DEL DESPACHO] — \[EMAIL CONTACTO]                 |
+| **Responsable**           | EMINENT BUSINESS SOLUTIONS SL — info@lexreclama.es         |
 | **Finalidad**             | Atender su consulta y gestionar la relación profesional    |
 | **Legitimación**          | Consentimiento del interesado / Ejecución de contrato      |
 | **Destinatarios**         | No se cederán datos a terceros salvo obligación legal      |
@@ -286,7 +286,7 @@ Texto a mostrar bajo el formulario (primera capa informativa, Art. 13 RGPD):
 ## 5.4. Mensaje de confirmación tras envío
 
 ```
-Gracias por contactar con [NOMBRE DEL DESPACHO]. Hemos recibido su solicitud y 
+Gracias por contactar con LexReclama. Hemos recibido su solicitud y
 nos pondremos en contacto con usted en un plazo de 24-48 horas laborables.
 
 Sus datos serán tratados de forma confidencial conforme a nuestra Política de Privacidad.
