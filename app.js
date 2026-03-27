@@ -87,9 +87,13 @@ function trackAdsLeadConversion() {
 document.querySelectorAll('.calc-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     const type = tab.dataset.tab;
-    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.calc-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
     document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
     document.getElementById(`panel-${type}`).classList.add('active');
     document.getElementById('calc-result').classList.add('hidden');
     syncCalcCtaClaimType(type);

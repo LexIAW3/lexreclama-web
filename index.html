@@ -419,14 +419,14 @@
       </div>
 
       <div class="calc-body" data-animate data-delay="2">
-        <div class="calc-tabs">
-          <button class="calc-tab active" data-tab="deuda">Deuda</button>
-          <button class="calc-tab" data-tab="banco">Banco</button>
-          <button class="calc-tab" data-tab="multa">Multa</button>
+        <div class="calc-tabs" role="tablist" aria-label="Tipo de reclamación">
+          <button class="calc-tab active" data-tab="deuda" role="tab" id="tab-deuda" aria-selected="true" aria-controls="panel-deuda">Deuda</button>
+          <button class="calc-tab" data-tab="banco" role="tab" id="tab-banco" aria-selected="false" aria-controls="panel-banco">Banco</button>
+          <button class="calc-tab" data-tab="multa" role="tab" id="tab-multa" aria-selected="false" aria-controls="panel-multa">Multa</button>
         </div>
 
         <!-- DEUDA -->
-        <div class="calc-panel active" id="panel-deuda">
+        <div class="calc-panel active" id="panel-deuda" role="tabpanel" aria-labelledby="tab-deuda" tabindex="0">
           <div class="calc-fields">
             <div class="field">
               <label for="deuda-importe">Importe de la deuda (€)</label>
@@ -449,7 +449,7 @@
         </div>
 
         <!-- BANCO -->
-        <div class="calc-panel" id="panel-banco">
+        <div class="calc-panel" id="panel-banco" role="tabpanel" aria-labelledby="tab-banco" tabindex="0">
           <div class="calc-fields">
             <div class="field">
               <label for="banco-tipo">Tipo de reclamación</label>
@@ -491,7 +491,7 @@
         </div>
 
         <!-- MULTA -->
-        <div class="calc-panel" id="panel-multa">
+        <div class="calc-panel" id="panel-multa" role="tabpanel" aria-labelledby="tab-multa" tabindex="0">
           <div class="calc-fields">
             <div class="field">
               <label for="multa-importe">Importe de la multa (€)</label>
