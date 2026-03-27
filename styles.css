@@ -893,7 +893,8 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 }
 
 html[data-theme='light'] .hero-chip {
-  background: rgba(14, 22, 60, 0.04);
+  background: rgba(14, 22, 60, 0.055);
+  border-color: rgba(14, 22, 60, 0.13);
 }
 
 /* Aurora: much softer on light backgrounds — !important to beat lower-cascade overrides */
@@ -1227,7 +1228,7 @@ html[data-theme='light'] .media-logo:hover { opacity: 0.55; }
 
 /* === CALCULATOR === */
 
-.calculadora .calc-body { max-width: 680px; }
+.calculadora .calc-body { max-width: 100%; }
 
 .calc-tabs {
   display: inline-flex;
@@ -4233,7 +4234,7 @@ html[data-theme='light'] .home-page::before { opacity: 0.022; }
 .hvp-amount-label {
   font-size: 0.72rem;
   color: var(--muted-2);
-  margin-top: -10px;
+  margin-top: -4px;
   letter-spacing: 0.01em;
 }
 
@@ -4336,7 +4337,7 @@ html[data-theme='light'] .home-page::before { opacity: 0.022; }
 }
 
 .hvp-mini-label {
-  font-size: 0.67rem;
+  font-size: 0.72rem;
   color: var(--muted-2);
   margin-top: 4px;
   line-height: 1.3;
@@ -6104,22 +6105,6 @@ html[data-theme='light'] .hvp-card--main {
   font-size: 0.95rem;
 }
 
-/* === LEX DS v7.4 — Visual audit fix (LEX-241/LEX-305) === */
-
-/* Fix 1.4 — Hero chips light mode */
-html[data-theme='light'] .hero-chip {
-  background: rgba(14, 22, 60, 0.055);
-  border-color: rgba(14, 22, 60, 0.13);
-}
-
-
-/* Fix 2.2 — HVP mini-label font-size */
-.hvp-mini-label { font-size: 0.72rem; }
-
-/* Fix 2.3 — HVP amount-label margin */
-.hvp-amount-label { margin-top: -4px; }
-
-
 
 /* area-card light mode shadow (único — Fix 5.3 LEX-241) */
 html[data-theme='light'] .area-card {
@@ -6192,6 +6177,12 @@ html[data-theme='light'] .area-card {
   border-radius: var(--r-lg);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.76), rgba(247, 250, 255, 0.62));
   box-shadow: 0 10px 32px rgba(14, 22, 60, 0.08);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 24px;
+  row-gap: 14px;
+  align-items: stretch;
 }
 
 .home-page .calculadora .calc-tabs {
@@ -6199,7 +6190,8 @@ html[data-theme='light'] .area-card {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
-  margin: 0 0 14px;
+  margin: 0;
+  grid-column: 1 / -1;
 }
 
 .home-page .calculadora .calc-tab {
@@ -6218,40 +6210,11 @@ html[data-theme='light'] .area-card {
 
 .home-page .calculadora .calc-fields .field:last-child { grid-column: 1 / -1; }
 
-.home-page .calculadora .calc-result { margin-top: 0; }
 .home-page .calculadora .result-inner { padding: 20px; }
 
 @media (max-width: 900px) {
   .home-page .calculadora .calc-body { padding: 16px; }
   .home-page .calculadora .calc-fields { grid-template-columns: 1fr; }
-}
-
-/* ── LEX DS v5.6 — FAQ full-width + Calculadora compact ───────── */
-
-/* FAQ: full container width — remove the 820px cap */
-/* (max-width removed from .faq-list above) */
-
-/* CALCULADORA: side-by-side compact layout */
-
-/* 1. Remove the max-width cap on the calc body */
-.calculadora .calc-body {
-  max-width: 100%;
-}
-
-/* 2. Grid: tabs row + [form | result] columns */
-.home-page .calculadora .calc-body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-  column-gap: 24px;
-  row-gap: 14px;
-  align-items: stretch;
-}
-
-/* Tabs span both columns */
-.home-page .calculadora .calc-tabs {
-  grid-column: 1 / -1;
-  margin-bottom: 0;
 }
 
 /* Result: right column, from row 2 */
@@ -6303,8 +6266,8 @@ html[data-theme='light'] .area-card {
 
 /* LEX-405 — Unir .footer-pre-cta con .footer sin separación visual */
 .footer-pre-cta + .footer {
-  margin-top: 0 !important;
-  border-top: none !important;
+  margin-top: 0;
+  border-top: none;
 }
 .footer-pre-cta + .footer::before {
   display: none;
