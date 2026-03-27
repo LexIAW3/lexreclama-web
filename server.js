@@ -2040,7 +2040,7 @@ async function sendWhatsAppWelcome(leadData) {
 
   try {
     const res = await fetch(
-      `https://graph.facebook.com/v19.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
+      `https://graph.facebook.com/v22.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
       {
         method: 'POST',
         headers: {
