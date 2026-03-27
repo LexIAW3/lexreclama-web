@@ -346,13 +346,26 @@ h3 { font-size: 1.04rem; letter-spacing: var(--tracking-tight); line-height: 1.4
 
 /* Eyebrow labels — above section h2s */
 .eyebrow {
-  display: inline-block;
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.16);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.67rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent-2);
-  margin-bottom: 10px;
+  color: var(--accent);
+  margin-bottom: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html[data-theme='light'] .eyebrow {
+  background: rgba(var(--accent-rgb), 0.07);
+  border-color: rgba(var(--accent-rgb), 0.18);
 }
 
 /* Gradient text */
@@ -2304,10 +2317,14 @@ body.contact-modal-open {
 /* === FOOTER === */
 
 .footer {
-  border-top: 1px solid var(--border);
+  position: relative;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-top: 1px solid rgba(14, 22, 60, 0.08);
   margin-top: 24px;
-  padding: 48px 0;
-  background: var(--footer-bg);
+  padding: 56px 0 64px;
+  overflow: hidden;
 }
 
 .footer-inner {
@@ -5151,17 +5168,7 @@ input:focus, select:focus, textarea:focus {
   border-color: rgba(var(--accent-rgb), 0.20) !important;
 }
 
-/* ── LEX DS v5.2 — Footer, Cookie & Modal Glass ─────────────── */
-
-/* FOOTER — glass treatment (backdrop-filter needs the fixed mesh orbs) */
-.footer {
-  position: relative;
-  background: rgba(255, 255, 255, 0.72) !important;
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  border-top: 1px solid rgba(14, 22, 60, 0.08) !important;
-  overflow: hidden;
-}
+/* ── LEX DS v5.2 — Cookie & Modal Glass ─────────────── */
 
 /* Subtle gradient accent at the very top of footer */
 .footer::before {
@@ -5215,32 +5222,7 @@ html[data-theme='light'] .footer .logo {
   transition: color 0.14s ease;
 }
 
-/* ── LEX DS v5.3 — Eyebrow Pills, Step Accents, Section h2 ───── */
-
-/* EYEBROW: plain text → premium pill badge (Linear/cal.com pattern) */
-.eyebrow {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 5px;
-  background: rgba(var(--accent-rgb), 0.08) !important;
-  border: 1px solid rgba(var(--accent-rgb), 0.16) !important;
-  border-radius: 999px !important;
-  padding: 4px 12px !important;
-  font-size: 0.67rem !important;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent) !important;
-  margin-bottom: 16px !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-html[data-theme='light'] .eyebrow {
-  background: rgba(var(--accent-rgb), 0.07) !important;
-  border-color: rgba(var(--accent-rgb), 0.18) !important;
-  color: var(--accent) !important;
-}
+/* ── LEX DS v5.3 — Step Accents, Section h2 ───── */
 
 /* STEP DIVIDER: gradient accent line + accent arrowhead */
 .step-divider::before {
@@ -6224,8 +6206,6 @@ html[data-theme='light'] .area-card {
 /* Fix 8.1 — Footer legal max-width */
 .footer-legal { max-width: 560px; }
 
-/* Fix 8.2 — Footer padding */
-.footer { padding: 56px 0 64px; }
 
 /* Fix 9.1 — Service page section padding */
 .service-page .section { padding: 96px 0; }
@@ -6242,8 +6222,6 @@ html[data-theme='light'] .area-card {
 /* Fix 10.1 — Section-sub margin-top */
 .section-sub { margin-top: 14px; }
 
-/* Fix 10.2 — Eyebrow margin-bottom */
-.eyebrow { margin-bottom: 14px !important; }
 
 /* Fix 10.3 — Home: keep eyebrow pill above section titles */
 .home-page .eyebrow {
