@@ -1085,7 +1085,7 @@ function createContactModalElement() {
         </div>
 
         <form class="contacto-form contact-modal-form" id="modal-lead-form">
-          <input type="hidden" name="${CSRF_INPUT_NAME}" value="${getCsrfToken()}" />
+          <input type="hidden" name="${CSRF_INPUT_NAME}" value="${escapeHtml(getCsrfToken())}" />
           <div class="form-row">
             <div class="field">
               <label for="modal-nombre">Nombre</label>
