@@ -965,8 +965,14 @@ html[data-theme='light'] .home-page .hero .aurora-secondary {
 
 .trust-bar-divider {
   width: 1px;
-  height: 20px;
-  background: var(--border);
+  height: 14px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(var(--accent-rgb), 0.2),
+    transparent
+  );
+  flex-shrink: 0;
 }
 
 @media (max-width: 760px) {
@@ -1402,17 +1408,24 @@ html[data-theme='light'] .media-logo:hover   { opacity: 0.5; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--r-sm);
-  background: var(--step-num-bg);
-  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--accent-rgb), 0.22) 0%,
+    rgba(var(--accent-rgb), 0.07) 100%
+  );
+  border: 1px solid rgba(var(--accent-rgb), 0.32);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 0 0 1px rgba(var(--accent-rgb), 0.06);
   color: var(--step-num-text);
   font-family: var(--font-display);
-  font-size: 0.82rem;
-  font-weight: 700;
-  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 800;
   letter-spacing: -0.02em;
+  margin-bottom: 22px;
 }
 
 .step h3 { margin-bottom: 8px; font-size: 1.05rem; font-weight: 700; letter-spacing: var(--tracking-tight); }
@@ -3831,8 +3844,8 @@ h1.article-h1 {
   font-size: 1.1rem;
   color: var(--text);
   margin: 0 0 16px;
-  border: none !important;
-  padding: 0 !important;
+  border: none;
+  padding: 0;
 }
 
 .related-link {
@@ -4678,6 +4691,7 @@ html[data-theme='light'] .field.field-error textarea {
   gap: 12px;
   width: max-content;
   animation: marquee-scroll 44s linear infinite;
+  transition: animation-play-state var(--dur-fast) var(--ease-out);
 }
 
 /* Pause on hover — great for accessibility and usability */
@@ -4785,26 +4799,6 @@ html[data-theme='light'] .stat-card:nth-child(3) {
   background: linear-gradient(148deg, rgba(0, 155, 101, 0.07) 0%, #ffffff 58%);
 }
 
-
-/* ---- PROCESS: Step number elevation ---- */
-
-.step-num {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 800;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--accent-rgb), 0.22) 0%,
-    rgba(var(--accent-rgb), 0.07) 100%
-  );
-  border-color: rgba(var(--accent-rgb), 0.32);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    0 0 0 1px rgba(var(--accent-rgb), 0.06);
-  margin-bottom: 22px;
-}
 
 .step:hover .step-num {
   background: linear-gradient(
@@ -4926,19 +4920,6 @@ select {
 select:focus {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1.5 7.5L7 2L12.5 7.5' stroke='%23C4A86A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
-
-/* ---- SECTION spacing: more breathing room ---- */
-
-.areas,
-.calculadora,
-.proceso,
-.testimonios,
-.contacto,
-.recursos,
-.faq {
-  padding: 112px 0;
-}
-
 
 /* ---- RECURSO CARDS: hover elevation ---- */
 
@@ -5113,18 +5094,6 @@ html[data-theme='light'] .footer .logo {
 
 
 
-/* Trust bar: subtle separator */
-.trust-bar-divider {
-  width: 1px;
-  height: 14px;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(var(--accent-rgb), 0.2),
-    transparent
-  );
-  flex-shrink: 0;
-}
 
 /* cta-banner-eyebrow consolidado en línea ~1443 */
 
@@ -5343,10 +5312,6 @@ html[data-theme='light'] .area-card:first-child .area-link:not(#area-link-banco)
 }
 
 
-/* TESTIMONIOS MARQUEE: pause-on-hover usa los tokens de movimiento */
-.testimonios-marquee-track {
-  transition: animation-play-state var(--dur-fast) var(--ease-out);
-}
 
 
 /* WILL-CHANGE: GPU compositing en hover únicamente (evita consumo innecesario de RAM) */
@@ -6079,12 +6044,12 @@ html[data-theme='light'] .area-card {
 /* Calculadora inline blog */
 .blog-article .calculadora { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 32px 0; }
 .blog-article .calculadora h3 { color: var(--text); margin: 0 0 16px; font-size: 1.05rem; }
-.calc-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-.calc-row:last-child { border-bottom: none; font-weight: 600; }
-.calc-label { color: var(--muted); }
-.calc-value { color: var(--text); font-weight: 600; }
-.calc-value.positive { color: var(--success); }
-.calc-value.negative { color: var(--danger); }
+.blog-article .calculadora .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.blog-article .calculadora .calc-row:last-child { border-bottom: none; font-weight: 600; }
+.blog-article .calculadora .calc-label { color: var(--muted); }
+.blog-article .calculadora .calc-value { color: var(--text); font-weight: 600; }
+.blog-article .calculadora .calc-value.positive { color: var(--success); }
+.blog-article .calculadora .calc-value.negative { color: var(--danger); }
 
 /* Opciones */
 .opcion-card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
