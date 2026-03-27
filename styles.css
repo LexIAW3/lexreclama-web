@@ -915,7 +915,7 @@ html[data-theme='light'] .home-page .hero .aurora-secondary {
 /* === TRUST BAR === */
 
 .trust-bar {
-  padding: 20px 0 0;
+  padding: 20px 0 24px;
 }
 
 .trust-bar-inner {
@@ -5353,17 +5353,6 @@ html[data-theme='light'] .btn-primary:hover {
    LEX DS v6.1 — HVP dark contrast · h2 scale · hero glow
    =================================================================== */
 
-/* HVP CARD IN LIGHT MODE — keep hero panel aligned with light UI */
-
-html[data-theme='light'] .hvp-card--main {
-  background: linear-gradient(160deg, #ffffff 0%, #f1f5ff 100%) !important;
-  border-color: rgba(14, 22, 60, 0.12) !important;
-  box-shadow:
-    0 24px 64px rgba(14, 22, 60, 0.14),
-    0 0 0 1px rgba(91, 114, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
-}
-
 /* Text overrides — calibrated for light card background */
 html[data-theme='light'] .hvp-card--main .hvp-label {
   color: rgba(14, 22, 60, 0.58);
@@ -5405,16 +5394,16 @@ html[data-theme='light'] .hvp-card--main .hvp-tag {
 
 .home-page h2,
 .home-page .section-title {
-  font-size: clamp(2.2rem, 4.8vw, 4rem) !important;
+  font-size: clamp(2.2rem, 4.8vw, 4rem);
 }
 
 /* CTA banner y contacto: escala propia más contenida */
 .home-page .cta-banner h2 {
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem) !important;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
 }
 
 .home-page .contacto-left h2 {
-  font-size: clamp(1.85rem, 3.2vw, 2.7rem) !important;
+  font-size: clamp(1.85rem, 3.2vw, 2.7rem);
 }
 
 /* HERO VISUAL GLOW: más dramático en light mode — refuerza contraste del dark card */
@@ -5425,26 +5414,26 @@ html[data-theme='light'] .hero-visual::before {
     rgba(53, 82, 232, 0.14),
     rgba(11, 126, 216, 0.06) 50%,
     transparent 70%
-  ) !important;
-  inset: -32px !important;
+  );
+  inset: -32px;
 }
 
 /* HVP ROW: mantener white/light para contraste con dark card de arriba */
 html[data-theme='light'] .hvp-row {
-  background: linear-gradient(160deg, #f8faff, #eef2ff) !important;
+  background: linear-gradient(160deg, #f8faff, #eef2ff);
   border: 1px solid rgba(14, 22, 60, 0.08);
   border-radius: var(--r-lg);
 }
 
 /* HVP NOTIF: en light mode, card es oscura → notif blanca frosted glass */
 html[data-theme='light'] .hvp-notif {
-  background: rgba(255, 255, 255, 0.90) !important;
-  border-color: rgba(255, 255, 255, 0.60) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-  color: rgba(14, 22, 60, 0.65) !important;
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(255, 255, 255, 0.60);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20), inset 0 1px 0 rgba(255, 255, 255, 1);
+  color: rgba(14, 22, 60, 0.65);
 }
 
-html[data-theme='light'] .hvp-notif strong { color: rgba(14, 22, 60, 0.90) !important; }
+html[data-theme='light'] .hvp-notif strong { color: rgba(14, 22, 60, 0.90); }
 
 /* ===================================================================
    LEX DS v7.0 — Motion system · Optical sizing · Precision upgrades
@@ -5700,7 +5689,7 @@ html[data-theme='light'] .stat-card:nth-child(1) {
 
 .home-page .areas .section-title,
 .home-page .proceso .section-title {
-  font-size: clamp(2rem, 3.8vw, 3.2rem) !important;
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
 }
 
 /* === PROCESS: connecting line más definida === */
@@ -5738,7 +5727,7 @@ html[data-theme='light'] .stat-card:nth-child(1) {
 /* --- ENTITIES BAR --- */
 .entities-bar {
   border-bottom: 1px solid var(--border);
-  padding: 12px 0;
+  padding: 18px 0;
   overflow: hidden;
 }
 
@@ -5906,22 +5895,14 @@ html[data-theme='light'] .footer-pre-cta {
 
 /* 2) Hero visual panel main card: lock a light visual in light mode */
 html[data-theme='light'] .hvp-card--main {
-  background: linear-gradient(165deg, #ffffff 0%, #f1f5ff 56%, #eaf0ff 100%) !important;
-  border-color: rgba(14, 22, 60, 0.12) !important;
+  background: linear-gradient(165deg, #ffffff 0%, #f1f5ff 56%, #eaf0ff 100%);
+  border-color: rgba(14, 22, 60, 0.12);
   box-shadow:
     0 24px 64px rgba(14, 22, 60, 0.14),
     0 0 0 1px rgba(91, 114, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
-/* 3) Trust/entities spacing: add breathing room between both rows */
-.trust-bar {
-  padding-bottom: 24px !important;
-}
-
-.entities-bar {
-  padding-top: 18px !important;
-}
 
 /* ─── VERTICAL FORM FIELDS ───────────────────────────────── */
 .vertical-fields {
