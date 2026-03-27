@@ -549,10 +549,10 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
       </div>
     </div>
   </nav>
-  <main id="content-root" class="container" style="padding: 7rem 0 3rem;">
+  <main id="content-root" class="container content-shell-main">
     <section>
       <p class="eyebrow">${escapeHtml(intro)}</p>
-      <h1 style="font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 1rem;">${escapeHtml(heading)}</h1>
+      <h1 class="content-shell-h1">${escapeHtml(heading)}</h1>
       ${bodyHtml}
     </section>
   </main>
@@ -1041,7 +1041,7 @@ function renderLegalPage(title, markdownBody, nonce = '') {
   <meta name="robots" content="noindex, follow" />
   <title>${escapeHtml(title)} · LexReclama</title>
   ${renderGa4Snippet(nonce)}
-  <style>
+  <style nonce="${nonce}">
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; }
     .wrap { max-width: 860px; margin: 0 auto; padding: 24px; }
     .top { margin-bottom: 16px; }

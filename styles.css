@@ -6631,3 +6631,7 @@ html[data-theme='light'] .area-card {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── renderContentShell placeholder (pillar/blog fallback) ── */
+.content-shell-main { padding: 7rem 0 3rem; }
+.content-shell-h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 1rem; }
