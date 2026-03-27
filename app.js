@@ -1319,6 +1319,13 @@ function initScrollAnimations() {
   }
 }
 
+// CSP-safe fallback para imágenes rotas en blog cards (reemplaza onerror= inline)
+document.addEventListener('error', (e) => {
+  if (e.target.tagName === 'IMG' && e.target.closest('.blog-card-img')) {
+    e.target.parentElement.classList.add('blog-card-img--fallback');
+  }
+}, true);
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavScrollEffect();
   ensureContactLinks();
