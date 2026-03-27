@@ -543,10 +543,10 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
     <div class="nav-inner">
       <a href="/" class="logo" aria-label="LexReclama — inicio">LexReclama<span>.</span></a>
       <div>
-        <a class="btn btn-sm" href="/reclamacion-deudas/">Deudas</a>
-        <a class="btn btn-sm" href="/clausulas-bancarias/">Cláusulas</a>
-        <a class="btn btn-sm" href="/recurrir-multas/">Multas</a>
-        <a class="btn btn-sm" href="/blog/">Blog</a>
+        <a class="btn btn-sm" href="/reclamacion-deudas/"${canonicalPath.startsWith('/reclamacion-deudas/') ? ' aria-current="page"' : ''}>Deudas</a>
+        <a class="btn btn-sm" href="/clausulas-bancarias/"${canonicalPath.startsWith('/clausulas-bancarias/') ? ' aria-current="page"' : ''}>Cláusulas</a>
+        <a class="btn btn-sm" href="/recurrir-multas/"${canonicalPath.startsWith('/recurrir-multas/') ? ' aria-current="page"' : ''}>Multas</a>
+        <a class="btn btn-sm" href="/blog/"${canonicalPath.startsWith('/blog/') ? ' aria-current="page"' : ''}>Blog</a>
       </div>
     </div>
   </nav>

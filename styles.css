@@ -1957,9 +1957,10 @@ html[data-theme='light'] .testimonio-card:hover {
   display: block;
 }
 
-input.field-invalid {
-  border-color: var(--error) !important;
-  outline-color: var(--error) !important;
+input.field-invalid,
+input.field-invalid:focus {
+  border-color: var(--error);
+  outline-color: var(--error);
 }
 
 .blog-subscribe-message {
@@ -4621,14 +4622,14 @@ html[data-theme='light'] .contact-modal-form::before {
 .field.field-valid input,
 .field.field-valid select,
 .field.field-valid textarea {
-  border-color: rgba(0, 212, 138, 0.5) !important;
+  border-color: rgba(0, 212, 138, 0.5);
   box-shadow: 0 0 0 3px rgba(0, 212, 138, 0.09);
 }
 
 .field.field-error input,
 .field.field-error select,
 .field.field-error textarea {
-  border-color: rgba(255, 82, 100, 0.55) !important;
+  border-color: rgba(255, 82, 100, 0.55);
   box-shadow: 0 0 0 3px rgba(255, 82, 100, 0.1);
 }
 
@@ -4647,14 +4648,14 @@ html[data-theme='light'] .contact-modal-form::before {
 html[data-theme='light'] .field.field-valid input,
 html[data-theme='light'] .field.field-valid select,
 html[data-theme='light'] .field.field-valid textarea {
-  border-color: rgba(0, 155, 101, 0.55) !important;
+  border-color: rgba(0, 155, 101, 0.55);
   box-shadow: 0 0 0 3px rgba(0, 155, 101, 0.1);
 }
 
 html[data-theme='light'] .field.field-error input,
 html[data-theme='light'] .field.field-error select,
 html[data-theme='light'] .field.field-error textarea {
-  border-color: rgba(200, 0, 46, 0.5) !important;
+  border-color: rgba(200, 0, 46, 0.5);
   box-shadow: 0 0 0 3px rgba(200, 0, 46, 0.09);
 }
 
@@ -5638,9 +5639,11 @@ html[data-theme='light'] .footer-pre-cta {
    =================================================================== */
 
 /* 1) Eyebrow visible state: lock final position to avoid shifted pills */
-.eyebrow.is-visible {
-  transform: none !important;
-  opacity: 1 !important;
+/* html prefix gives specificity 0,2,1 matching html [data-animate].is-visible;
+   cascade position (line ~5640 > line 308) ensures this wins without !important */
+html .eyebrow.is-visible {
+  transform: none;
+  opacity: 1;
 }
 
 /* 2) Hero visual panel main card: lock a light visual in light mode */
