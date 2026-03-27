@@ -310,6 +310,15 @@ html [data-animate][data-delay="2"] { transition-delay: 160ms; }
 html [data-animate][data-delay="3"] { transition-delay: 240ms; }
 html [data-animate][data-delay="4"] { transition-delay: 320ms; }
 
+@media (prefers-reduced-motion: reduce) {
+  /* a11y: WCAG 2.3.3 — mostrar elementos inmediatamente sin animación */
+  html [data-animate] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* === TYPOGRAPHY === */
 
 h1, h2, h3, h4 {

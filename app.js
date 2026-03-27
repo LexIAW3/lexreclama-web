@@ -1452,6 +1452,7 @@ function initScrollProgress() {
 function initCounters() {
   const els = document.querySelectorAll('[data-count-to]');
   if (!els.length) return;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
@@ -1459,6 +1460,11 @@ function initCounters() {
       const target = +el.dataset.countTo;
       const prefix = el.dataset.prefix || '';
       const suffix = el.dataset.suffix || '';
+      if (reducedMotion) {
+        el.textContent = prefix + target + suffix;
+        observer.unobserve(el);
+        return;
+      }
       const dur = 1400;
       const start = performance.now();
       function tick(now) {
