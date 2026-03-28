@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Excluir área privada de clientes y recursos internos de plantillas
+Disallow: /portal-cliente/
+Disallow: /social-templates/
+
+Sitemap: https://www.lexreclama.es/sitemap.xml
