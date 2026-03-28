@@ -287,6 +287,39 @@ function initNavScrollEffect() {
   window.addEventListener('scroll', onScrollThrottled, { passive: true });
 }
 
+/* ─── MOBILE NAV (blog pages — pattern: [hidden] attr) ───────
+ * index.html uses its own inline script with aria-hidden+inert.
+ * Blog articles use <div id="nav-mobile" hidden> — this function
+ * wires the hamburger for those pages only.
+ * ──────────────────────────────────────────────────────────── */
+function initMobileNav() {
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileNav = document.getElementById('nav-mobile');
+  // Only take over if nav-mobile uses the [hidden] attribute pattern.
+  // Pages with the inline-script pattern (index.html) won't have [hidden].
+  if (!hamburger || !mobileNav || !mobileNav.hasAttribute('hidden')) return;
+
+  function setOpen(open) {
+    hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    hamburger.classList.toggle('open', open);
+    if (open) {
+      mobileNav.removeAttribute('hidden');
+    } else {
+      mobileNav.setAttribute('hidden', '');
+    }
+  }
+
+  hamburger.addEventListener('click', () => setOpen(!hamburger.classList.contains('open')));
+  mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('click', (e) => {
+    if (!hamburger.classList.contains('open')) return;
+    const nav = hamburger.closest('nav,header,.nav');
+    if (nav && nav.contains(e.target)) return;
+    if (mobileNav.contains(e.target)) return;
+    setOpen(false);
+  });
+}
+
 /* ─── CALCULATORS ─────────────────────────────────────────── */
 function calcDeuda() {
   const importe = parseFloat(document.getElementById('deuda-importe').value) || 0;
@@ -1352,6 +1385,7 @@ document.addEventListener('error', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavScrollEffect();
+  initMobileNav();
   ensureContactLinks();
   initBankLeadMagnetCalculator();
   initContactModal();
