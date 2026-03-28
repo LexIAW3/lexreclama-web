@@ -83,6 +83,15 @@ const ASSET_VERSIONS = [
 // Named shorthand used in renderContentShell template literal.
 const ASSET_CSS_HASH = ASSET_VERSIONS[0].hash;
 const STRIPE_API = 'https://api.stripe.com/v1';
+
+// Fetch timeouts — prevents external API hangs from exhausting the event loop.
+// AbortSignal.timeout() is available in Node.js 17.3+ (running on v22).
+const FETCH_TIMEOUT_API_MS   = 10 * 1000; // internal Paperclip API
+const FETCH_TIMEOUT_EXT_MS   =  8 * 1000; // external APIs (Brevo, Stripe, WhatsApp)
+const FETCH_TIMEOUT_OCR_MS   = 30 * 1000; // OCR upload — file transfer + processing
+function fetchWithTimeout(url, options = {}, timeoutMs = FETCH_TIMEOUT_EXT_MS) {
+  return fetch(url, { signal: AbortSignal.timeout(timeoutMs), ...options });
+}
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
 const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
@@ -1118,7 +1127,7 @@ async function uploadDocumentToOcr(issueId, file) {
     const fullBody = Buffer.concat([bodyStart, file.buffer, bodyEnd]);
 
     const ocrUrl = new URL(`/api/documents/upload?issueId=${encodeURIComponent(issueId)}`, OCR_SERVER);
-    const res = await fetch(ocrUrl.toString(), {
+    const res = await fetchWithTimeout(ocrUrl.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': `multipart/form-data; boundary=${boundary}`,
@@ -1126,7 +1135,7 @@ async function uploadDocumentToOcr(issueId, file) {
         ...(OCR_SHARED_SECRET ? { 'x-ocr-shared-secret': OCR_SHARED_SECRET } : {}),
       },
       body: fullBody,
-    });
+    }, FETCH_TIMEOUT_OCR_MS);
     if (!res.ok) {
       const err = await res.text().catch(() => '');
       console.warn(`[ocr] upload failed for ${file.originalname}: ${res.status} ${err}`);
@@ -1389,14 +1398,14 @@ async function createIssueForLead(leadData, paymentMeta = { paid: false }) {
     goalId: GOAL_ID,
   };
 
-  const apiRes = await fetch(`${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues`, {
+  const apiRes = await fetchWithTimeout(`${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${SUBMIT_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(issue),
-  });
+  }, FETCH_TIMEOUT_API_MS);
   const data = await apiRes.json();
   if (!apiRes.ok) throw new Error(data.error || `HTTP ${apiRes.status}`);
 
@@ -1464,7 +1473,7 @@ async function createStripeCheckoutSession(req, leadToken, leadData) {
   form.append('customer_email', leadData.email);
   form.append('locale', 'es');
 
-  const stripeRes = await fetch(`${STRIPE_API}/checkout/sessions`, {
+  const stripeRes = await fetchWithTimeout(`${STRIPE_API}/checkout/sessions`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
@@ -1482,7 +1491,7 @@ async function createStripeCheckoutSession(req, leadToken, leadData) {
 
 async function readStripeCheckoutSession(sessionId) {
   if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY no configurada');
-  const stripeRes = await fetch(`${STRIPE_API}/checkout/sessions/${encodeURIComponent(sessionId)}`, {
+  const stripeRes = await fetchWithTimeout(`${STRIPE_API}/checkout/sessions/${encodeURIComponent(sessionId)}`, {
     headers: {
       'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
     },
@@ -1674,7 +1683,7 @@ async function subscribeContactInBrevo(payload) {
     body.listIds = [BREVO_LIST_ID];
   }
 
-  const brevoRes = await fetch(`${BREVO_API_BASE}/contacts`, {
+  const brevoRes = await fetchWithTimeout(`${BREVO_API_BASE}/contacts`, {
     method: 'POST',
     headers: {
       'api-key': BREVO_API_KEY,
@@ -1735,7 +1744,7 @@ async function sendLeadMagnetEmail(payload) {
     ].join('\n');
   }
 
-  const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+  const res = await fetchWithTimeout(`${BREVO_API_BASE}/smtp/email`, {
     method: 'POST',
     headers: {
       'api-key': BREVO_API_KEY,
@@ -1924,13 +1933,14 @@ async function readIssueDocumentsIndex(issueId) {
 }
 
 async function fetchIssueByIdentifier(caseId) {
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues?q=${encodeURIComponent(caseId)}&limit=20`,
     {
       headers: {
         Authorization: `Bearer ${SUBMIT_API_KEY}`,
       },
     },
+    FETCH_TIMEOUT_API_MS,
   );
   const data = await res.json().catch(() => []);
   if (!res.ok || !Array.isArray(data)) return null;
@@ -1939,11 +1949,11 @@ async function fetchIssueByIdentifier(caseId) {
 }
 
 async function fetchIssueComments(issueId) {
-  const res = await fetch(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(issueId)}/comments`, {
+  const res = await fetchWithTimeout(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(issueId)}/comments`, {
     headers: {
       Authorization: `Bearer ${SUBMIT_API_KEY}`,
     },
-  });
+  }, FETCH_TIMEOUT_API_MS);
   const data = await res.json().catch(() => []);
   if (!res.ok || !Array.isArray(data)) return [];
   return data
@@ -1976,7 +1986,7 @@ async function sendPortalCodeEmail(email, caseId, code) {
     htmlContent: `<p>Tu codigo de acceso para <strong>${escapeHtml(caseId)}</strong> es:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${escapeHtml(code)}</p><p>Caduca en 10 minutos y solo se puede usar una vez.</p>`,
     textContent: `Tu codigo de acceso para ${caseId} es: ${code}\n\nCaduca en 10 minutos y solo se puede usar una vez.`,
   };
-  const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+  const res = await fetchWithTimeout(`${BREVO_API_BASE}/smtp/email`, {
     method: 'POST',
     headers: {
       'api-key': BREVO_API_KEY,
@@ -2039,7 +2049,7 @@ async function sendWhatsAppWelcome(leadData) {
   };
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `https://graph.facebook.com/v22.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
       {
         method: 'POST',
@@ -2102,7 +2112,7 @@ async function sendLeadConfirmationEmail(leadData, identifier) {
     textContent,
   };
 
-  const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+  const res = await fetchWithTimeout(`${BREVO_API_BASE}/smtp/email`, {
     method: 'POST',
     headers: {
       'api-key': BREVO_API_KEY,
@@ -2270,11 +2280,11 @@ async function handlePortalMe(req, res) {
     res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
     return;
   }
-  const issueRes = await fetch(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}`, {
+  const issueRes = await fetchWithTimeout(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}`, {
     headers: {
       Authorization: `Bearer ${SUBMIT_API_KEY}`,
     },
-  });
+  }, FETCH_TIMEOUT_API_MS);
   const issue = await issueRes.json().catch(() => null);
   if (!issueRes.ok || !issue) {
     res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -2340,7 +2350,7 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
   portalMessages.set(caseId, current.slice(-12));
 
   if (SUBMIT_API_KEY) {
-    await fetch(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}/comments`, {
+    await fetchWithTimeout(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}/comments`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${SUBMIT_API_KEY}`,
@@ -2349,7 +2359,7 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
       body: JSON.stringify({
         body: `[CLIENTE]\n\n${message}`,
       }),
-    }).catch((err) => {
+    }, FETCH_TIMEOUT_API_MS).catch((err) => {
       console.warn(`[portal] mensaje de ${caseId} no sincronizado a Paperclip: ${err.message}`);
     });
   }
@@ -2691,7 +2701,7 @@ const server = http.createServer(async (req, res) => {
   let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
   // Security: prevent path traversal
   if (!filePath.startsWith(STATIC_DIR + path.sep) && filePath !== STATIC_DIR) {
-    res.writeHead(403); res.end('Forbidden'); return;
+    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('Forbidden'); return;
   }
 
   fs.stat(filePath, (statErr, stats) => {
