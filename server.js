@@ -121,7 +121,7 @@ const recentLeadSubmissions = new Map();
 const recentCheckoutCreations = new Map();
 const idempotencyInFlight = new Map();
 const PORTAL_CODE_TTL_MS = 10 * 60 * 1000;
-const PORTAL_SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const PORTAL_SESSION_TTL_MS = 4 * 60 * 60 * 1000;
 const PORTAL_SESSION_COOKIE_NAME = 'lex_portal_session';
 const PORTAL_COOKIE_SECURE =
   process.env.NODE_ENV === 'production'
@@ -2034,6 +2034,9 @@ async function handlePortalMe(req, res) {
     res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
     return;
   }
+  // Sliding renewal: extend session on each active use
+  auth.session.expiresAtMs = Date.now() + PORTAL_SESSION_TTL_MS;
+  appendSetCookieHeader(res, buildPortalSessionCookieHeader(auth.token, Math.floor(PORTAL_SESSION_TTL_MS / 1000)));
   const issueRes = await fetchWithTimeout(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}`, {
     headers: {
       Authorization: `Bearer ${SUBMIT_API_KEY}`,
