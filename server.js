@@ -13,6 +13,8 @@ const { generateNonce, safeEqual } = require('./utils/crypto');
 const { escapeHtml } = require('./utils/html');
 const { getClientIp, buildAdminIpChecker } = require('./utils/ip');
 const { sendAdminAuthChallenge, isAdminAuthorized } = require('./utils/auth');
+const { parseCookies, createCsrfManager } = require('./middleware/csrf');
+const { createRateLimiter } = require('./middleware/rateLimit');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -140,7 +142,6 @@ function detectTestLeadReason(leadData) {
 
 /* ─── RATE LIMITER + CSRF ────────────────────────────────────── */
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-const rateLimitMap = new Map();
 const RATE_LIMIT_RULES = {
   '/health': { scope: 'health', max: 60, windowMs: 60 * 1000 },
   '/submit-lead': { scope: 'submit-lead', max: 5 },
@@ -163,58 +164,17 @@ const RATE_LIMIT_RULES = {
 
 const CSRF_COOKIE_NAME = 'lex_csrf_token';
 const CSRF_TTL_MS = 12 * 60 * 60 * 1000;
-const issuedCsrfTokens = new Map();
-
-function parseCookies(req) {
-  const header = String(req.headers.cookie || '');
-  if (!header) return {};
-  return header.split(';').reduce((acc, pair) => {
-    const idx = pair.indexOf('=');
-    if (idx === -1) return acc;
-    const key = pair.slice(0, idx).trim();
-    const value = pair.slice(idx + 1).trim();
-    try {
-      acc[key] = decodeURIComponent(value);
-    } catch {
-      acc[key] = value;
-    }
-    return acc;
-  }, {});
-}
-
-function sweepCsrfTokens() {
-  const now = Date.now();
-  for (const [token, expiresAtMs] of issuedCsrfTokens) {
-    if (expiresAtMs <= now) issuedCsrfTokens.delete(token);
-  }
-}
-
-function getOrCreateCsrfToken(req, res) {
-  sweepCsrfTokens();
-  const cookies = parseCookies(req);
-  const cookieToken = String(cookies[CSRF_COOKIE_NAME] || '').trim();
-  const now = Date.now();
-  const activeExpiry = cookieToken ? issuedCsrfTokens.get(cookieToken) : 0;
-  if (cookieToken && activeExpiry > now) {
-    return cookieToken;
-  }
-
-  const token = crypto.randomBytes(32).toString('hex');
-  issuedCsrfTokens.set(token, now + CSRF_TTL_MS);
-
-  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim().toLowerCase();
-  const secureCookie = forwardedProto === 'https';
-  const maxAge = Math.floor(CSRF_TTL_MS / 1000);
-  const cookieParts = [
-    `${CSRF_COOKIE_NAME}=${encodeURIComponent(token)}`,
-    'Path=/',
-    'SameSite=Strict',
-    `Max-Age=${maxAge}`,
-  ];
-  if (secureCookie) cookieParts.push('Secure');
-  res.setHeader('Set-Cookie', cookieParts.join('; '));
-  return token;
-}
+const {
+  sweepCsrfTokens,
+  getOrCreateCsrfToken,
+  validateCsrfToken,
+} = createCsrfManager({
+  cookieName: CSRF_COOKIE_NAME,
+  ttlMs: CSRF_TTL_MS,
+  randomToken: () => crypto.randomBytes(32).toString('hex'),
+  safeEqual,
+  parseBody: parseMultipartOrJsonBody,
+});
 
 function validateAndAttachJsonBody(req, res) {
   return (async () => {
@@ -296,27 +256,6 @@ function parseMultipartOrJsonBody(req, res) {
   });
 }
 
-function validateCsrfToken(req, res) {
-  return (async () => {
-    const okBody = await parseMultipartOrJsonBody(req, res);
-    if (!okBody) return false;
-    sweepCsrfTokens();
-
-    const cookies = parseCookies(req);
-    const cookieToken = String(cookies[CSRF_COOKIE_NAME] || '').trim();
-    const bodyToken = String(req.parsedBody?.csrfToken || '').trim();
-    const known = bodyToken ? issuedCsrfTokens.get(bodyToken) : 0;
-    const validWindow = known > Date.now();
-
-    if (!cookieToken || !bodyToken || !safeEqual(cookieToken, bodyToken) || !validWindow) {
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'CSRF token inválido' }));
-      return false;
-    }
-    return true;
-  })();
-}
-
 function logAdminAudit(req, outcome, detail = '') {
   const clientIp = getClientIp(req);
   const forwardedFor = String(req.headers['x-forwarded-for'] || '').trim();
@@ -328,24 +267,10 @@ function logAdminAudit(req, outcome, detail = '') {
   console.log(`[audit][admin] outcome=${outcome} ip=${clientIp} method=${req.method} path=${req.url}${detailPart}${xffPart} ua="${userAgent}"`);
 }
 
-function consumeRateLimit(rule, ip) {
-  if (!rule) { console.error('[rate-limit] consumeRateLimit called with undefined rule — no limit applied'); return { limited: false, retryAfterSec: 0 }; }
-  const now = Date.now();
-  const windowMs = Number.isFinite(rule?.windowMs) && rule.windowMs > 0 ? rule.windowMs : RATE_LIMIT_WINDOW_MS;
-  const windowStart = now - windowMs;
-  const key = `${rule.scope}:${ip || 'unknown'}`;
-  const current = rateLimitMap.get(key) || [];
-  const validHits = current.filter((timestamp) => timestamp > windowStart);
-  if (validHits.length >= rule.max) {
-    const oldest = validHits[0];
-    const retryAfterSec = Math.max(1, Math.ceil((oldest + windowMs - now) / 1000));
-    rateLimitMap.set(key, validHits);
-    return { limited: true, retryAfterSec };
-  }
-  validHits.push(now);
-  rateLimitMap.set(key, validHits);
-  return { limited: false, retryAfterSec: 0 };
-}
+const {
+  consumeRateLimit,
+  sweepRateLimitEntries,
+} = createRateLimiter({ defaultWindowMs: RATE_LIMIT_WINDOW_MS });
 
 function sweepIdempotencyMaps() {
   const now = Date.now();
@@ -2664,14 +2589,8 @@ function sweepAllMaps() {
     if (!activeCaseIds.has(caseId)) portalMessages.delete(caseId);
   }
 
-  // rateLimitMap: delete fully-expired keys (consumeRateLimit compacts per use,
-  // but dead keys from IPs that never return would accumulate indefinitely).
-  const cutoff = Date.now() - RATE_LIMIT_WINDOW_MS;
-  for (const [key, hits] of rateLimitMap) {
-    const valid = hits.filter((t) => t > cutoff);
-    if (valid.length === 0) rateLimitMap.delete(key);
-    else rateLimitMap.set(key, valid);
-  }
+  // rate limit entries: delete fully-expired keys to prevent unbounded growth.
+  sweepRateLimitEntries();
 }
 
 setInterval(sweepAllMaps, 30 * 60 * 1000).unref();
