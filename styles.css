@@ -587,6 +587,7 @@ html[data-theme='light'] .topbar {
 }
 
 .nav-links a {
+  position: relative;
   color: var(--muted);
   font-size: 0.86rem;
   font-weight: 500;
@@ -1667,8 +1668,9 @@ html[data-theme='light'] .testimonio-card:hover {
   transition: border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
-.faq-item:hover { border-color: rgba(255, 255, 255, 0.12); box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 16px rgba(0,0,0,0.2); }
-.faq-item[open]  { border-color: rgba(var(--accent-rgb), 0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 24px rgba(var(--accent-rgb), 0.06); }
+.faq-item:hover      { border-color: rgba(255, 255, 255, 0.12); box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 16px rgba(0,0,0,0.2); }
+.faq-item[open]      { border-color: rgba(var(--accent-rgb), 0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 24px rgba(var(--accent-rgb), 0.06); }
+.faq-item:last-child { border-bottom: none; }
 
 .faq-item summary {
   display: flex;
@@ -2444,7 +2446,7 @@ body.contact-modal-open {
   transition: color 0.14s ease;
 }
 
-.footer-links a:hover { color: var(--muted); }
+.footer-links a:hover { color: var(--accent); }
 
 .footer-legal {
   color: var(--muted-2);
@@ -2466,7 +2468,7 @@ body.contact-modal-open {
   transition: color 0.14s ease;
 }
 
-.footer-social a:hover { color: var(--muted); }
+.footer-social a:hover { color: var(--accent); }
 
 .footer-copy { color: var(--muted-2); font-size: 0.79rem; }
 
@@ -5050,13 +5052,6 @@ html[data-theme='light'] .footer .logo {
   opacity: 0.85;
 }
 
-/* Footer hover: slightly elevated links */
-.footer-links a:hover,
-.footer-social a:hover {
-  color: var(--accent);
-  transition: color 0.14s ease;
-}
-
 /* SECTION TITLE: gradient underline decoration on primary sections */
 .areas .section-title,
 .proceso .section-title,
@@ -5118,10 +5113,6 @@ html[data-theme='light'] .recurso-tag {
 }
 
 /* NAV LINKS: underline slide-in on hover (Linear pattern) */
-.nav-links a {
-  position: relative;
-}
-
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -5816,9 +5807,6 @@ html[data-theme='light'] .area-card {
   border-radius: 12px;
   display: block;
 }
-
-/* Last FAQ item — no bottom border */
-.faq-item:last-child { border-bottom: none; }
 
 /* Small disclaimer / footnote text in articles */
 .text-disclaimer { font-size: 0.82rem; color: var(--muted-2); margin-top: 16px; font-family: inherit; }
