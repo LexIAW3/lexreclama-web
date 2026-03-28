@@ -712,10 +712,10 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 /* === HERO === */
 
 .home-page .hero {
-  padding: 128px 0 112px;
+  padding: 104px 0 80px;
   position: relative;
   overflow: hidden;
-  text-align: center;
+  text-align: left;
 }
 
 /* Dot grid — finer, more subtle */
@@ -779,9 +779,7 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 .home-page .hero .container {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: block;
 }
 
 .hero-badge,
@@ -2789,6 +2787,7 @@ body.contact-modal-open {
   border: 1px solid var(--border);
   border-radius: var(--r);
   padding: 20px;
+  margin-top: 28px;
 }
 
 .service-page .motivo h3,
@@ -2873,8 +2872,6 @@ body.contact-modal-open {
 }
 
 .service-page .related-blog a:hover { border-color: var(--border-strong); }
-
-.service-page .related-blog { margin-top: 28px; }
 
 .bank-lead-calc {
   margin: 26px auto 0;
@@ -4114,16 +4111,7 @@ h1.article-h1 {
 
 html[data-theme='light'] .home-page::before { opacity: 0.022; }
 
-/* ---- 2. HERO — override centrado → split layout ---- */
-
-.home-page .hero {
-  padding: 104px 0 80px;
-  text-align: left; /* override: de centrado a izquierda */
-}
-
-.home-page .hero .container {
-  display: block; /* el layout lo maneja .hero-layout */
-}
+/* ---- 2. HERO — split layout ---- */
 
 .hero-layout {
   display: grid;
