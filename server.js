@@ -1910,6 +1910,9 @@ function mapIssueToPortalCase(issue, messages = []) {
 
 async function readIssueDocumentsIndex(issueId) {
   const folder = path.join(DOCUMENTS_DIR, String(issueId || '').trim());
+  // Defense-in-depth: ensure folder is still inside DOCUMENTS_DIR even if issueId
+  // contained path-traversal sequences (primary guard is at the session layer).
+  if (!folder.startsWith(DOCUMENTS_DIR + path.sep) && folder !== DOCUMENTS_DIR) return [];
   const indexPath = path.join(folder, 'index.json');
   try {
     const raw = await fs.promises.readFile(indexPath, 'utf8');
