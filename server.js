@@ -456,6 +456,9 @@ function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHt
   <link rel="canonical" href="${SITE_URL}${canonicalPath}" />
   <meta name="robots" content="${noindex ? 'noindex,follow' : 'index,follow'}" />
   <title>${escapeHtml(pageTitle)} | LexReclama</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon.svg" sizes="any" />
+  <link rel="apple-touch-icon" href="/logo-avatar.png" />
   <link rel="stylesheet" href="/styles.min.css?v=${ASSET_CSS_HASH}" />
   ${renderGa4Snippet(nonce)}
 </head>
@@ -899,7 +902,7 @@ function markdownToHtml(text) {
   return out.join('\n');
 }
 
-function renderLegalPage(title, markdownBody, nonce = '') {
+function renderLegalPage(title, markdownBody, nonce = '', canonicalPath = '') {
   const bodyHtml = markdownToHtml(markdownBody) || '<p>Contenido no disponible.</p>';
   return `<!doctype html>
 <html lang="es">
@@ -907,7 +910,11 @@ function renderLegalPage(title, markdownBody, nonce = '') {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, follow" />
+  ${canonicalPath ? `<link rel="canonical" href="${SITE_URL}${canonicalPath}" />` : ''}
   <title>${escapeHtml(title)} · LexReclama</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon.svg" sizes="any" />
+  <link rel="apple-touch-icon" href="/logo-avatar.png" />
   ${renderGa4Snippet(nonce)}
   <style nonce="${nonce}">
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; }
@@ -943,7 +950,7 @@ function renderLegalPage(title, markdownBody, nonce = '') {
 function handleLegalPage(req, res, pathname, nonce = '') {
   const page = LEGAL_PAGES[pathname];
   if (!page) return false;
-  const html = renderLegalPage(page.title, page.body, nonce);
+  const html = renderLegalPage(page.title, page.body, nonce, pathname);
   sendCompressed(req, res, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300' }, Buffer.from(html));
   return true;
 }
