@@ -7,9 +7,11 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const zlib = require('zlib');
-const net = require('net');
 const { URL } = require('url');
 const busboy = require('busboy');
+const { generateNonce, safeEqual } = require('./utils/crypto');
+const { escapeHtml } = require('./utils/html');
+const { getClientIp, buildAdminIpChecker } = require('./utils/ip');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -29,6 +31,7 @@ const ADMIN_ALLOWED_IPS = String(process.env.ADMIN_ALLOWED_IPS || '127.0.0.1,::1
   .split(',')
   .map((entry) => entry.trim())
   .filter(Boolean);
+const isAdminIpAllowed = buildAdminIpChecker(ADMIN_ALLOWED_IPS);
 const GA4_MEASUREMENT_ID = (process.env.GA4_MEASUREMENT_ID || '').trim();
 const GOOGLE_ADS_ID = (process.env.GOOGLE_ADS_ID || '').trim();
 const GOOGLE_ADS_CONVERSION_LABEL = (process.env.GOOGLE_ADS_CONVERSION_LABEL || '').trim();
@@ -311,51 +314,6 @@ function validateCsrfToken(req, res) {
     }
     return true;
   })();
-}
-
-function getClientIp(req) {
-  const headerRealIp = String(req.headers['x-real-ip'] || '').trim();
-  const headerForwardedFor = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-  const socketIp = String(req.socket.remoteAddress || '').trim();
-  const candidate = headerRealIp || headerForwardedFor || socketIp || 'unknown';
-  const ipv4Mapped = candidate.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-  const normalized = ipv4Mapped ? ipv4Mapped[1] : candidate;
-  return net.isIP(normalized) ? normalized : 'unknown';
-}
-
-function ipToInt(ip) {
-  const parts = String(ip).split('.');
-  if (parts.length !== 4) return null;
-  let value = 0;
-  for (const part of parts) {
-    if (!/^\d+$/.test(part)) return null;
-    const n = Number(part);
-    if (!Number.isInteger(n) || n < 0 || n > 255) return null;
-    value = (value << 8) | n;
-  }
-  return value >>> 0;
-}
-
-function isIpv4InCidr(ip, cidr) {
-  const [base, prefixRaw] = String(cidr).split('/');
-  const prefix = Number(prefixRaw);
-  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) return false;
-  const ipNum = ipToInt(ip);
-  const baseNum = ipToInt(base);
-  if (ipNum === null || baseNum === null) return false;
-  if (prefix === 0) return true;
-  const mask = (0xFFFFFFFF << (32 - prefix)) >>> 0;
-  return (ipNum & mask) === (baseNum & mask);
-}
-
-function isAdminIpAllowed(ip) {
-  if (!ip || ip === 'unknown') return false;
-  const kind = net.isIP(ip);
-  for (const rule of ADMIN_ALLOWED_IPS) {
-    if (rule === ip) return true;
-    if (kind === 4 && rule.includes('/') && isIpv4InCidr(ip, rule)) return true;
-  }
-  return false;
 }
 
 function logAdminAudit(req, outcome, detail = '') {
@@ -838,10 +796,6 @@ const LEGAL_PAGES = {
   },
 };
 
-function generateNonce() {
-  return crypto.randomBytes(16).toString('base64url');
-}
-
 const COMPRESSIBLE_EXTS = new Set(['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg']);
 
 function sendCompressed(req, res, headers, body, statusCode = 200) {
@@ -862,14 +816,6 @@ function sendCompressed(req, res, headers, body, statusCode = 200) {
     res.writeHead(statusCode, headers);
     res.end(body);
   }
-}
-
-function safeEqual(a, b) {
-  // Hash both values to a fixed-length digest so the comparison is constant-time
-  // regardless of input length — avoids timing side-channel that leaks password length.
-  const left = crypto.createHash('sha256').update(String(a)).digest();
-  const right = crypto.createHash('sha256').update(String(b)).digest();
-  return crypto.timingSafeEqual(left, right);
 }
 
 function parseBasicAuth(req) {
@@ -903,15 +849,6 @@ function isAdminAuthorized(req) {
   const creds = parseBasicAuth(req);
   if (!creds) return false;
   return safeEqual(creds.username, ADMIN_USER) && safeEqual(creds.password, ADMIN_PASSWORD);
-}
-
-function escapeHtml(value) {
-  return String(value || '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 }
 
 function formatDate(iso) {
