@@ -847,8 +847,9 @@ html[data-theme='light'] .theme-toggle .icon-moon { display: inline-flex; }
 }
 
 .hero-note {
-  margin-top: 18px;
-  font-size: 0.8rem;
+  margin-top: 16px;
+  font-size: 0.79rem;
+  letter-spacing: 0.01em;
   color: var(--muted-2);
 }
 
@@ -4149,12 +4150,6 @@ html[data-theme='light'] .home-page::before { opacity: 0.022; }
 }
 
 /* Hero note */
-.hero-note {
-  margin-top: 16px;
-  font-size: 0.79rem;
-  letter-spacing: 0.01em;
-}
-
 /* ---- 3. HERO VISUAL PANEL ---- */
 
 .hero-visual {
@@ -5288,17 +5283,6 @@ html[data-theme='light'] .area-card:first-child .area-link:not(#area-link-banco)
   background: rgba(var(--accent-rgb), 0.13);
   border-color: rgba(var(--accent-rgb), 0.28);
 }
-
-/* HVP NOTIF ICON: el SVG hereda color del padre — centrado preciso */
-
-.hvp-notif-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-
 
 
 /* WILL-CHANGE: GPU compositing en hover únicamente (evita consumo innecesario de RAM) */

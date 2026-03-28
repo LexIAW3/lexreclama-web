@@ -2433,6 +2433,7 @@ function send404(req, res, csrfToken = '', nonce = '') {
 }
 
 const server = http.createServer(async (req, res) => {
+  try {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const normalizedPath = normalizePathname(url.pathname);
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
@@ -2723,6 +2724,13 @@ const server = http.createServer(async (req, res) => {
       res.end(data);
     });
   });
+  } catch (err) {
+    console.error(`[server] unhandled error ${req.method} ${req.url}: ${err.message}`);
+    if (!res.headersSent) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Error interno del servidor' }));
+    }
+  }
 });
 
 // Periodic sweep of all in-memory Maps to prevent unbounded growth.
