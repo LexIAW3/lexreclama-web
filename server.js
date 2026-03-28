@@ -13,6 +13,12 @@ const { generateNonce, safeEqual } = require('./utils/crypto');
 const { escapeHtml } = require('./utils/html');
 const { getClientIp, buildAdminIpChecker } = require('./utils/ip');
 const { sendAdminAuthChallenge, isAdminAuthorized } = require('./utils/auth');
+const {
+  appendSetCookieHeader,
+  buildPortalSessionCookie,
+  parsePortalSessionToken,
+  getPortalSessionFromRequest,
+} = require('./utils/portalAuth');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 
@@ -115,6 +121,19 @@ const PORTAL_COOKIE_SECURE =
 const portalAuthCodes = new Map();
 const portalSessions = new Map();
 const portalMessages = new Map();
+const parsePortalSessionTokenFromRequest = (req) => parsePortalSessionToken(req, {
+  cookieName: PORTAL_SESSION_COOKIE_NAME,
+  parseCookies,
+});
+const buildPortalSessionCookieHeader = (token, maxAgeSeconds) => buildPortalSessionCookie(token, maxAgeSeconds, {
+  cookieName: PORTAL_SESSION_COOKIE_NAME,
+  secure: PORTAL_COOKIE_SECURE,
+});
+const getPortalSession = (req) => getPortalSessionFromRequest(req, {
+  portalSessions,
+  sweepPortalState,
+  parsePortalSessionTokenFromRequest,
+});
 const BLOG_REDIRECTS = {
   '/blog/cuanto-cuesta-monitorio/': '/blog/coste-monitorio/',
   '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
@@ -1652,37 +1671,6 @@ function parseBearerToken(req) {
   return header.slice(7).trim();
 }
 
-function appendSetCookieHeader(res, cookieValue) {
-  const existing = res.getHeader('Set-Cookie');
-  if (!existing) {
-    res.setHeader('Set-Cookie', cookieValue);
-    return;
-  }
-  if (Array.isArray(existing)) {
-    res.setHeader('Set-Cookie', [...existing, cookieValue]);
-    return;
-  }
-  res.setHeader('Set-Cookie', [existing, cookieValue]);
-}
-
-function buildPortalSessionCookie(token, maxAgeSeconds) {
-  const flags = [
-    `${PORTAL_SESSION_COOKIE_NAME}=${encodeURIComponent(token)}`,
-    'Path=/api/portal',
-    'HttpOnly',
-  ];
-  if (PORTAL_COOKIE_SECURE) flags.push('Secure');
-  flags.push('SameSite=Strict', `Max-Age=${maxAgeSeconds}`);
-  return [
-    ...flags,
-  ].join('; ');
-}
-
-function parsePortalSessionToken(req) {
-  const cookies = parseCookies(req);
-  return String(cookies[PORTAL_SESSION_COOKIE_NAME] || '').trim();
-}
-
 function sweepPortalState() {
   const now = Date.now();
   for (const [caseId, auth] of portalAuthCodes) {
@@ -2084,7 +2072,7 @@ async function handlePortalVerifyCode(req, res) {
 
   appendSetCookieHeader(
     res,
-    buildPortalSessionCookie(token, Math.floor(PORTAL_SESSION_TTL_MS / 1000)),
+    buildPortalSessionCookieHeader(token, Math.floor(PORTAL_SESSION_TTL_MS / 1000)),
   );
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
@@ -2093,21 +2081,8 @@ async function handlePortalVerifyCode(req, res) {
   }));
 }
 
-function getPortalSessionFromRequest(req) {
-  sweepPortalState();
-  const token = parsePortalSessionToken(req);
-  if (!token) return null;
-  const session = portalSessions.get(token);
-  if (!session) return null;
-  if (session.expiresAtMs <= Date.now()) {
-    portalSessions.delete(token);
-    return null;
-  }
-  return { token, session };
-}
-
 async function handlePortalMe(req, res) {
-  const auth = getPortalSessionFromRequest(req);
+  const auth = getPortalSession(req);
   if (!auth) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
@@ -2152,15 +2127,15 @@ async function handlePortalMe(req, res) {
 }
 
 async function handlePortalLogout(req, res) {
-  const token = parsePortalSessionToken(req);
+  const token = parsePortalSessionTokenFromRequest(req);
   if (token) portalSessions.delete(token);
-  appendSetCookieHeader(res, buildPortalSessionCookie('', 0));
+  appendSetCookieHeader(res, buildPortalSessionCookieHeader('', 0));
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ ok: true }));
 }
 
 async function handlePortalCaseMessage(req, res, caseIdRaw) {
-  const auth = getPortalSessionFromRequest(req);
+  const auth = getPortalSession(req);
   if (!auth) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
@@ -2202,7 +2177,7 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
 }
 
 async function handlePortalCaseDocumentDownload(req, res, caseIdRaw, fileIdRaw) {
-  const auth = getPortalSessionFromRequest(req);
+  const auth = getPortalSession(req);
   if (!auth) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Sesion invalida o expirada' }));
