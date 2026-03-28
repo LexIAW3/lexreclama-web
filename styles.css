@@ -152,11 +152,6 @@ html[data-theme='light'] body {
 /* === KEYFRAMES === */
 
 /* Hero orb slow breathe — barely noticeable, creates life */
-@keyframes orb-pulse {
-  0%, 100% { opacity: 1;    transform: translateX(-50%) scale(1);    }
-  50%       { opacity: 0.72; transform: translateX(-50%) scale(1.08); }
-}
-
 /* Badge dot pulse — status indicator alive */
 @keyframes dot-pulse {
   0%, 100% { box-shadow: 0 0 0   0    var(--green), 0 0  8px var(--green); }
@@ -1941,7 +1936,7 @@ html[data-theme='light'] .testimonio-card:hover {
 }
 
 .blog-subscribe-consent .checkbox-label a {
-  color: var(--white);
+  color: #fff;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -5621,7 +5616,7 @@ html[data-theme='light'] .entity-logo    { color: rgba(14, 22, 60, 0.55); }
 .footer-pre-cta-text {
   font-size: 0.92rem;
   font-weight: 600;
-  color: var(--text-2);
+  color: var(--text);
 }
 
 .btn-sm {
