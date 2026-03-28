@@ -104,7 +104,7 @@
   </nav>
 
   <!-- MOBILE NAV -->
-  <div class="nav-mobile" id="nav-mobile" role="navigation" aria-label="Menú móvil">
+  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-modal="true" aria-label="Menú de navegación" hidden>
     <div class="nav-mobile-inner">
       <a href="/reclamacion-deudas/">Reclamar deuda</a>
       <a href="/clausulas-bancarias/">Cláusulas bancarias</a>
@@ -365,25 +365,10 @@
       var hamburger = document.getElementById('nav-hamburger');
       var mobileNav = document.getElementById('nav-mobile');
       if (hamburger && mobileNav) {
-        hamburger.addEventListener('click', function () {
-          var isOpen = mobileNav.classList.toggle('open');
-          hamburger.classList.toggle('open', isOpen);
-          hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-        mobileNav.querySelectorAll('a').forEach(function (link) {
-          link.addEventListener('click', function () {
-            mobileNav.classList.remove('open');
-            hamburger.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-          });
-        });
-        document.addEventListener('click', function (e) {
-          if (!nav.contains(e.target) && !mobileNav.contains(e.target)) {
-            mobileNav.classList.remove('open');
-            hamburger.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-          }
-        });
+        function setOpen(open) { mobileNav.hidden = !open; hamburger.classList.toggle('open', open); hamburger.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+        hamburger.addEventListener('click', function () { setOpen(mobileNav.hidden); });
+        mobileNav.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', function () { setOpen(false); }); });
+        document.addEventListener('click', function (e) { if (!mobileNav.hidden && !nav.contains(e.target) && !mobileNav.contains(e.target)) { setOpen(false); } });
       }
     })();
   </script>
