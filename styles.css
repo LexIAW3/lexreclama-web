@@ -5733,6 +5733,20 @@ html[data-theme='light'] .hvp-card--main {
 }
 
 /* ─── RADIO GROUP ────────────────────────────────────────── */
+.radio-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.radio-fieldset legend {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #0f172a);
+  margin-bottom: 0.25rem;
+  padding: 0;
+}
+
 .radio-group {
   display: flex;
   gap: 1.5rem;

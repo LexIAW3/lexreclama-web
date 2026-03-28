@@ -789,7 +789,7 @@
           </div>
 
           <!-- Timeline: qué ocurre tras enviar -->
-          <div class="contact-timeline" aria-hidden="true">
+          <div class="contact-timeline">
             <div class="contact-timeline-item contact-timeline-item--done">
               <span class="ct-dot ct-dot--done"></span>
               <span class="ct-text">Envías tu consulta — 2 minutos</span>
@@ -934,11 +934,13 @@
                 <input type="text" id="deuda-nombre-deudor" name="deuda_nombre_deudor" placeholder="Empresa SL o persona física" />
               </div>
               <div class="field">
-                <label>¿Tiene contrato o factura?</label>
-                <div class="radio-group">
-                  <label class="radio-label"><input type="radio" name="deuda_tiene_contrato" value="si" /> Sí</label>
-                  <label class="radio-label"><input type="radio" name="deuda_tiene_contrato" value="no" /> No</label>
-                </div>
+                <fieldset class="radio-fieldset">
+                  <legend>¿Tiene contrato o factura?</legend>
+                  <div class="radio-group">
+                    <label class="radio-label"><input type="radio" name="deuda_tiene_contrato" value="si" /> Sí</label>
+                    <label class="radio-label"><input type="radio" name="deuda_tiene_contrato" value="no" /> No</label>
+                  </div>
+                </fieldset>
               </div>
             </div>
           </div>

@@ -84,21 +84,45 @@ function trackAdsLeadConversion() {
 }
 
 /* ─── CALCULATOR TABS ─────────────────────────────────────── */
-document.querySelectorAll('.calc-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const type = tab.dataset.tab;
-    document.querySelectorAll('.calc-tab').forEach(t => {
-      t.classList.remove('active');
-      t.setAttribute('aria-selected', 'false');
-    });
-    document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-    document.getElementById(`panel-${type}`).classList.add('active');
-    document.getElementById('calc-result').classList.add('hidden');
-    syncCalcCtaClaimType(type);
+function activateCalcTab(tab) {
+  const type = tab.dataset.tab;
+  document.querySelectorAll('.calc-tab').forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+    t.tabIndex = -1;
   });
-});
+  document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  tab.setAttribute('aria-selected', 'true');
+  tab.tabIndex = 0;
+  document.getElementById(`panel-${type}`).classList.add('active');
+  document.getElementById('calc-result').classList.add('hidden');
+  syncCalcCtaClaimType(type);
+}
+
+const calcTabList = document.querySelector('[role="tablist"]');
+if (calcTabList) {
+  const tabs = Array.from(calcTabList.querySelectorAll('[role="tab"]'));
+  // Set initial roving tabindex
+  tabs.forEach((t, i) => { t.tabIndex = i === 0 ? 0 : -1; });
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => activateCalcTab(tab));
+    tab.addEventListener('keydown', (e) => {
+      const idx = tabs.indexOf(e.currentTarget);
+      let next = -1;
+      if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = tabs.length - 1;
+      if (next !== -1) {
+        e.preventDefault();
+        activateCalcTab(tabs[next]);
+        tabs[next].focus();
+      }
+    });
+  });
+}
 
 /* ─── BANCO FIELD TOGGLE ──────────────────────────────────── */
 function toggleBancoFields() {
