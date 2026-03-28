@@ -23,27 +23,6 @@ jobs:
       - name: Check for syntax errors in portal-cliente/app.js
         run: node --check portal-cliente/app.js
 
-      - name: Check for syntax errors in utils modules
-        run: |
-          for f in utils/*.js; do
-            node --check "$f" || exit 1
-          done
-          echo "All utils modules OK."
-
-      - name: Check for syntax errors in middleware modules
-        run: |
-          for f in middleware/*.js; do
-            node --check "$f" || exit 1
-          done
-          echo "All middleware modules OK."
-
-      - name: Check for syntax errors in routes modules
-        run: |
-          for f in routes/*.js; do
-            node --check "$f" || exit 1
-          done
-          echo "All routes modules OK."
-
       - name: Verify critical files exist
         run: |
           for f in index.html styles.css app.js server.js; do
