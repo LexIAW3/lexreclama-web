@@ -1413,7 +1413,64 @@ document.addEventListener('DOMContentLoaded', () => {
   trackVirtualPageView();
   window.addEventListener('popstate', trackVirtualPageView);
   window.addEventListener('hashchange', trackVirtualPageView);
+  initBlogPagination();
 });
+
+function initBlogPagination() {
+  const cards = Array.from(document.querySelectorAll('.blog-grid .blog-card'));
+  const pagination = document.querySelector('.blog-pagination');
+  if (!cards.length || !pagination) return;
+
+  const prevBtn = pagination.querySelector('.pagination-prev');
+  const nextBtn = pagination.querySelector('.pagination-next');
+  const pagesWrap = pagination.querySelector('.pagination-pages');
+  const perPage = 9;
+  const totalPages = Math.max(1, Math.ceil(cards.length / perPage));
+
+  function getPageFromUrl() {
+    const page = parseInt(new URL(window.location.href).searchParams.get('page') || '1', 10);
+    if (!Number.isFinite(page) || page < 1) return 1;
+    return Math.min(page, totalPages);
+  }
+
+  function setPageInUrl(page) {
+    const url = new URL(window.location.href);
+    if (page <= 1) url.searchParams.delete('page');
+    else url.searchParams.set('page', String(page));
+    window.history.replaceState({ page }, '', url.toString());
+  }
+
+  function renderPagination(currentPage) {
+    pagesWrap.innerHTML = '';
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = `pagination-page${i === currentPage ? ' pagination-page--active' : ''}`;
+      btn.textContent = String(i);
+      btn.setAttribute('aria-label', `Ir a página ${i}`);
+      if (i === currentPage) btn.setAttribute('aria-current', 'page');
+      btn.addEventListener('click', () => render(i, true));
+      pagesWrap.appendChild(btn);
+    }
+  }
+
+  function render(page, updateUrl) {
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+    cards.forEach((card, index) => { card.hidden = index < start || index >= end; });
+    prevBtn.disabled = page === 1;
+    nextBtn.disabled = page === totalPages;
+    renderPagination(page);
+    if (updateUrl) setPageInUrl(page);
+  }
+
+  if (totalPages <= 1) { pagination.hidden = true; return; }
+
+  prevBtn.addEventListener('click', () => { const p = getPageFromUrl(); if (p > 1) render(p - 1, true); });
+  nextBtn.addEventListener('click', () => { const p = getPageFromUrl(); if (p < totalPages) render(p + 1, true); });
+  window.addEventListener('popstate', () => render(getPageFromUrl(), false));
+  render(getPageFromUrl(), true);
+}
 
 function initCookieBanner() {
   const banner = document.getElementById('cookie-banner');
