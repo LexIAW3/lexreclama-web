@@ -2416,6 +2416,15 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Static file serving
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, {
+      'Content-Type': 'text/plain; charset=utf-8',
+      Allow: 'GET, HEAD',
+    });
+    res.end('Method Not Allowed');
+    return;
+  }
+
   // Block internal/build directories from public access
   if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
     send404(req, res, csrfToken, nonce); return;
