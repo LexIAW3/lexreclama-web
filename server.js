@@ -925,7 +925,7 @@ function formatDate(iso) {
   }).format(date);
 }
 
-function renderAdminPage() {
+function renderAdminPage(nonce = '') {
   const rows = recentLeads.map((lead) => `
       <tr>
         <td>${escapeHtml(formatDate(lead.createdAt))}</td>
@@ -1106,7 +1106,7 @@ async function handleAdmin(req, res, nonce = '') {
   }
 
   logAdminAudit(req, 'auth_success');
-  const html = renderAdminPage();
+  const html = renderAdminPage(nonce);
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
   res.end(html);
 }
