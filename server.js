@@ -2427,7 +2427,7 @@ async function handlePortalCaseDocumentDownload(req, res, caseIdRaw, fileIdRaw) 
 
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
 const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
-const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html']);
+const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html', 'design-system.html']);
 
 function send404(req, res, csrfToken = '', nonce = '') {
   fs.readFile(PAGE_404_PATH, (err, data) => {
