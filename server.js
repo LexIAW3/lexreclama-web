@@ -36,6 +36,7 @@ const {
   normalizePhoneForWhatsApp,
   extractClientEmail,
 } = require('./services/notifications');
+const { createStripeService } = require('./services/stripe');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -1341,75 +1342,21 @@ function getBaseUrl(req) {
   return `${protocol}://${host}`;
 }
 
-async function createStripeCheckoutSession(req, leadToken, leadData) {
-  if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY no configurada');
-  const paidConfig = PAID_CLAIM_TYPES[leadData.tipo];
-  if (!paidConfig) throw new Error('Tipo no soportado para pago inicial');
-
-  const origin = getBaseUrl(req);
-  const successUrl = `${origin}/?checkout=success&lead=${encodeURIComponent(leadToken)}&session_id={CHECKOUT_SESSION_ID}`;
-  const cancelUrl = `${origin}/?checkout=cancel&lead=${encodeURIComponent(leadToken)}`;
-
-  const form = new URLSearchParams();
-  form.append('mode', 'payment');
-  form.append('success_url', successUrl);
-  form.append('cancel_url', cancelUrl);
-  form.append('payment_method_types[0]', 'card');
-  form.append('line_items[0][quantity]', '1');
-  form.append('line_items[0][price_data][currency]', 'eur');
-  form.append('line_items[0][price_data][unit_amount]', String(paidConfig.grossAmountCents));
-  form.append('line_items[0][price_data][product_data][name]', `LexReclama · ${leadData.tipoLabel}`);
-  form.append('line_items[0][price_data][product_data][description]', `Honorarios iniciales orientativos: ${paidConfig.baseAmountLabel}`);
-  form.append('metadata[leadToken]', leadToken);
-  form.append('metadata[leadType]', leadData.tipo);
-  form.append('metadata[leadEmail]', leadData.email);
-  form.append('customer_email', leadData.email);
-  form.append('locale', 'es');
-
-  const stripeRes = await fetchWithTimeout(`${STRIPE_API}/checkout/sessions`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: form.toString(),
-  });
-  const stripeData = await stripeRes.json();
-  if (!stripeRes.ok) {
-    const stripeMessage = stripeData?.error?.message || `Stripe error HTTP ${stripeRes.status}`;
-    throw new Error(stripeMessage);
-  }
-  return stripeData;
-}
-
-async function readStripeCheckoutSession(sessionId) {
-  if (!STRIPE_SECRET_KEY) throw new Error('STRIPE_SECRET_KEY no configurada');
-  const stripeRes = await fetchWithTimeout(`${STRIPE_API}/checkout/sessions/${encodeURIComponent(sessionId)}`, {
-    headers: {
-      'Authorization': `Bearer ${STRIPE_SECRET_KEY}`,
-    },
-  });
-  const stripeData = await stripeRes.json();
-  if (!stripeRes.ok) {
-    const stripeMessage = stripeData?.error?.message || `Stripe error HTTP ${stripeRes.status}`;
-    throw new Error(stripeMessage);
-  }
-  return stripeData;
-}
-
-function sweepPendingCheckoutLeads() {
-  const now = Date.now();
-  for (const [leadToken, pending] of pendingCheckoutLeads) {
-    if (now - pending.createdAtMs > PENDING_CHECKOUT_TTL_MS) {
-      pendingCheckoutLeads.delete(leadToken);
-    }
-  }
-  for (const [leadToken, completed] of completedCheckoutLeads) {
-    if (now - completed.completedAtMs > COMPLETED_CHECKOUT_TTL_MS) {
-      completedCheckoutLeads.delete(leadToken);
-    }
-  }
-}
+const {
+  createStripeCheckoutSession,
+  readStripeCheckoutSession,
+  sweepPendingCheckoutLeads,
+} = createStripeService({
+  stripeSecretKey: STRIPE_SECRET_KEY,
+  stripeApi: STRIPE_API,
+  fetchWithTimeout,
+  paidClaimTypes: PAID_CLAIM_TYPES,
+  getBaseUrl,
+  pendingCheckoutLeads,
+  completedCheckoutLeads,
+  pendingCheckoutTtlMs: PENDING_CHECKOUT_TTL_MS,
+  completedCheckoutTtlMs: COMPLETED_CHECKOUT_TTL_MS,
+});
 
 async function handleCreateCheckoutSession(req, res) {
   const body = req.parsedBody;
