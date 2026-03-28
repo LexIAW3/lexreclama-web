@@ -25,6 +25,7 @@ const {
   maskEmail,
   mapIssueToPortalCase,
 } = require('./utils/portalCase');
+const { sweepPortalState } = require('./utils/portalSessionStore');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 
@@ -127,6 +128,7 @@ const PORTAL_COOKIE_SECURE =
 const portalAuthCodes = new Map();
 const portalSessions = new Map();
 const portalMessages = new Map();
+const runPortalStateSweep = () => sweepPortalState({ portalAuthCodes, portalSessions });
 const parsePortalSessionTokenFromRequest = (req) => parsePortalSessionToken(req, {
   cookieName: PORTAL_SESSION_COOKIE_NAME,
   parseCookies,
@@ -137,7 +139,7 @@ const buildPortalSessionCookieHeader = (token, maxAgeSeconds) => buildPortalSess
 });
 const getPortalSession = (req) => getPortalSessionFromRequest(req, {
   portalSessions,
-  sweepPortalState,
+  sweepPortalState: runPortalStateSweep,
   parsePortalSessionTokenFromRequest,
 });
 const BLOG_REDIRECTS = {
@@ -1662,16 +1664,6 @@ function parseBearerToken(req) {
   return header.slice(7).trim();
 }
 
-function sweepPortalState() {
-  const now = Date.now();
-  for (const [caseId, auth] of portalAuthCodes) {
-    if (auth.expiresAtMs <= now || auth.used) portalAuthCodes.delete(caseId);
-  }
-  for (const [token, session] of portalSessions) {
-    if (session.expiresAtMs <= now) portalSessions.delete(token);
-  }
-}
-
 async function readIssueDocumentsIndex(issueId) {
   const folder = path.join(DOCUMENTS_DIR, String(issueId || '').trim());
   // Defense-in-depth: ensure folder is still inside DOCUMENTS_DIR even if issueId
@@ -1922,7 +1914,7 @@ async function handleAdminPortalTestCode(req, res, url) {
 }
 
 async function handlePortalRequestCode(req, res) {
-  sweepPortalState();
+  runPortalStateSweep();
   const caseId = normalizeCaseIdentifier(req.parsedBody?.caseId);
   if (!isCaseIdentifierValid(caseId)) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -2500,7 +2492,7 @@ const server = http.createServer(async (req, res) => {
 // Periodic sweep of all in-memory Maps to prevent unbounded growth.
 // Belt-and-suspenders: individual handlers also call sweep at their entry points.
 function sweepAllMaps() {
-  sweepPortalState(); // clears expired portalAuthCodes + portalSessions
+  runPortalStateSweep(); // clears expired portalAuthCodes + portalSessions
   sweepCsrfTokens();
 
   // portalMessages: remove entries whose caseId has no active session.
