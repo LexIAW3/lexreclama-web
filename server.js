@@ -1145,7 +1145,7 @@ async function handleSubmitLead(req, res) {
 
   const leadData = normalizeLeadPayload(body);
   if (!leadData.ok) {
-    res.writeHead(400);
+    res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: leadData.error }));
     return;
   }
@@ -2347,7 +2347,7 @@ async function handlePortalCaseMessage(req, res, caseIdRaw) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        body: `## Mensaje desde portal cliente\n\nCaso: **${caseId}**\n\n${message}`,
+        body: `[CLIENTE]\n\n${message}`,
       }),
     }).catch((err) => {
       console.warn(`[portal] mensaje de ${caseId} no sincronizado a Paperclip: ${err.message}`);
@@ -2405,16 +2405,19 @@ async function handlePortalCaseDocumentDownload(req, res, caseIdRaw, fileIdRaw) 
   }
 
   const safeName = String(selected.name || 'documento').replace(/[\r\n"\\]/g, '_').slice(0, 180);
+  const asciiName = safeName.replace(/[^\x20-\x7E]/g, '_');
   res.writeHead(200, {
     'Content-Type': selected.mimeType || 'application/octet-stream',
     'Content-Length': String(stat.size),
-    'Content-Disposition': `attachment; filename="${safeName}"`,
+    'Content-Disposition': `attachment; filename="${asciiName}"; filename*=UTF-8''${encodeURIComponent(safeName)}`,
     'Cache-Control': 'private, no-store',
   });
   fs.createReadStream(normalizedFile).pipe(res);
 }
 
 const PAGE_404_PATH = path.join(STATIC_DIR, '404.html');
+const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
+const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html']);
 
 function send404(req, res, csrfToken = '', nonce = '') {
   fs.readFile(PAGE_404_PATH, (err, data) => {
@@ -2663,7 +2666,6 @@ const server = http.createServer(async (req, res) => {
 
   // Static file serving
   // Block internal/build directories from public access
-  const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates'];
   if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
     send404(req, res, csrfToken, nonce); return;
   }
@@ -2671,7 +2673,6 @@ const server = http.createServer(async (req, res) => {
   // Security: block dotfiles (e.g. /.env, /.gitignore) and server-side source files
   const segments = url.pathname.split('/');
   const hasDotSegment = segments.some((s) => s.startsWith('.') && s.length > 1);
-  const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html']);
   const lastSegment = segments[segments.length - 1] || '';
   // Block internal file types — sources/drafts/configs/logs are not public assets
   const hasBlockedExtension = lastSegment.endsWith('.md')
