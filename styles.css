@@ -3355,7 +3355,7 @@ body.contact-modal-open {
   color: var(--muted);
   cursor: pointer;
   background: transparent;
-  transition: all 0.15s;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .blog-cat-pill.active,
@@ -3517,7 +3517,7 @@ body.contact-modal-open {
   color: var(--muted);
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -3548,7 +3548,7 @@ body.contact-modal-open {
   color: var(--muted);
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
 .pagination-page:hover {
@@ -5654,7 +5654,7 @@ html[data-theme='light'] .hvp-card--main {
 /* ─── FILE UPLOAD ZONE ──────────────────────────────────── */
 .field-hint {
   font-size: 0.78rem;
-  color: var(--text-muted, #666);
+  color: var(--muted);
   font-weight: 400;
 }
 
@@ -5665,20 +5665,20 @@ html[data-theme='light'] .hvp-card--main {
   justify-content: center;
   gap: 0.5rem;
   padding: 1.5rem 1rem;
-  border: 2px dashed var(--border, #d1d5db);
+  border: 2px dashed var(--border);
   border-radius: 8px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  background: var(--bg-subtle, #f9fafb);
-  color: var(--text-muted, #666);
+  background: var(--surface-2);
+  color: var(--muted);
   text-align: center;
 }
 
 .file-drop-zone:hover,
 .file-drop-zone:focus-visible,
 .file-drop-zone.drag-over {
-  border-color: var(--primary, #1a56db);
-  background: var(--bg-primary-subtle, #eff6ff);
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.06);
   outline: none;
 }
 
@@ -5691,7 +5691,7 @@ html[data-theme='light'] .hvp-card--main {
 }
 
 .file-drop-link {
-  color: var(--primary, #1a56db);
+  color: var(--accent);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -5718,7 +5718,7 @@ html[data-theme='light'] .hvp-card--main {
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.65rem;
-  background: var(--bg-subtle, #f3f4f6);
+  background: var(--surface-2);
   border-radius: 6px;
   font-size: 0.85rem;
 }
@@ -5728,11 +5728,11 @@ html[data-theme='light'] .hvp-card--main {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text, #111827);
+  color: var(--text);
 }
 
 .file-item-size {
-  color: var(--text-muted, #6b7280);
+  color: var(--muted);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -5741,7 +5741,7 @@ html[data-theme='light'] .hvp-card--main {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-muted, #9ca3af);
+  color: var(--muted-2);
   font-size: 0.85rem;
   padding: 0 0.2rem;
   line-height: 1;
