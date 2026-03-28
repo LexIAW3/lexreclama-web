@@ -70,10 +70,9 @@ async function routePortalApi({
       await handlers.handlePortalLogout(req, res);
       return true;
     }
-    if (url.pathname.startsWith('/api/portal/cases/') && url.pathname.endsWith('/messages')) {
-      const caseId = decodeURIComponent(
-        url.pathname.replace('/api/portal/cases/', '').replace('/messages', '').replace(/\//g, ''),
-      );
+    const msgMatch = url.pathname.match(/^\/api\/portal\/cases\/([^/]+)\/messages$/);
+    if (msgMatch) {
+      const caseId = decodeURIComponent(msgMatch[1]);
       await handlers.handlePortalCaseMessage(req, res, caseId);
       return true;
     }

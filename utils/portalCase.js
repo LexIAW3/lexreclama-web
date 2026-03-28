@@ -15,12 +15,12 @@ function maskEmail(email) {
 
 function mapIssueStatusLabel(status) {
   const labels = {
-    todo: 'En revision',
+    todo: 'En revisión',
     in_progress: 'En curso',
-    blocked: 'Pendiente de documentacion',
+    blocked: 'Pendiente de documentación',
     done: 'Resuelto',
   };
-  return labels[status] || 'En revision';
+  return labels[status] || 'En revisión';
 }
 
 function mapIssueToPortalCase(issue, messages = []) {
