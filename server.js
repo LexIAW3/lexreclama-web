@@ -2198,7 +2198,7 @@ function send404(req, res, csrfToken = '', nonce = '') {
 
 const server = http.createServer(async (req, res) => {
   try {
-  const url = new URL(req.url, `http://localhost:${PORT}`);
+  const url = new URL(req.url.replace(/^\/\/+/, '/'), `http://localhost:${PORT}`);
   const normalizedPath = normalizePathname(url.pathname);
   const host = (req.headers.host || '').split(':')[0].toLowerCase();
   if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/health') {
