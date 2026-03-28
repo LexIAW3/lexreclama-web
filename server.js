@@ -27,6 +27,7 @@ const {
 } = require('./utils/portalCase');
 const { sweepPortalState } = require('./utils/portalSessionStore');
 const { routePortalApi } = require('./routes/portal');
+const { routeAdmin } = require('./routes/admin');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 const {
@@ -2148,42 +2149,26 @@ const server = http.createServer(async (req, res) => {
     sendCompressed(req, res, htmlHeaders, Buffer.from(html));
     return;
   }
-  if (req.method === 'GET' && url.pathname === '/admin') {
-    const clientIp = getClientIp(req);
-    if (!isAdminIpAllowed(clientIp)) {
-      logAdminAudit(req, 'ip_denied', 'ip_not_in_allowlist');
-      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
-      res.end('Forbidden');
-      return;
-    }
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/admin'], clientIp);
-    if (rate.limited) {
-      logAdminAudit(req, 'rate_limited', `retry_after=${rate.retryAfterSec}`);
-      res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
-      res.end('Demasiadas solicitudes. Intentalo mas tarde.');
-      return;
-    }
-    await handleAdmin(req, res, nonce);
-    return;
-  }
-  if (req.method === 'GET' && url.pathname === '/api/admin/portal-test-code') {
-    const clientIp = getClientIp(req);
-    if (!isAdminIpAllowed(clientIp)) {
-      res.writeHead(403, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-      res.end(JSON.stringify({ error: 'Forbidden' }));
-      return;
-    }
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/admin/portal-test-code'], clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
-      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
-      return;
-    }
-    if (!isAdminAuthorized(req, { adminUser: ADMIN_USER, adminPassword: ADMIN_PASSWORD, safeEqual })) {
-      sendAdminAuthChallenge(res);
-      return;
-    }
-    await handleAdminPortalTestCode(req, res, url);
+  if (await routeAdmin({
+    req,
+    res,
+    url,
+    nonce,
+    getClientIp,
+    isAdminIpAllowed,
+    logAdminAudit,
+    consumeRateLimit,
+    rateLimitRules: RATE_LIMIT_RULES,
+    isAdminAuthorized,
+    adminUser: ADMIN_USER,
+    adminPassword: ADMIN_PASSWORD,
+    safeEqual,
+    sendAdminAuthChallenge,
+    handlers: {
+      handleAdmin,
+      handleAdminPortalTestCode,
+    },
+  })) {
     return;
   }
 
