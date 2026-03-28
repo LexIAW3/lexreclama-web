@@ -12,6 +12,7 @@ const busboy = require('busboy');
 const { generateNonce, safeEqual } = require('./utils/crypto');
 const { escapeHtml } = require('./utils/html');
 const { getClientIp, buildAdminIpChecker } = require('./utils/ip');
+const { sendAdminAuthChallenge, isAdminAuthorized } = require('./utils/auth');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -818,39 +819,6 @@ function sendCompressed(req, res, headers, body, statusCode = 200) {
   }
 }
 
-function parseBasicAuth(req) {
-  const header = req.headers.authorization || '';
-  if (!header.startsWith('Basic ')) return null;
-  let decoded = '';
-  try {
-    decoded = Buffer.from(header.slice(6), 'base64').toString('utf8');
-  } catch {
-    return null;
-  }
-  const sep = decoded.indexOf(':');
-  if (sep === -1) return null;
-  return {
-    username: decoded.slice(0, sep),
-    password: decoded.slice(sep + 1),
-  };
-}
-
-function sendAdminAuthChallenge(res) {
-  res.writeHead(401, {
-    'Content-Type': 'text/plain; charset=utf-8',
-    'WWW-Authenticate': 'Basic realm="Lex Admin", charset="UTF-8"',
-    'Cache-Control': 'no-store',
-  });
-  res.end('Authentication required');
-}
-
-function isAdminAuthorized(req) {
-  if (!ADMIN_PASSWORD) return false;
-  const creds = parseBasicAuth(req);
-  if (!creds) return false;
-  return safeEqual(creds.username, ADMIN_USER) && safeEqual(creds.password, ADMIN_PASSWORD);
-}
-
 function formatDate(iso) {
   if (!iso) return '—';
   const date = new Date(iso);
@@ -1035,7 +1003,7 @@ async function handleAdmin(req, res, nonce = '') {
     return;
   }
 
-  if (!isAdminAuthorized(req)) {
+  if (!isAdminAuthorized(req, { adminUser: ADMIN_USER, adminPassword: ADMIN_PASSWORD, safeEqual })) {
     logAdminAudit(req, 'auth_failed');
     await new Promise((resolve) => setTimeout(resolve, 300));
     sendAdminAuthChallenge(res);
@@ -2607,7 +2575,7 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
       return;
     }
-    if (!isAdminAuthorized(req)) {
+    if (!isAdminAuthorized(req, { adminUser: ADMIN_USER, adminPassword: ADMIN_PASSWORD, safeEqual })) {
       sendAdminAuthChallenge(res);
       return;
     }
