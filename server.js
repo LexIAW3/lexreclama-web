@@ -2332,7 +2332,7 @@ const server = http.createServer(async (req, res) => {
     res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /portal-cliente/\nDisallow: /social-templates/\nSitemap: ${SITE_URL}/sitemap.xml\n`);
     return;
   }
-  if (req.method === 'GET' && url.pathname === '/.well-known/security.txt') {
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/.well-known/security.txt') {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
     res.end([
       'Contact: mailto:hola@lexreclama.es',
