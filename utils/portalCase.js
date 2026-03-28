@@ -26,15 +26,15 @@ function mapIssueStatusLabel(status) {
 function mapIssueToPortalCase(issue, messages = []) {
   const status = String(issue?.status || 'todo');
   const stepsByStatus = {
-    todo: ['Recibido', 'En revision', 'Analisis legal', 'Resolucion', 'Cierre'],
-    in_progress: ['Recibido', 'En revision', 'Analisis legal', 'Resolucion', 'Cierre'],
-    blocked: ['Recibido', 'Pendiente de documentacion', 'Analisis legal', 'Resolucion', 'Cierre'],
-    done: ['Recibido', 'Analisis legal', 'Resolucion', 'Cierre completado'],
+    todo: ['Recibido', 'En revisión', 'Análisis legal', 'Resolución', 'Cierre'],
+    in_progress: ['Recibido', 'En revisión', 'Análisis legal', 'Resolución', 'Cierre'],
+    blocked: ['Recibido', 'Pendiente de documentación', 'Análisis legal', 'Resolución', 'Cierre'],
+    done: ['Recibido', 'Análisis legal', 'Resolución', 'Cierre completado'],
   };
   const activeStepByStatus = {
-    todo: 'En revision',
-    in_progress: 'Analisis legal',
-    blocked: 'Pendiente de documentacion',
+    todo: 'En revisión',
+    in_progress: 'Análisis legal',
+    blocked: 'Pendiente de documentación',
     done: 'Cierre completado',
   };
   const steps = stepsByStatus[status] || stepsByStatus.todo;
