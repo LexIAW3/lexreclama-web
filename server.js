@@ -2332,6 +2332,16 @@ const server = http.createServer(async (req, res) => {
     res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /portal-cliente/\nDisallow: /social-templates/\nSitemap: ${SITE_URL}/sitemap.xml\n`);
     return;
   }
+  if (req.method === 'GET' && url.pathname === '/.well-known/security.txt') {
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
+    res.end([
+      'Contact: mailto:hola@lexreclama.es',
+      'Expires: 2027-03-28T00:00:00.000Z',
+      'Preferred-Languages: es, en',
+      `Canonical: https://${PRIMARY_HOST}/.well-known/security.txt`,
+    ].join('\n') + '\n');
+    return;
+  }
   if (req.method === 'GET' && url.pathname === '/sitemap.xml') {
     const clientIp = getClientIp(req);
     const rate = consumeRateLimit(RATE_LIMIT_RULES['/sitemap.xml'], clientIp);
