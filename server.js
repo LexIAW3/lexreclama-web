@@ -26,6 +26,7 @@ const {
   mapIssueToPortalCase,
 } = require('./utils/portalCase');
 const { sweepPortalState } = require('./utils/portalSessionStore');
+const { routePortalApi } = require('./routes/portal');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 
@@ -2267,37 +2268,23 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'GET' && url.pathname === '/api/portal/me') {
-    const clientIp = getClientIp(req);
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/portal/me'], clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
-      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
-      return;
-    }
-    await handlePortalMe(req, res);
-    return;
-  }
-
-  if (req.method === 'GET' && url.pathname.startsWith('/api/portal/cases/') && url.pathname.includes('/documents/')) {
-    const clientIp = getClientIp(req);
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/portal/documents'], clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
-      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
-      return;
-    }
-    const match = url.pathname.match(/^\/api\/portal\/cases\/([^/]+)\/documents\/([^/]+)$/);
-    if (!match) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Ruta no encontrada' }));
-      return;
-    }
-    const caseId = decodeURIComponent(match[1]);
-    const fileId = decodeURIComponent(match[2]);
-    await handlePortalCaseDocumentDownload(req, res, caseId, fileId);
-    return;
-  }
+  if (await routePortalApi({
+    req,
+    res,
+    url,
+    getClientIp,
+    consumeRateLimit,
+    rateLimitRules: RATE_LIMIT_RULES,
+    validateCsrfToken,
+    handlers: {
+      handlePortalMe,
+      handlePortalCaseDocumentDownload,
+      handlePortalRequestCode,
+      handlePortalVerifyCode,
+      handlePortalLogout,
+      handlePortalCaseMessage,
+    },
+  })) return;
 
   // Lead + portal submission endpoints
   if (req.method === 'POST' && (
@@ -2306,14 +2293,9 @@ const server = http.createServer(async (req, res) => {
     || url.pathname === '/create-checkout-session'
     || url.pathname === '/confirm-checkout'
     || url.pathname === '/api/subscribe'
-    || url.pathname === '/api/portal/request-code'
-    || url.pathname === '/api/portal/verify-code'
-    || url.pathname === '/api/portal/logout'
-    || url.pathname.startsWith('/api/portal/cases/')
   )) {
     const clientIp = getClientIp(req);
-    const rateLimitPath = url.pathname.startsWith('/api/portal/cases/') ? '/api/portal/cases' : url.pathname;
-    const rule = RATE_LIMIT_RULES[rateLimitPath];
+    const rule = RATE_LIMIT_RULES[url.pathname];
     const rate = consumeRateLimit(rule, clientIp);
     if (rate.limited) {
       res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
@@ -2326,14 +2308,6 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
     if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
     if (url.pathname === '/api/subscribe') { await handleSubscribe(req, res); return; }
-    if (url.pathname === '/api/portal/request-code') { await handlePortalRequestCode(req, res); return; }
-    if (url.pathname === '/api/portal/verify-code') { await handlePortalVerifyCode(req, res); return; }
-    if (url.pathname === '/api/portal/logout') { await handlePortalLogout(req, res); return; }
-    if (url.pathname.startsWith('/api/portal/cases/') && url.pathname.endsWith('/messages')) {
-      const caseId = decodeURIComponent(url.pathname.replace('/api/portal/cases/', '').replace('/messages', '').replace(/\//g, ''));
-      await handlePortalCaseMessage(req, res, caseId);
-      return;
-    }
   }
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
