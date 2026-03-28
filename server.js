@@ -2329,7 +2329,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-    res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${SITE_URL}/sitemap.xml\n`);
+    res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /portal-cliente/\nDisallow: /social-templates/\nSitemap: ${SITE_URL}/sitemap.xml\n`);
     return;
   }
   if (req.method === 'GET' && url.pathname === '/sitemap.xml') {
