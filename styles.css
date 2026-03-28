@@ -6103,6 +6103,7 @@ html[data-theme='light'] .area-card {
 .step-list { list-style: none; padding: 0; margin: 24px 0; }
 .step-item { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
 .step-body strong { display: block; color: var(--text); margin-bottom: 4px; font-size: 0.95rem; }
+.step-body h3 { display: block; color: var(--text); margin: 0 0 4px; font-size: 0.95rem; font-weight: 600; }
 .step-body p { margin: 0; font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
 
 /* Blog recurso-card (distinto del global) */
