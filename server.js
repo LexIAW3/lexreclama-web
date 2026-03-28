@@ -38,6 +38,7 @@ const {
   extractClientEmail,
 } = require('./services/notifications');
 const { createStripeService } = require('./services/stripe');
+const { createPaperclipService } = require('./services/paperclip');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -196,6 +197,29 @@ const {
   fetchWithTimeout,
   escapeHtml,
   detectTestLeadReason,
+});
+
+const {
+  uploadDocumentToOcr,
+  createIssueForLead,
+  fetchIssueByIdentifier,
+  fetchIssueComments,
+} = createPaperclipService({
+  paperclipApi: PAPERCLIP_API,
+  companyId: COMPANY_ID,
+  submitApiKey: SUBMIT_API_KEY,
+  fetchWithTimeout,
+  fetchTimeoutApiMs: FETCH_TIMEOUT_API_MS,
+  fetchTimeoutOcrMs: FETCH_TIMEOUT_OCR_MS,
+  gestorAgentId: GESTOR_AGENT_ID,
+  goalId: GOAL_ID,
+  ocrServer: OCR_SERVER,
+  ocrSharedSecret: OCR_SHARED_SECRET,
+  sendLeadConfirmationEmail,
+  sendWhatsAppWelcome,
+  maskEmail,
+  recentLeads,
+  maxRecentLeads: MAX_RECENT_LEADS,
 });
 
 /* ─── RATE LIMITER + CSRF ────────────────────────────────────── */
@@ -1006,43 +1030,6 @@ async function handleAdmin(req, res, nonce = '') {
   res.end(html);
 }
 
-async function uploadDocumentToOcr(issueId, file) {
-  try {
-    // Build multipart manually using node's built-in capabilities
-    const boundary = `----FormBoundary${crypto.randomBytes(16).toString('hex')}`;
-    const CRLF = '\r\n';
-    const parts = [
-      `--${boundary}${CRLF}`,
-      `Content-Disposition: form-data; name="file"; filename="${file.originalname}"${CRLF}`,
-      `Content-Type: ${file.mimetype}${CRLF}`,
-      CRLF,
-    ];
-    const bodyStart = Buffer.from(parts.join(''));
-    const bodyEnd = Buffer.from(`${CRLF}--${boundary}--${CRLF}`);
-    const fullBody = Buffer.concat([bodyStart, file.buffer, bodyEnd]);
-
-    const ocrUrl = new URL(`/api/documents/upload?issueId=${encodeURIComponent(issueId)}`, OCR_SERVER);
-    const res = await fetchWithTimeout(ocrUrl.toString(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=${boundary}`,
-        'Content-Length': String(fullBody.length),
-        ...(OCR_SHARED_SECRET ? { 'x-ocr-shared-secret': OCR_SHARED_SECRET } : {}),
-      },
-      body: fullBody,
-    }, FETCH_TIMEOUT_OCR_MS);
-    if (!res.ok) {
-      const err = await res.text().catch(() => '');
-      console.warn(`[ocr] upload failed for ${file.originalname}: ${res.status} ${err}`);
-      return null;
-    }
-    return await res.json();
-  } catch (err) {
-    console.warn(`[ocr] upload error for ${file.originalname}: ${err.message}`);
-    return null;
-  }
-}
-
 async function handleSubmitLead(req, res) {
   const body = req.parsedBody;
   const uploadedFiles = req.uploadedFiles || [];
@@ -1234,104 +1221,6 @@ function normalizeLeadPayload(body) {
       ...vertical,
     },
   };
-}
-
-function buildVerticalDescription(leadData) {
-  const lines = [];
-  if (leadData.tipo === 'multa') {
-    lines.push('**Datos de la multa:**');
-    if (leadData.multa_expediente) lines.push(`- Expediente: ${leadData.multa_expediente}`);
-    if (leadData.multa_importe) lines.push(`- Importe: ${leadData.multa_importe} €`);
-    if (leadData.multa_fecha) lines.push(`- Fecha notificación: ${leadData.multa_fecha}`);
-    if (leadData.multa_tipo_infraccion) lines.push(`- Tipo infracción: ${leadData.multa_tipo_infraccion}`);
-    if (leadData.multa_organismo) lines.push(`- Organismo: ${leadData.multa_organismo}`);
-  } else if (leadData.tipo === 'banco') {
-    lines.push('**Datos bancarios:**');
-    if (leadData.banco_tipo_clausula) lines.push(`- Cláusula: ${leadData.banco_tipo_clausula}`);
-    if (leadData.banco_nombre) lines.push(`- Banco: ${leadData.banco_nombre}`);
-    if (leadData.banco_anio_firma) lines.push(`- Año firma: ${leadData.banco_anio_firma}`);
-    if (leadData.banco_cuota_mensual) lines.push(`- Cuota mensual: ${leadData.banco_cuota_mensual} €`);
-  } else if (leadData.tipo === 'deuda') {
-    lines.push('**Datos de la deuda:**');
-    if (leadData.deuda_tipo_deuda) lines.push(`- Tipo: ${leadData.deuda_tipo_deuda}`);
-    if (leadData.deuda_importe_reclamado) lines.push(`- Importe: ${leadData.deuda_importe_reclamado} €`);
-    if (leadData.deuda_nombre_deudor) lines.push(`- Deudor: ${leadData.deuda_nombre_deudor}`);
-    if (leadData.deuda_tiene_contrato) lines.push(`- Contrato/factura: ${leadData.deuda_tiene_contrato === 'si' ? 'Sí' : 'No'}`);
-  }
-  return lines.length > 1 ? lines : [];
-}
-
-async function createIssueForLead(leadData, paymentMeta = { paid: false }) {
-  const verticalLines = buildVerticalDescription(leadData);
-  const issue = {
-    title: `Lead: ${leadData.tipoLabel} — ${leadData.nombre}`,
-    description: [
-      `**Tipo de reclamación:** ${leadData.tipoLabel}`,
-      `**Nombre:** ${leadData.nombre}`,
-      `**Email:** ${leadData.email}`,
-      leadData.telefono ? `**Teléfono:** ${leadData.telefono}` : null,
-      `**Consentimiento privacidad:** ${leadData.privacidadAceptada ? 'Sí' : 'No'}`,
-      `**Consentimiento comercial:** ${leadData.comercialAceptada ? 'Sí' : 'No'}`,
-      `**Timestamp consentimiento:** ${leadData.consentimientoTimestamp}`,
-      `**Versión política aceptada:** ${leadData.versionPolitica}`,
-      ...(verticalLines.length ? ['', ...verticalLines] : []),
-      '',
-      '**Descripción del caso:**',
-      leadData.descripcion || '(sin descripción)',
-      '',
-      paymentMeta.paid
-        ? `**Pago inicial:** Confirmado (${paymentMeta.amountLabel || 'Stripe Checkout'})`
-        : '**Pago inicial:** No requerido',
-      paymentMeta.checkoutSessionId ? `**Stripe checkout session:** ${paymentMeta.checkoutSessionId}` : null,
-      '',
-      '---',
-      '*Lead recibido desde la landing page web.*',
-    ].filter((line) => line !== null).join('\n'),
-    status: 'todo',
-    priority: 'medium',
-    assigneeAgentId: GESTOR_AGENT_ID,
-    goalId: GOAL_ID,
-  };
-
-  const apiRes = await fetchWithTimeout(`${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${SUBMIT_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(issue),
-  }, FETCH_TIMEOUT_API_MS);
-  const data = await apiRes.json();
-  if (!apiRes.ok) throw new Error(data.error || `HTTP ${apiRes.status}`);
-
-  try {
-    const sent = await sendLeadConfirmationEmail(leadData, data.identifier || data.id || 'tu expediente');
-    if (!sent) {
-      console.warn(`[lead-email] confirmation not sent for ${maskEmail(leadData.email)} (identifier: ${data.identifier || 'n/a'})`);
-    }
-  } catch (err) {
-    console.error(`[lead-email] confirmation failed for ${maskEmail(leadData.email)}: ${err.message}`);
-  }
-
-  // Paso 2 del flujo de contacto: mensaje de acompañamiento por WhatsApp Business (D+0)
-  if (leadData.telefono) {
-    const waSent = await sendWhatsAppWelcome(leadData);
-    if (!waSent) {
-      console.warn(`[whatsapp] welcome not sent for ${maskEmail(leadData.email)} (identifier: ${data.identifier || 'n/a'})`);
-    }
-  }
-
-  recentLeads.unshift({
-    createdAt: new Date().toISOString(),
-    nombre: leadData.nombre,
-    email: leadData.email,
-    telefono: leadData.telefono,
-    tipoLabel: leadData.tipoLabel,
-    issueId: data.id || null,
-    identifier: data.identifier || null,
-  });
-  if (recentLeads.length > MAX_RECENT_LEADS) recentLeads.length = MAX_RECENT_LEADS;
-  return data;
 }
 
 function getBaseUrl(req) {
@@ -1574,42 +1463,6 @@ async function readIssueDocumentsIndex(issueId) {
   } catch {
     return [];
   }
-}
-
-async function fetchIssueByIdentifier(caseId) {
-  const res = await fetchWithTimeout(
-    `${PAPERCLIP_API}/api/companies/${COMPANY_ID}/issues?q=${encodeURIComponent(caseId)}&limit=20`,
-    {
-      headers: {
-        Authorization: `Bearer ${SUBMIT_API_KEY}`,
-      },
-    },
-    FETCH_TIMEOUT_API_MS,
-  );
-  const data = await res.json().catch(() => []);
-  if (!res.ok || !Array.isArray(data)) return null;
-  const exact = data.find((issue) => String(issue.identifier || '').toUpperCase() === caseId);
-  return exact || null;
-}
-
-async function fetchIssueComments(issueId) {
-  const res = await fetchWithTimeout(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(issueId)}/comments`, {
-    headers: {
-      Authorization: `Bearer ${SUBMIT_API_KEY}`,
-    },
-  }, FETCH_TIMEOUT_API_MS);
-  const data = await res.json().catch(() => []);
-  if (!res.ok || !Array.isArray(data)) return [];
-  return data
-    .filter((comment) => String(comment.body || '').trimStart().startsWith('[CLIENTE]'))
-    .map((comment) => ({
-      author: comment.authorAgentId ? 'Despacho' : 'Cliente',
-      fromClient: !comment.authorAgentId,
-      body: String(comment.body || '')
-        .replace(/^\s*\[CLIENTE\]\s*/i, '')
-        .replace(/^#+\s*/gm, '')
-        .slice(0, 450),
-    }));
 }
 
 async function handleAdminPortalTestCode(req, res, url) {
