@@ -1190,7 +1190,7 @@ async function handleSubmitLead(req, res) {
     }));
   } catch (err) {
     console.error('Lead submission error:', err.message);
-    res.writeHead(500);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'No se pudo procesar la solicitud en este momento.' }));
   }
 }

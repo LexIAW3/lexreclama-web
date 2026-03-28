@@ -5960,7 +5960,7 @@ html[data-theme='light'] .area-card {
 }
 
 /* Mobile: stack vertically */
-@media (max-width: 768px) {
+@media (max-width: 760px) {
   .home-page .calculadora .calc-body {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
