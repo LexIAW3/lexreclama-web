@@ -56,6 +56,7 @@ function createNotificationService({
     const attributes = {};
     if (payload.nombre) attributes.NOMBRE = payload.nombre;
     if (payload.tipoReclamacion) attributes.TIPO_RECLAMACION = payload.tipoReclamacion;
+    if (payload.leadMagnet === 'guia-bancaria') attributes.SOURCE = 'lead-magnet';
     attributes.PRIVACIDAD_ACEPTADA = 'true';
     attributes.CONSENTIMIENTO_TIMESTAMP = payload.consentimientoTimestamp;
     attributes.VERSION_POLITICA = payload.versionPolitica;
