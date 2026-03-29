@@ -30,6 +30,7 @@ const { routePortalApi } = require('./routes/portal');
 const { routeAdmin } = require('./routes/admin');
 const { routeLeadEndpoints } = require('./routes/leads');
 const { routeCheckoutEndpoints } = require('./routes/checkout');
+const { routeSubscribeEndpoint } = require('./routes/subscribe');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 const { applySecurityHeaders } = require('./middleware/securityHeaders');
@@ -1874,19 +1875,18 @@ const server = http.createServer(async (req, res) => {
     },
   })) return;
 
-  if (req.method === 'POST' && url.pathname === '/api/subscribe') {
-    const clientIp = getClientIp(req);
-    const rule = RATE_LIMIT_RULES[url.pathname];
-    const rate = consumeRateLimit(rule, clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
-      res.end(JSON.stringify({ error: 'Demasiadas solicitudes. Inténtalo más tarde.' }));
-      return;
-    }
-    if (!await validateCsrfToken(req, res)) return;
-    await handleSubscribe(req, res);
-    return;
-  }
+  if (await routeSubscribeEndpoint({
+    req,
+    res,
+    url,
+    getClientIp,
+    consumeRateLimit,
+    rateLimitRules: RATE_LIMIT_RULES,
+    validateCsrfToken,
+    handlers: {
+      handleSubscribe,
+    },
+  })) return;
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
     const clientIp = getClientIp(req);
