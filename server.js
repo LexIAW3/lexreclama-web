@@ -31,6 +31,7 @@ const { routeAdmin } = require('./routes/admin');
 const { routeLeadEndpoints } = require('./routes/leads');
 const { routeCheckoutEndpoints } = require('./routes/checkout');
 const { routeSubscribeEndpoint } = require('./routes/subscribe');
+const { routeStaticMeta } = require('./routes/static');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 const { applySecurityHeaders } = require('./middleware/securityHeaders');
@@ -1888,40 +1889,18 @@ const server = http.createServer(async (req, res) => {
     },
   })) return;
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
-  if (req.method === 'GET' && url.pathname === '/robots.txt') {
-    const clientIp = getClientIp(req);
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/robots.txt'], clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
-      res.end('Too many requests');
-      return;
-    }
-    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
-    res.end(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /portal-cliente/\nDisallow: /social-templates/\nSitemap: ${SITE_URL}/sitemap.xml\n`);
-    return;
-  }
-  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/.well-known/security.txt') {
-    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' });
-    res.end([
-      'Contact: mailto:hola@lexreclama.es',
-      'Expires: 2027-03-28T00:00:00.000Z',
-      'Preferred-Languages: es, en',
-      `Canonical: https://${PRIMARY_HOST}/.well-known/security.txt`,
-    ].join('\n') + '\n');
-    return;
-  }
-  if (req.method === 'GET' && url.pathname === '/sitemap.xml') {
-    const clientIp = getClientIp(req);
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/sitemap.xml'], clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'application/xml; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
-      res.end('<error>Too many requests</error>');
-      return;
-    }
-    const sitemapHeaders = { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' };
-    sendCompressed(req, res, sitemapHeaders, Buffer.from(buildSitemapXml()));
-    return;
-  }
+  if (routeStaticMeta({
+    req,
+    res,
+    url,
+    getClientIp,
+    consumeRateLimit,
+    rateLimitRules: RATE_LIMIT_RULES,
+    siteUrl: SITE_URL,
+    primaryHost: PRIMARY_HOST,
+    sendCompressed,
+    buildSitemapXml,
+  })) return;
   if (req.method === 'GET' && (normalizedPath === '/blog/' || normalizedPath in PILLAR_PAGES)) {
     const clientIp = getClientIp(req);
     const rate = consumeRateLimit(RATE_LIMIT_RULES['/dynamic-pages'], clientIp);

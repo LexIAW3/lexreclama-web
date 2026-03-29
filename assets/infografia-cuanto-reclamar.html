@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Cuánto puedes recuperar con LexReclama?</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #ffffff;
+      width: 1200px;
+      height: 800px;
+      overflow: hidden;
+    }
+
+    .infografia {
+      width: 1200px;
+      height: 800px;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .header {
+      background: #1B2A4A;
+      padding: 22px 48px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      background: #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #1B2A4A;
+      font-family: 'Georgia', serif;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+
+    .logo-text span {
+      color: #D4AF37;
+    }
+
+    .header h1 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 30px;
+      font-weight: bold;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1.2;
+      letter-spacing: 0.3px;
+    }
+
+    .header h1 em {
+      color: #D4AF37;
+      font-style: normal;
+    }
+
+    .header .subtitle {
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      color: #c8d4e8;
+      margin-top: 6px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .gold-line {
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, #D4AF37 20%, #D4AF37 80%, transparent 100%);
+      width: 100%;
+    }
+
+    /* BODY */
+    .body {
+      flex: 1;
+      padding: 20px 40px 14px;
+      background: #f7f9fc;
+    }
+
+    /* TABLE */
+    .table-wrapper {
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Arial', Helvetica, sans-serif;
+    }
+
+    thead tr {
+      background: #1B2A4A;
+    }
+
+    thead th {
+      color: #D4AF37;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 11px 16px;
+      text-align: left;
+    }
+
+    thead th:first-child {
+      border-radius: 6px 0 0 0;
+    }
+
+    thead th:last-child {
+      border-radius: 0 6px 0 0;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e2e8f0;
+      transition: background 0.1s;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #eef2f8;
+    }
+
+    tbody tr:nth-child(odd) {
+      background: #ffffff;
+    }
+
+    tbody td {
+      padding: 13px 16px;
+      font-size: 13.5px;
+      color: #1B2A4A;
+      vertical-align: middle;
+      line-height: 1.35;
+    }
+
+    .col-tipo {
+      width: 22%;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .col-quien {
+      width: 28%;
+    }
+
+    .col-importe {
+      width: 24%;
+    }
+
+    .col-plazo {
+      width: 26%;
+    }
+
+    .tipo-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-blue {
+      background: #dce8f8;
+      color: #1B2A4A;
+      border: 1px solid #b0caea;
+    }
+
+    .badge-gold {
+      background: #fef7e0;
+      color: #8a6b00;
+      border: 1px solid #e8c84a;
+    }
+
+    .badge-green {
+      background: #e0f4ec;
+      color: #1a6b42;
+      border: 1px solid #7ecba3;
+    }
+
+    .badge-red {
+      background: #fde8e8;
+      color: #8b1a1a;
+      border: 1px solid #e8a0a0;
+    }
+
+    .badge-purple {
+      background: #ede8fd;
+      color: #3b1a8b;
+      border: 1px solid #a89ee8;
+    }
+
+    .importe-value {
+      font-weight: 700;
+      color: #1B2A4A;
+      font-size: 14px;
+    }
+
+    .importe-note {
+      font-size: 11.5px;
+      color: #6b7c9b;
+      margin-top: 2px;
+    }
+
+    .plazo-tag {
+      display: inline-block;
+      font-size: 12px;
+      color: #4a6090;
+      background: #dfe6f4;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .plazo-urgent {
+      color: #8b3a00;
+      background: #fde8d0;
+    }
+
+    .plazo-open {
+      color: #1a6b42;
+      background: #d8f4e8;
+    }
+
+    .plazo-review {
+      color: #5a2d8b;
+      background: #ede4fd;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #1B2A4A;
+      padding: 12px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-logo-mark {
+      width: 28px;
+      height: 28px;
+      background: #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #1B2A4A;
+    }
+
+    .footer-logo-text {
+      font-family: 'Georgia', serif;
+      font-size: 15px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .footer-logo-text span {
+      color: #D4AF37;
+    }
+
+    .footer-center {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer-cta {
+      background: #D4AF37;
+      color: #1B2A4A;
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 18px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-right {
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      color: #8fa3c4;
+      text-align: right;
+    }
+
+    .footer-right .url {
+      color: #D4AF37;
+      font-weight: 600;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+<div class="infografia">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="logo-mark">L</div>
+      <div class="logo-text">Lex<span>Reclama</span></div>
+    </div>
+    <h1>¿Cuánto puedes recuperar con <em>LexReclama</em>?</h1>
+    <div class="subtitle">Consulta gratuita &mdash; sin compromiso</div>
+  </div>
+
+  <div class="gold-line"></div>
+
+  <!-- BODY -->
+  <div class="body">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-tipo">Tipo de reclamación</th>
+            <th class="col-quien">¿Quién puede reclamar?</th>
+            <th class="col-importe">Importe típico</th>
+            <th class="col-plazo">Plazo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-tipo">
+              <span class="tipo-badge badge-blue">🏠 Gastos hipotecarios</span>
+            </td>
+            <td class="col-quien">Quien firmó hipoteca <strong>antes de 2018</strong></td>
+            <td class="col-importe">
+              <div class="importe-value">1.500 – 3.500 €</div>
+            </td>
+            <td class="col-plazo">
+              <span class="plazo-tag plazo-urgent">⚠ Antes de prescribir</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-tipo">
+              <span class="tipo-badge badge-gold">📉 Cláusula suelo</span>
+            </td>
+            <td class="col-quien">Hipotecas con suelo <strong>&gt; 0%</strong></td>
+            <td class="col-importe">
+              <div class="importe-value">Variable</div>
+              <div class="importe-note">Diferencial pagado de más</div>
+            </td>
+            <td class="col-plazo">
+              <span class="plazo-tag plazo-open">✓ Prescripción abierta</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-tipo">
+              <span class="tipo-badge badge-purple">📊 IRPH</span>
+            </td>
+            <td class="col-quien">Hipotecas referenciadas a <strong>IRPH</strong></td>
+            <td class="col-importe">
+              <div class="importe-value">Variable</div>
+            </td>
+            <td class="col-plazo">
+              <span class="plazo-tag plazo-review">⚖ En revisión judicial</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-tipo">
+              <span class="tipo-badge badge-red">💳 Tarjeta revolving</span>
+            </td>
+            <td class="col-quien">Quien tiene/tuvo <strong>tarjeta revolving</strong></td>
+            <td class="col-importe">
+              <div class="importe-value">Intereses pagados</div>
+            </td>
+            <td class="col-plazo">
+              <span class="plazo-tag">5 años</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="col-tipo">
+              <span class="tipo-badge badge-green">🚗 Multa de tráfico</span>
+            </td>
+            <td class="col-quien"><strong>Cualquier conductor</strong></td>
+            <td class="col-importe">
+              <div class="importe-value">Importe de la multa</div>
+            </td>
+            <td class="col-plazo">
+              <span class="plazo-tag plazo-urgent">⚠ Recurso: 1 mes</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <div class="footer-logo-mark">L</div>
+      <div class="footer-logo-text">Lex<span>Reclama</span></div>
+    </div>
+    <div class="footer-center">
+      <div class="footer-cta">Consulta gratuita &rarr;</div>
+    </div>
+    <div class="footer-right">
+      <div class="url">www.lexreclama.es</div>
+      <div>Tu derecho, nuestra misión</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
