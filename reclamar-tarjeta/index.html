@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reclamar hipoteca IRPH — Consulta gratuita | LexReclama</title>
-  <meta name="description" content="Reclama tu hipoteca IRPH con análisis legal gratuito. Te ayudamos a recuperar el sobrecoste frente al Euribor y solo cobramos si ganamos." />
+  <title>Reclamar tarjeta revolving — Calcula tu caso gratis | LexReclama</title>
+  <meta name="description" content="Si tu tarjeta cobra intereses abusivos, puedes reclamar. Calcula una estimación inicial y recibe análisis legal gratuito en 24h." />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://www.lexreclama.es/reclamar-irph/" />
+  <link rel="canonical" href="https://www.lexreclama.es/reclamar-tarjeta/" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.lexreclama.es/reclamar-irph/" />
-  <meta property="og:title" content="Reclamar hipoteca IRPH — Consulta gratuita | LexReclama" />
-  <meta property="og:description" content="Si tu hipoteca estaba referenciada a IRPH, revisamos gratis cuánto puedes recuperar." />
+  <meta property="og:url" content="https://www.lexreclama.es/reclamar-tarjeta/" />
+  <meta property="og:title" content="Reclamar tarjeta revolving — Calcula tu caso gratis | LexReclama" />
+  <meta property="og:description" content="El Tribunal Supremo declaró usurarios los intereses revolving superiores al 20% TAE. Revisión jurídica gratis." />
   <meta property="og:locale" content="es_ES" />
   <meta property="og:site_name" content="LexReclama" />
-  <meta property="og:image" content="https://www.lexreclama.es/assets/infografia-irph.png" />
+  <meta property="og:image" content="https://www.lexreclama.es/assets/infografia-revolving.png" />
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/logo-avatar.png" />
@@ -24,20 +24,20 @@
   <link rel="stylesheet" href="/styles.min.css" />
   <!-- GA4_SNIPPET -->
   <style>
-    .irph-page .hero-irph {
+    .revolving-page .hero-revolving {
       padding: 72px 0 36px;
-      background: radial-gradient(circle at 80% -20%, rgba(212, 175, 55, 0.25), transparent 42%), linear-gradient(145deg, #112641 0%, #1b2f4c 55%, #223b63 100%);
+      background: radial-gradient(circle at 80% -20%, rgba(212, 175, 55, 0.25), transparent 42%), linear-gradient(145deg, #0f2f3a 0%, #18404f 55%, #225769 100%);
       color: #fff;
     }
 
-    .irph-page .hero-irph-grid {
+    .revolving-page .hero-revolving-grid {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 28px;
       align-items: center;
     }
 
-    .irph-page .hero-irph h1 {
+    .revolving-page .hero-revolving h1 {
       margin: 0 0 14px;
       font-size: clamp(2rem, 4.8vw, 3rem);
       line-height: 1.08;
@@ -45,12 +45,12 @@
       color: #fff;
     }
 
-    .irph-page .hero-irph p {
+    .revolving-page .hero-revolving p {
       color: rgba(236, 242, 252, 0.95);
       max-width: 62ch;
     }
 
-    .irph-page .hero-irph-bullets {
+    .revolving-page .hero-revolving-bullets {
       list-style: none;
       padding: 0;
       margin: 18px 0 0;
@@ -58,14 +58,14 @@
       gap: 10px;
     }
 
-    .irph-page .hero-irph-bullets li {
+    .revolving-page .hero-revolving-bullets li {
       display: flex;
       align-items: center;
       gap: 8px;
       color: #f2f5fb;
     }
 
-    .irph-page .hero-irph-badge {
+    .revolving-page .hero-revolving-badge {
       display: inline-block;
       margin-bottom: 14px;
       padding: 6px 12px;
@@ -79,7 +79,7 @@
       color: #f2d27a;
     }
 
-    .irph-page .irph-hero-image {
+    .revolving-page .revolving-hero-image {
       width: 100%;
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.16);
@@ -87,41 +87,43 @@
       background: #fff;
     }
 
-    .irph-page .irph-steps {
-      padding: 56px 0 20px;
+    .revolving-page .revolving-calculator {
+      padding: 56px 0 28px;
     }
 
-    .irph-page .irph-steps-grid {
-      display: grid;
-      gap: 16px;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .irph-page .irph-step-card {
+    .revolving-page .revolving-calc-card {
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       background: #fff;
-      padding: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .irph-page .irph-step-num {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: inline-grid;
-      place-items: center;
-      background: rgba(212, 175, 55, 0.17);
-      color: #8f6a1a;
-      font-weight: 700;
-      margin-bottom: 10px;
+    .revolving-page .revolving-calc-fields {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 14px;
     }
 
-    .irph-page .irph-contact {
-      padding-top: 28px;
+    .revolving-page .revolving-result {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(17, 38, 65, 0.04);
+      border: 1px solid rgba(17, 38, 65, 0.12);
+    }
+
+    .revolving-page .revolving-result.hidden {
+      display: none;
+    }
+
+    .revolving-page .revolving-contact {
+      padding-top: 20px;
       padding-bottom: 64px;
     }
 
-    .irph-page .irph-contact .contacto-inner {
+    .revolving-page .revolving-contact .contacto-inner {
       grid-template-columns: 0.9fr 1.1fr;
       align-items: start;
     }
@@ -139,19 +141,19 @@
     }
 
     @media (max-width: 980px) {
-      .irph-page .hero-irph-grid,
-      .irph-page .irph-contact .contacto-inner,
-      .irph-page .irph-steps-grid {
+      .revolving-page .hero-revolving-grid,
+      .revolving-page .revolving-contact .contacto-inner,
+      .revolving-page .revolving-calc-fields {
         grid-template-columns: 1fr;
       }
 
-      .irph-page .hero-irph {
+      .revolving-page .hero-revolving {
         padding-top: 52px;
       }
     }
   </style>
 </head>
-<body class="service-page irph-page">
+<body class="service-page revolving-page">
   <a href="#main-content" class="skip-link">Ir al contenido principal</a>
 
   <nav class="nav" id="main-nav" aria-label="Navegación principal">
@@ -162,8 +164,8 @@
       <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
-        <li><a href="/reclamar-irph/" aria-current="page">Reclamar IRPH</a></li>
-        <li><a href="/reclamar-tarjeta/">Reclamar tarjeta revolving</a></li>
+        <li><a href="/reclamar-irph/">Reclamar IRPH</a></li>
+        <li><a href="/reclamar-tarjeta/" aria-current="page">Reclamar tarjeta revolving</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
         <li><a href="/blog/">Blog</a></li>
         <li><a href="/contacto/">Contacto</a></li>
@@ -172,7 +174,7 @@
         <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
           <span></span><span></span><span></span>
         </button>
-        <a href="#contacto-irph" class="btn btn-sm btn-primary">Consulta gratuita</a>
+        <a href="#contacto-revolving" class="btn btn-sm btn-primary">Calcula tu reclamación</a>
       </div>
     </div>
   </nav>
@@ -181,77 +183,85 @@
     <div class="nav-mobile-inner">
       <a href="/reclamacion-deudas/">Reclamar deuda</a>
       <a href="/clausulas-bancarias/">Cláusulas bancarias</a>
-      <a href="/reclamar-irph/" aria-current="page">Reclamar IRPH</a>
-      <a href="/reclamar-tarjeta/">Reclamar tarjeta revolving</a>
+      <a href="/reclamar-irph/">Reclamar IRPH</a>
+      <a href="/reclamar-tarjeta/" aria-current="page">Reclamar tarjeta revolving</a>
       <a href="/recurrir-multas/">Recurrir multa</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a href="#contacto-irph" class="btn btn-primary" aria-current="page">Consulta gratuita</a>
+      <a href="#contacto-revolving" class="btn btn-primary" aria-current="page">Calcula tu reclamación</a>
     </div>
   </div>
 
   <main id="main-content">
-    <section class="hero-irph">
-      <div class="container hero-irph-grid">
+    <section class="hero-revolving">
+      <div class="container hero-revolving-grid">
         <div>
-          <span class="hero-irph-badge">Sentencia TJUE 2025 · reclamación activa</span>
-          <h1>Reclama tu hipoteca IRPH y recupera lo que pagaste de más</h1>
-          <p>Si tu banco aplicó IRPH sin transparencia suficiente, puedes reclamar el sobrecoste frente al Euribor. Revisamos tu caso gratis y te damos una estimación real en 24h.</p>
-          <ul class="hero-irph-bullets">
+          <span class="hero-revolving-badge">Sentencia TS 4/2020 · acción activa</span>
+          <h1>¿Tu tarjeta de crédito te cobra intereses abusivos?</h1>
+          <p>El Tribunal Supremo declaró usurarios los intereses superiores al 20% TAE. Si tu tarjeta revolving está en ese rango, puedes reclamar y recuperar lo pagado de más.</p>
+          <ul class="hero-revolving-bullets">
+            <li><span>✓</span> Recuperación media estimada: 2.000-8.000 EUR</li>
             <li><span>✓</span> Sin pago inicial</li>
             <li><span>✓</span> Solo cobramos si recuperas dinero</li>
-            <li><span>✓</span> Gestión integral judicial y extrajudicial</li>
           </ul>
-          <p><a href="#contacto-irph" class="btn btn-primary" style="margin-top:18px;">Quiero revisar mi hipoteca IRPH</a></p>
+          <p><a href="#revolving-calculadora" class="btn btn-primary" style="margin-top:18px;">Calcula tu reclamación</a></p>
         </div>
         <div>
-          <img src="/assets/infografia-irph.png" alt="Resumen visual de reclamación IRPH" class="irph-hero-image" loading="eager" fetchpriority="high" />
+          <img src="/assets/infografia-revolving.png" alt="Resumen visual sobre reclamación de tarjetas revolving" class="revolving-hero-image" loading="eager" fetchpriority="high" />
         </div>
       </div>
     </section>
 
-    <section class="irph-steps">
+    <section class="revolving-calculator" id="revolving-calculadora">
       <div class="container">
-        <span class="eyebrow">Cómo trabajamos</span>
-        <h2 class="section-title">Pasos del proceso para reclamar IRPH</h2>
-        <p class="section-sub">Proceso simple, online y con acompañamiento legal en cada fase.</p>
-        <div class="irph-steps-grid">
-          <article class="irph-step-card">
-            <span class="irph-step-num">1</span>
-            <h3>Revisión documental gratuita</h3>
-            <p>Analizamos escritura, oferta vinculante y cuadro de amortización para detectar falta de transparencia y cuantificar el sobrecoste.</p>
-          </article>
-          <article class="irph-step-card">
-            <span class="irph-step-num">2</span>
-            <h3>Reclamación al banco</h3>
-            <p>Presentamos reclamación formal y negociamos una devolución. Si no hay acuerdo razonable, preparamos demanda.</p>
-          </article>
-          <article class="irph-step-card">
-            <span class="irph-step-num">3</span>
-            <h3>Demanda y cobro</h3>
-            <p>Defendemos tu caso en vía judicial y gestionamos el cobro de principal, intereses y costas cuando corresponda.</p>
-          </article>
+        <span class="eyebrow">Calculadora orientativa</span>
+        <h2 class="section-title">Haz una estimación rápida de tu caso</h2>
+        <p class="section-sub">Resultado informativo. La cifra final depende del historial completo del contrato y extractos.</p>
+
+        <div class="revolving-calc-card">
+          <div class="revolving-calc-fields">
+            <div class="field">
+              <label for="calc-capital">Capital dispuesto total (€)</label>
+              <input type="number" id="calc-capital" min="0" placeholder="3000" />
+            </div>
+            <div class="field">
+              <label for="calc-pagado">Total pagado al banco (€)</label>
+              <input type="number" id="calc-pagado" min="0" placeholder="5200" />
+            </div>
+            <div class="field">
+              <label for="calc-tae">TAE de tu tarjeta (%)</label>
+              <input type="number" id="calc-tae" min="0" step="0.1" placeholder="26.8" />
+            </div>
+          </div>
+
+          <button type="button" id="calc-revolving-btn" class="btn btn-primary">Calcular estimación</button>
+
+          <div id="calc-revolving-result" class="revolving-result hidden" role="status" aria-live="polite">
+            <p><strong>Estimación recuperable:</strong> <span id="calc-revolving-amount">—</span></p>
+            <p id="calc-revolving-note">—</p>
+            <p><a href="#contacto-revolving" class="btn btn-primary">Enviar mi caso para revisión gratuita</a></p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="contacto section irph-contact" id="contacto-irph">
+    <section class="contacto section revolving-contact" id="contacto-revolving">
       <div class="container">
         <div class="contacto-inner">
           <div class="contacto-left" data-animate>
-            <span class="eyebrow">Consulta IRPH</span>
-            <h2>Cuéntanos tu hipoteca y te diremos si compensa reclamar</h2>
-            <p>Envíanos tus datos y una breve descripción. Recibirás una valoración inicial gratuita, sin compromiso.</p>
+            <span class="eyebrow">Consulta revolving</span>
+            <h2>Envíanos tu caso y te diremos si puedes reclamar</h2>
+            <p>Te damos una valoración legal inicial en menos de 24h laborables, sin compromiso.</p>
             <div class="trust-items">
-              <div class="trust-item"><span class="trust-icon-wrap">✓</span><span>Análisis jurídico inicial sin coste</span></div>
-              <div class="trust-item"><span class="trust-icon-wrap">✓</span><span>Respuesta en menos de 24h laborables</span></div>
-              <div class="trust-item"><span class="trust-icon-wrap">✓</span><span>Sin honorarios si no recuperas</span></div>
+              <div class="trust-item"><span class="trust-icon-wrap">✓</span><span>Revisión jurídica gratuita</span></div>
+              <div class="trust-item"><span class="trust-icon-wrap">✓</span><span>Sin adelanto de honorarios</span></div>
+              <div class="trust-item"><span class="trust-icon-wrap">✓</span><span>Gestión completa extrajudicial y judicial</span></div>
             </div>
           </div>
 
           <form class="contacto-form" id="lead-form" data-animate data-delay="1">
             <input type="hidden" name="csrfToken" value="" />
-            <input type="hidden" name="tipo_reclamacion" value="IRPH" />
+            <input type="hidden" name="tipo_reclamacion" value="Tarjeta revolving" />
             <label for="tipo-reclamacion" class="sr-only">Tipo de reclamación</label>
             <select id="tipo-reclamacion" name="tipo" class="sr-only" tabindex="-1" aria-hidden="true">
               <option value="banco" selected>Cláusulas bancarias abusivas</option>
@@ -277,29 +287,29 @@
               <div class="field">
                 <label for="banco-tipo-clausula">Tipo de cláusula</label>
                 <select id="banco-tipo-clausula" name="banco_tipo_clausula">
-                  <option value="irph" selected>IRPH</option>
+                  <option value="revolving" selected>Tarjeta revolving</option>
                 </select>
               </div>
               <div class="field">
-                <label for="banco-nombre">Nombre del banco (opcional)</label>
-                <input type="text" id="banco-nombre" name="banco_nombre" placeholder="BBVA, Santander..." />
+                <label for="banco-nombre">Entidad emisora (opcional)</label>
+                <input type="text" id="banco-nombre" name="banco_nombre" placeholder="WiZink, Cofidis, Cetelem..." />
               </div>
             </div>
 
             <div class="form-row">
               <div class="field">
-                <label for="banco-anio-firma">Año de firma de la hipoteca (opcional)</label>
-                <input type="number" id="banco-anio-firma" name="banco_anio_firma" placeholder="2008" min="1980" max="2030" />
+                <label for="banco-anio-firma">Año de contratación (opcional)</label>
+                <input type="number" id="banco-anio-firma" name="banco_anio_firma" placeholder="2016" min="1980" max="2030" />
               </div>
               <div class="field">
                 <label for="banco-cuota-mensual">Cuota mensual aproximada (€)</label>
-                <input type="number" id="banco-cuota-mensual" name="banco_cuota_mensual" placeholder="600" min="0" />
+                <input type="number" id="banco-cuota-mensual" name="banco_cuota_mensual" placeholder="90" min="0" />
               </div>
             </div>
 
             <div class="field">
               <label for="descripcion">Cuéntanos brevemente tu situación</label>
-              <textarea id="descripcion" name="descripcion" rows="4" placeholder="Indica cuándo firmaste, banco, cuota aproximada y cualquier detalle relevante" required></textarea>
+              <textarea id="descripcion" name="descripcion" rows="4" placeholder="Indica tu TAE, antigüedad aproximada y cuánto has pagado" required></textarea>
             </div>
 
             <div class="field checkbox-field">
@@ -317,7 +327,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
-              <span id="submit-text">Solicitar revisión gratuita IRPH</span>
+              <span id="submit-text">Enviar para revisión gratuita</span>
               <span id="submit-loading" class="hidden">Enviando…</span>
             </button>
 
@@ -354,6 +364,45 @@
     </div>
   </footer>
 
+  <script>
+    (function () {
+      const btn = document.getElementById('calc-revolving-btn');
+      const result = document.getElementById('calc-revolving-result');
+      const amountEl = document.getElementById('calc-revolving-amount');
+      const noteEl = document.getElementById('calc-revolving-note');
+      const fmt = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+
+      function computeEstimate(capital, pagado, tae) {
+        const exceso = Math.max(pagado - capital, 0);
+        const factor = tae >= 26 ? 1 : (tae >= 20 ? 0.75 : 0.45);
+        return Math.round(exceso * factor);
+      }
+
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        const capital = Number(document.getElementById('calc-capital').value || 0);
+        const pagado = Number(document.getElementById('calc-pagado').value || 0);
+        const tae = Number(document.getElementById('calc-tae').value || 0);
+
+        if (!capital || !pagado || !tae || capital < 0 || pagado < 0 || tae < 0) {
+          result.classList.remove('hidden');
+          amountEl.textContent = 'Necesitamos los 3 campos';
+          noteEl.textContent = 'Completa capital dispuesto, total pagado y TAE para calcular una referencia.';
+          return;
+        }
+
+        const estimate = computeEstimate(capital, pagado, tae);
+        result.classList.remove('hidden');
+        amountEl.textContent = fmt.format(estimate);
+
+        if (tae >= 20) {
+          noteEl.textContent = 'Tu TAE está en un rango reclamable en muchos casos. Revisamos gratis contrato y extractos para cuantificar con precisión.';
+        } else {
+          noteEl.textContent = 'Aunque tu TAE sea menor, podemos revisar transparencia y comisiones. La viabilidad depende del contrato y fecha de firma.';
+        }
+      });
+    })();
+  </script>
   <script src="/app.min.js" defer></script>
 </body>
 </html>
