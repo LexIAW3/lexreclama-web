@@ -12,6 +12,7 @@ const busboy = require('busboy');
 const { generateNonce, safeEqual } = require('./utils/crypto');
 const { escapeHtml } = require('./utils/html');
 const { getClientIp, buildAdminIpChecker } = require('./utils/ip');
+const { createSitemapBuilder } = require('./utils/sitemap');
 const { sendAdminAuthChallenge, isAdminAuthorized } = require('./utils/auth');
 const {
   appendSetCookieHeader,
@@ -478,10 +479,6 @@ const BLOG_ARTICLES_CACHE_TTL_MS = 60 * 1000; // 60 s
 let blogArticlesCache = null;
 let blogArticlesCachedAtMs = 0;
 
-const SITEMAP_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min
-let sitemapCache = null;
-let sitemapCachedAtMs = 0;
-
 function listBlogArticles() {
   const now = Date.now();
   if (blogArticlesCache && now - blogArticlesCachedAtMs < BLOG_ARTICLES_CACHE_TTL_MS) {
@@ -508,6 +505,15 @@ function formatSlug(slug) {
     .map((part) => (part ? part[0].toUpperCase() + part.slice(1) : part))
     .join(' ');
 }
+
+const buildSitemapXml = createSitemapBuilder({
+  siteUrl: SITE_URL,
+  staticDir: STATIC_DIR,
+  listBlogArticles,
+  blogRedirects: BLOG_REDIRECTS,
+  fsModule: fs,
+  pathModule: path,
+});
 
 function renderContentShell({ pageTitle, metaDescription, heading, intro, bodyHtml, canonicalPath = '/', noindex = false, nonce = '' }) {
   return `<!doctype html>
@@ -697,54 +703,6 @@ function renderPillarPage(pathname, nonce = '') {
     escapeHtml,
     renderContentShell,
   });
-}
-
-function buildSitemapXmlUncached() {
-  // Legal pages are noindex — excluded from sitemap (crawl budget, Google guidelines)
-  const staticUrls = [
-    '/',
-    '/contacto/',
-    '/reclamacion-deudas/',
-    '/clausulas-bancarias/',
-    '/clausulas-bancarias/gastos-hipotecarios/',
-    '/clausulas-bancarias/clausula-suelo/',
-    '/clausulas-bancarias/irph-hipoteca/',
-    '/recurrir-multas/',
-    '/multas-dgt/',
-    '/blog/',
-  ];
-  const blogUrls = listBlogArticles()
-    .map((slug) => `/blog/${slug}/`)
-    .filter((urlPath) => !BLOG_REDIRECTS[urlPath]);
-  const urls = [...staticUrls, ...blogUrls];
-
-  function urlLastMod(urlPath) {
-    // Map URL path → local HTML file to read mtime
-    const filePath = urlPath === '/'
-      ? path.join(STATIC_DIR, 'index.html')
-      : path.join(STATIC_DIR, urlPath.replace(/^\//, ''), 'index.html');
-    try {
-      const mtime = fs.statSync(filePath).mtime;
-      return mtime.toISOString().slice(0, 10); // YYYY-MM-DD
-    } catch {
-      return new Date().toISOString().slice(0, 10);
-    }
-  }
-
-  const body = urls
-    .map((urlPath) => `  <url><loc>${SITE_URL}${urlPath}</loc><lastmod>${urlLastMod(urlPath)}</lastmod></url>`)
-    .join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
-}
-
-function buildSitemapXml() {
-  const now = Date.now();
-  if (sitemapCache && now - sitemapCachedAtMs < SITEMAP_CACHE_TTL_MS) {
-    return sitemapCache;
-  }
-  sitemapCache = buildSitemapXmlUncached();
-  sitemapCachedAtMs = now;
-  return sitemapCache;
 }
 
 const MAX_BODY_BYTES = 50 * 1024; // 50 KB
