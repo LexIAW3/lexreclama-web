@@ -1538,22 +1538,24 @@ async function handlePortalMe(req, res) {
   // Sliding renewal: extend session on each active use
   auth.session.expiresAtMs = Date.now() + PORTAL_SESSION_TTL_MS;
   appendSetCookieHeader(res, buildPortalSessionCookieHeader(auth.token, Math.floor(PORTAL_SESSION_TTL_MS / 1000)));
-  const issueRes = await fetchWithTimeout(`${PAPERCLIP_API}/api/issues/${encodeURIComponent(auth.session.issueId)}`, {
-    headers: {
-      Authorization: `Bearer ${SUBMIT_API_KEY}`,
-    },
-  }, FETCH_TIMEOUT_API_MS);
-  const issue = await issueRes.json().catch(() => null);
-  if (!issueRes.ok || !issue) {
+  const issue = await fetchIssueByIdentifier(auth.session.caseId);
+  if (!issue) {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Caso no disponible' }));
     return;
   }
 
-  const apiMessages = await fetchIssueComments(auth.session.issueId);
+  const issueId = String(issue.id || auth.session.issueId || '').trim();
+  if (!issueId) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Caso no disponible' }));
+    return;
+  }
+
+  const apiMessages = await fetchIssueComments(issueId);
   const localMessages = portalMessages.get(auth.session.caseId) || [];
   const allMessages = [...apiMessages.slice(0, 5), ...localMessages].slice(-8);
-  const rawDocuments = await readIssueDocumentsIndex(auth.session.issueId);
+  const rawDocuments = await readIssueDocumentsIndex(issueId);
   const documents = rawDocuments.map((doc) => ({
     id: doc.fileId,
     name: doc.name,
