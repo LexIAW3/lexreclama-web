@@ -32,6 +32,7 @@ const { routeLeadEndpoints } = require('./routes/leads');
 const { routeCheckoutEndpoints } = require('./routes/checkout');
 const { routeSubscribeEndpoint } = require('./routes/subscribe');
 const { routeStaticMeta } = require('./routes/static');
+const { routeStaticFiles } = require('./routes/static-files');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 const { applySecurityHeaders } = require('./middleware/securityHeaders');
@@ -1946,74 +1947,22 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // Static file serving
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    res.writeHead(405, {
-      'Content-Type': 'text/plain; charset=utf-8',
-      Allow: 'GET, HEAD',
-    });
-    res.end('Method Not Allowed');
-    return;
-  }
-
-  // Block internal/build directories from public access
-  if (BLOCKED_PREFIXES.some((p) => url.pathname === p || url.pathname.startsWith(p + '/'))) {
-    send404(req, res, csrfToken, nonce); return;
-  }
-
-  // Security: block dotfiles (e.g. /.env, /.gitignore) and server-side source files
-  const segments = url.pathname.split('/');
-  const hasDotSegment = segments.some((s) => s.startsWith('.') && s.length > 1);
-  const lastSegment = segments[segments.length - 1] || '';
-  // Block internal file types — sources/drafts/configs/logs are not public assets
-  const hasBlockedExtension = lastSegment.endsWith('.md')
-    || lastSegment.endsWith('.log')
-    || lastSegment.endsWith('.conf')
-    || lastSegment.endsWith('.sh')
-    || lastSegment.endsWith('.php')
-    || lastSegment.endsWith('.asp')
-    || lastSegment.endsWith('.aspx')
-    || lastSegment.endsWith('.jsp');
-  if (hasDotSegment || BLOCKED_FILENAMES.has(lastSegment) || hasBlockedExtension) {
-    send404(req, res, csrfToken, nonce); return;
-  }
-
-  let filePath = path.join(STATIC_DIR, url.pathname === '/' ? 'index.html' : url.pathname);
-  // Security: prevent path traversal
-  if (!filePath.startsWith(STATIC_DIR + path.sep) && filePath !== STATIC_DIR) {
-    res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('Forbidden'); return;
-  }
-
-  fs.stat(filePath, (statErr, stats) => {
-    if (!statErr && stats.isDirectory()) {
-      filePath = path.join(filePath, 'index.html');
-    }
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        send404(req, res, csrfToken, nonce); return;
-      }
-      const ext = path.extname(filePath);
-      const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream' };
-      if (ext === '.css' || ext === '.js') {
-        headers['Cache-Control'] = 'public, max-age=31536000, immutable';
-      } else if (ext && ext !== '.html') {
-        // Non-hashed static assets (logos, favicons, images, fonts, docs) should be cacheable,
-        // but with a shorter TTL so branding/content updates propagate quickly.
-        headers['Cache-Control'] = 'public, max-age=86400';
-      }
-      if (ext === '.html') {
-        const body = Buffer.from(injectRuntimeSnippets(data.toString('utf8'), csrfToken, nonce));
-        sendCompressed(req, res, headers, body);
-        return;
-      }
-      if (COMPRESSIBLE_EXTS.has(ext)) {
-        sendCompressed(req, res, headers, data);
-        return;
-      }
-      res.writeHead(200, headers);
-      res.end(data);
-    });
-  });
+  if (await routeStaticFiles({
+    req,
+    res,
+    url,
+    fs,
+    staticDir: STATIC_DIR,
+    blockedPrefixes: BLOCKED_PREFIXES,
+    blockedFilenames: BLOCKED_FILENAMES,
+    mime: MIME,
+    compressibleExts: COMPRESSIBLE_EXTS,
+    send404,
+    injectRuntimeSnippets,
+    sendCompressed,
+    csrfToken,
+    nonce,
+  })) return;
   } catch (err) {
     console.error(`[server] unhandled error ${req.method} ${req.url}: ${err.message}`);
     if (!res.headersSent) {
