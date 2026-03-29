@@ -29,6 +29,7 @@ const { sweepPortalState } = require('./utils/portalSessionStore');
 const { routePortalApi } = require('./routes/portal');
 const { routeAdmin } = require('./routes/admin');
 const { routeLeadEndpoints } = require('./routes/leads');
+const { routeCheckoutEndpoints } = require('./routes/checkout');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 const { applySecurityHeaders } = require('./middleware/securityHeaders');
@@ -1859,12 +1860,21 @@ const server = http.createServer(async (req, res) => {
     },
   })) return;
 
-  // Lead + portal submission endpoints
-  if (req.method === 'POST' && (
-    url.pathname === '/create-checkout-session'
-    || url.pathname === '/confirm-checkout'
-    || url.pathname === '/api/subscribe'
-  )) {
+  if (await routeCheckoutEndpoints({
+    req,
+    res,
+    url,
+    getClientIp,
+    consumeRateLimit,
+    rateLimitRules: RATE_LIMIT_RULES,
+    validateCsrfToken,
+    handlers: {
+      handleCreateCheckoutSession,
+      handleConfirmCheckout,
+    },
+  })) return;
+
+  if (req.method === 'POST' && url.pathname === '/api/subscribe') {
     const clientIp = getClientIp(req);
     const rule = RATE_LIMIT_RULES[url.pathname];
     const rate = consumeRateLimit(rule, clientIp);
@@ -1874,9 +1884,8 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     if (!await validateCsrfToken(req, res)) return;
-    if (url.pathname === '/create-checkout-session') { await handleCreateCheckoutSession(req, res); return; }
-    if (url.pathname === '/confirm-checkout') { await handleConfirmCheckout(req, res); return; }
-    if (url.pathname === '/api/subscribe') { await handleSubscribe(req, res); return; }
+    await handleSubscribe(req, res);
+    return;
   }
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (req.method === 'GET' && url.pathname === '/robots.txt') {
