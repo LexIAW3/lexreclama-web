@@ -21,6 +21,7 @@ function createSitemapBuilder({
       '/clausulas-bancarias/gastos-hipotecarios/',
       '/clausulas-bancarias/clausula-suelo/',
       '/clausulas-bancarias/irph-hipoteca/',
+      '/reclamar-irph/',
       '/recurrir-multas/',
       '/multas-dgt/',
       '/blog/',
