@@ -6,11 +6,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const zlib = require('zlib');
 const { URL } = require('url');
 const busboy = require('busboy');
 const { generateNonce, safeEqual } = require('./utils/crypto');
 const { escapeHtml } = require('./utils/html');
+const { createFetchWithTimeout, sendCompressed } = require('./utils/http');
 const { getClientIp, buildAdminIpChecker } = require('./utils/ip');
 const { createSitemapBuilder } = require('./utils/sitemap');
 const { sendAdminAuthChallenge, isAdminAuthorized } = require('./utils/auth');
@@ -129,9 +129,7 @@ const STRIPE_API = 'https://api.stripe.com/v1';
 const FETCH_TIMEOUT_API_MS   = 10 * 1000; // internal Paperclip API
 const FETCH_TIMEOUT_EXT_MS   =  8 * 1000; // external APIs (Brevo, Stripe, WhatsApp)
 const FETCH_TIMEOUT_OCR_MS   = 30 * 1000; // OCR upload — file transfer + processing
-function fetchWithTimeout(url, options = {}, timeoutMs = FETCH_TIMEOUT_EXT_MS) {
-  return fetch(url, { signal: AbortSignal.timeout(timeoutMs), ...options });
-}
+const fetchWithTimeout = createFetchWithTimeout(FETCH_TIMEOUT_EXT_MS);
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
 const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
@@ -763,26 +761,6 @@ const LEGAL_PAGES = {
 };
 
 const COMPRESSIBLE_EXTS = new Set(['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg']);
-
-function sendCompressed(req, res, headers, body, statusCode = 200) {
-  const accept = String(req.headers['accept-encoding'] || '');
-  if (accept.includes('br') && typeof zlib.brotliCompress === 'function') {
-    zlib.brotliCompress(body, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } }, (err, compressed) => {
-      if (err) { res.writeHead(statusCode, headers); res.end(body); return; }
-      res.writeHead(statusCode, { ...headers, 'Content-Encoding': 'br', 'Vary': 'Accept-Encoding' });
-      res.end(compressed);
-    });
-  } else if (accept.includes('gzip')) {
-    zlib.gzip(body, { level: 6 }, (err, compressed) => {
-      if (err) { res.writeHead(statusCode, headers); res.end(body); return; }
-      res.writeHead(statusCode, { ...headers, 'Content-Encoding': 'gzip', 'Vary': 'Accept-Encoding' });
-      res.end(compressed);
-    });
-  } else {
-    res.writeHead(statusCode, headers);
-    res.end(body);
-  }
-}
 
 function formatDate(iso) {
   if (!iso) return '—';
