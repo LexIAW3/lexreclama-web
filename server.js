@@ -34,7 +34,9 @@ const { routeSubscribeEndpoint } = require('./routes/subscribe');
 const { routeStaticMeta } = require('./routes/static');
 const { routeStaticFiles } = require('./routes/static-files');
 const { renderAdminPageTemplate } = require('./templates/admin');
+const { renderBlogIndexTemplate } = require('./templates/blog');
 const { renderLegalPageTemplate } = require('./templates/legal');
+const { renderPillarPageTemplate } = require('./templates/pillar');
 const { parseCookies, createCsrfManager } = require('./middleware/csrf');
 const { createRateLimiter } = require('./middleware/rateLimit');
 const { applySecurityHeaders } = require('./middleware/securityHeaders');
@@ -678,34 +680,22 @@ function injectRuntimeSnippets(html, csrfToken = '', nonce = '') {
 }
 
 function renderBlogIndex(nonce = '') {
-  const articles = listBlogArticles();
-  const items = articles.length
-    ? `<ul>${articles.map((slug) => `<li><a href="/blog/${slug}/">${escapeHtml(formatSlug(slug))}</a></li>`).join('')}</ul>`
-    : '<p>Todavía no hay artículos publicados.</p>';
-
-  return renderContentShell({
-    pageTitle: 'Blog legal',
-    metaDescription: 'Hub de contenido legal sobre reclamaciones de deudas, cláusulas bancarias y multas.',
-    heading: 'Blog de reclamaciones legales',
-    intro: 'Hub de contenido',
-    bodyHtml: `<p>Artículos disponibles:</p>${items}`,
-    canonicalPath: '/blog/',
+  return renderBlogIndexTemplate({
     nonce,
+    listBlogArticles,
+    formatSlug,
+    escapeHtml,
+    renderContentShell,
   });
 }
 
 function renderPillarPage(pathname, nonce = '') {
-  const page = PILLAR_PAGES[pathname];
-  if (!page) return null;
-  return renderContentShell({
-    pageTitle: page.title,
-    metaDescription: page.placeholder,
-    heading: page.title,
-    intro: page.subtitle,
-    bodyHtml: `<p>${escapeHtml(page.placeholder)}</p>`,
-    canonicalPath: pathname,
-    noindex: true,
+  return renderPillarPageTemplate({
+    pathname,
     nonce,
+    pillarPages: PILLAR_PAGES,
+    escapeHtml,
+    renderContentShell,
   });
 }
 
