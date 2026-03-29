@@ -1069,6 +1069,7 @@ function normalizeLeadPayload(body) {
       banco_nombre: str('banco_nombre', 100),
       banco_anio_firma: str('banco_anio_firma', 6),
       banco_cuota_mensual: str('banco_cuota_mensual', 20),
+      banco_irph_referenciado: str('banco_irph_referenciado', 20),
     };
   } else if (tipo === 'deuda') {
     vertical = {

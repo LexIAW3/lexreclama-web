@@ -163,6 +163,7 @@
       <ul class="nav-links" role="list">
         <li><a href="/reclamacion-deudas/">Reclamar deuda</a></li>
         <li><a href="/clausulas-bancarias/">Cláusulas bancarias</a></li>
+        <li><a href="/reclamar-irph/">Reclamar IRPH</a></li>
         <li><a href="/recurrir-multas/">Recurrir multa</a></li>
         <li><a href="/blog/">Blog</a></li>
         <li><a href="/contacto/">Contacto</a></li>
@@ -181,6 +182,7 @@
     <div class="nav-mobile-inner">
       <a href="/reclamacion-deudas/">Reclamar deuda</a>
       <a href="/clausulas-bancarias/">Cláusulas bancarias</a>
+      <a href="/reclamar-irph/">Reclamar IRPH</a>
       <a href="/recurrir-multas/">Recurrir multa</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
@@ -906,6 +908,17 @@
                 <label for="banco-cuota-mensual">Cuota mensual aproximada (€)</label>
                 <input type="number" id="banco-cuota-mensual" name="banco_cuota_mensual" placeholder="600" min="0" />
               </div>
+            </div>
+            <div class="field hidden" id="banco-irph-cross-sell-field">
+              <fieldset class="radio-fieldset">
+                <legend>¿Su hipoteca estaba referenciada al IRPH (en vez del Euríbor)?</legend>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="banco_irph_referenciado" value="si" /> Sí</label>
+                  <label class="radio-label"><input type="radio" name="banco_irph_referenciado" value="no" /> No</label>
+                  <label class="radio-label"><input type="radio" name="banco_irph_referenciado" value="no-se" /> No sé</label>
+                </div>
+              </fieldset>
+              <p class="field-hint hidden" id="banco-irph-cross-sell-message">Si su hipoteca estaba en IRPH o no lo tiene claro, puede recuperar también el sobrecoste pagado frente al Euríbor. Podemos revisarlo sin coste en la misma consulta.</p>
             </div>
           </div>
 

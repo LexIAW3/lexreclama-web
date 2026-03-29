@@ -775,6 +775,62 @@ function ensureContactLinks() {
   });
 }
 
+function ensureIrphLinks() {
+  const irphHref = '/reclamar-irph/';
+
+  const navLinks = document.querySelector('.nav-links');
+  if (navLinks && !navLinks.querySelector('a[href="/reclamar-irph/"], a[href="/reclamar-irph"]')) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = irphHref;
+    a.textContent = 'Reclamar IRPH';
+    li.appendChild(a);
+    const blogItem = [...navLinks.querySelectorAll('li')].find((item) => item.querySelector('a[href="/blog/"], a[href="/blog"]'));
+    if (blogItem) {
+      navLinks.insertBefore(li, blogItem);
+    } else {
+      navLinks.appendChild(li);
+    }
+  }
+
+  const navMobile = document.querySelector('.nav-mobile-inner');
+  if (navMobile && !navMobile.querySelector('a[href="/reclamar-irph/"], a[href="/reclamar-irph"]')) {
+    const a = document.createElement('a');
+    a.href = irphHref;
+    a.textContent = 'Reclamar IRPH';
+    const blogItem = navMobile.querySelector('a[href="/blog/"], a[href="/blog"]');
+    if (blogItem) {
+      navMobile.insertBefore(a, blogItem);
+    } else {
+      const mobilePrimaryBtn = navMobile.querySelector('a.btn');
+      if (mobilePrimaryBtn) {
+        navMobile.insertBefore(a, mobilePrimaryBtn);
+      } else {
+        navMobile.appendChild(a);
+      }
+    }
+  }
+}
+
+function toggleBancoIrphCrossSell() {
+  const tipoClausulaField = document.getElementById('banco-tipo-clausula');
+  const crossSellField = document.getElementById('banco-irph-cross-sell-field');
+  const infoMessage = document.getElementById('banco-irph-cross-sell-message');
+  if (!tipoClausulaField || !crossSellField || !infoMessage) return;
+
+  const isGastos = tipoClausulaField.value === 'gastos';
+  crossSellField.classList.toggle('hidden', !isGastos);
+  if (!isGastos) {
+    const selected = document.querySelector('input[name="banco_irph_referenciado"]:checked');
+    if (selected) selected.checked = false;
+    infoMessage.classList.add('hidden');
+    return;
+  }
+
+  const selectedValue = document.querySelector('input[name="banco_irph_referenciado"]:checked')?.value || '';
+  infoMessage.classList.toggle('hidden', selectedValue !== 'si' && selectedValue !== 'no-se');
+}
+
 /* ─── LEAD FORM SUBMISSION ────────────────────────────────── */
 // SYNC: debe coincidir con PAID_CLAIM_TYPES en server.js
 function requiresUpfrontPayment(tipo) {
@@ -842,6 +898,8 @@ async function submitLead(event) {
     verticalData.banco_nombre = (document.getElementById('banco-nombre')?.value || '').trim();
     verticalData.banco_anio_firma = (document.getElementById('banco-anio-firma')?.value || '').trim();
     verticalData.banco_cuota_mensual = (document.getElementById('banco-cuota-mensual')?.value || '').trim();
+    const irphRefRadio = document.querySelector('input[name="banco_irph_referenciado"]:checked');
+    verticalData.banco_irph_referenciado = irphRefRadio ? irphRefRadio.value : '';
   } else if (data.tipo === 'deuda') {
     verticalData.deuda_tipo_deuda = (document.getElementById('deuda-tipo-deuda')?.value || '').trim();
     verticalData.deuda_importe_reclamado = (document.getElementById('deuda-importe-reclamado')?.value || '').trim();
@@ -1387,6 +1445,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavScrollEffect();
   initMobileNav();
   ensureContactLinks();
+  ensureIrphLinks();
   initBankLeadMagnetCalculator();
   initContactModal();
   initScrollAnimations();
@@ -1402,6 +1461,15 @@ document.addEventListener('DOMContentLoaded', () => {
     tipoReclamacion.addEventListener('change', () => showVerticalFields(tipoReclamacion.value));
     showVerticalFields(tipoReclamacion.value);
   }
+
+  const bancoTipoClausula = document.getElementById('banco-tipo-clausula');
+  if (bancoTipoClausula) {
+    bancoTipoClausula.addEventListener('change', toggleBancoIrphCrossSell);
+  }
+  document.querySelectorAll('input[name="banco_irph_referenciado"]').forEach((radio) => {
+    radio.addEventListener('change', toggleBancoIrphCrossSell);
+  });
+  toggleBancoIrphCrossSell();
 
   // File upload
   initFileUpload();

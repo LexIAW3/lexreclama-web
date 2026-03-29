@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero — Reclama tu hipoteca IRPH | LexReclama</title>
+  <style>
+    /* ==========================================
+       LexReclama — Hero Section /reclamar-irph
+       Standalone block, drop into any page.
+       Paleta: navy #1B2A4A · gold #D4AF37
+    ========================================== */
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #f0f4f8;
+    }
+
+    /* ---- HERO WRAPPER ---- */
+    .hero-irph {
+      background: linear-gradient(135deg, #1B2A4A 0%, #243660 60%, #1a3352 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 80px 24px 72px;
+    }
+
+    /* Decorative background geometry */
+    .hero-irph::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.06);
+      pointer-events: none;
+    }
+
+    .hero-irph::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.04);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---- BADGE ---- */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: #D4AF37;
+      font-family: 'Arial', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #D4AF37;
+      border-radius: 50%;
+    }
+
+    /* ---- HEADING ---- */
+    .hero-irph h1 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: bold;
+      color: #ffffff;
+      line-height: 1.15;
+      letter-spacing: -0.3px;
+      margin-bottom: 20px;
+    }
+
+    .hero-irph h1 .highlight {
+      color: #D4AF37;
+    }
+
+    /* ---- SUBHEADLINE ---- */
+    .hero-subhead {
+      font-family: 'Arial', Helvetica, sans-serif;
+      font-size: clamp(15px, 2vw, 18px);
+      color: #c8d4e8;
+      line-height: 1.65;
+      max-width: 700px;
+      margin-bottom: 32px;
+    }
+
+    /* ---- BULLET POINTS ---- */
+    .hero-bullets {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      margin-bottom: 36px;
+    }
+
+    .hero-bullets li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Arial', sans-serif;
+      font-size: 15px;
+      color: #ffffff;
+    }
+
+    .bullet-check {
+      width: 22px;
+      height: 22px;
+      background: rgba(212, 175, 55, 0.2);
+      border: 1.5px solid #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #D4AF37;
+      flex-shrink: 0;
+    }
+
+    /* ---- CTA ---- */
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-cta {
+      display: inline-block;
+      background: #D4AF37;
+      color: #1B2A4A;
+      font-family: 'Arial', Helvetica, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 15px 36px;
+      border-radius: 6px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-cta:hover,
+    .btn-cta:focus {
+      background: #c49e2a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
+      outline: none;
+    }
+
+    .cta-note {
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      color: #8a9bc0;
+    }
+
+    /* ---- BOTTOM DIVIDER ---- */
+    .hero-divider {
+      height: 3px;
+      background: linear-gradient(90deg, transparent 0%, #D4AF37 30%, #D4AF37 70%, transparent 100%);
+      margin-top: 0;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      .hero-irph {
+        padding: 52px 20px 48px;
+      }
+
+      .hero-bullets {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .hero-cta-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================
+       HERO SECTION — /reclamar-irph
+       Drop this block into the page layout.
+  ======================================= -->
+  <section class="hero-irph" aria-label="Reclama tu hipoteca IRPH">
+    <div class="hero-inner">
+
+      <!-- Badge -->
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Sentencia TJUE 2025 — Ya es reclamable
+      </div>
+
+      <!-- Heading -->
+      <h1>
+        Reclama tu hipoteca IRPH<br>
+        — hasta <span class="highlight">35.000€</span> recuperables
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="hero-subhead">
+        El Tribunal de Justicia de la UE confirmó en 2025 que tienes derecho a reclamar
+        si tu banco no explicó correctamente el IRPH. Miles de hipotecas afectadas en España
+        pueden recuperar el sobrecoste cobrado de más frente al Euríbor.
+      </p>
+
+      <!-- Bullet points -->
+      <ul class="hero-bullets">
+        <li>
+          <span class="bullet-check">✓</span>
+          Sin pago inicial
+        </li>
+        <li>
+          <span class="bullet-check">✓</span>
+          Solo cobro si ganas
+        </li>
+        <li>
+          <span class="bullet-check">✓</span>
+          Análisis gratuito en 24h
+        </li>
+      </ul>
+
+      <!-- CTA -->
+      <div class="hero-cta-row">
+        <a href="/contacto" class="btn-cta">Consulta gratuita</a>
+        <span class="cta-note">Sin compromiso · Respuesta en 24 horas</span>
+      </div>
+
+    </div>
+  </section>
+  <div class="hero-divider"></div>
+
+</body>
+</html>
