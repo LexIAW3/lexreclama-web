@@ -8,7 +8,12 @@ async function routeLeadEndpoints({
   validateCsrfToken,
   handlers,
 }) {
-  if (req.method !== 'POST' || (url.pathname !== '/submit-lead' && url.pathname !== '/api/lead')) {
+  if (req.method !== 'POST' || (
+    url.pathname !== '/submit-lead'
+    && url.pathname !== '/api/lead'
+    && url.pathname !== '/api/leads'
+    && url.pathname !== '/api/subscribe'
+  )) {
     return false;
   }
 
@@ -25,7 +30,11 @@ async function routeLeadEndpoints({
     await handlers.handleSubmitLead(req, res);
     return true;
   }
-  await handlers.handleApiLead(req, res);
+  if (url.pathname === '/api/lead' || url.pathname === '/api/leads') {
+    await handlers.handleApiLead(req, res);
+    return true;
+  }
+  await handlers.handleSubscribe(req, res);
   return true;
 }
 
