@@ -740,76 +740,135 @@ function inferClaimTypeFromPath(pathname) {
   return 'otro';
 }
 
-function ensureContactLinks() {
-  const contactHref = '/contacto/';
+const HEADER_SERVICE_LINKS = [
+  { href: '/reclamacion-deudas/', label: 'Reclamar deuda' },
+  { href: '/clausulas-bancarias/', label: 'Cláusulas bancarias' },
+  { href: '/reclamar-irph/', label: 'Reclamar IRPH' },
+  { href: '/reclamar-tarjeta/', label: 'Reclamar tarjeta revolving' },
+  { href: '/recurrir-multas/', label: 'Recurrir multa' },
+];
 
-  const navLinks = document.querySelector('.nav-links');
-  if (navLinks && !navLinks.querySelector('a[href="/contacto/"], a[href="/contacto"]')) {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = contactHref;
-    a.textContent = 'Contacto';
-    li.appendChild(a);
-    navLinks.appendChild(li);
+const HEADER_PRIMARY_LINKS = [
+  { href: '/blog/', label: 'Blog' },
+  { href: '/contacto/', label: 'Contacto' },
+];
+
+function normalizePathname(pathname) {
+  const path = String(pathname || '/').split('#')[0].split('?')[0].trim() || '/';
+  if (path === '/') return '/';
+  return path.endsWith('/') ? path : `${path}/`;
+}
+
+function isCurrentRoute(currentPath, href) {
+  return normalizePathname(currentPath) === normalizePathname(href);
+}
+
+function createHeaderLink(link, currentPath) {
+  const a = document.createElement('a');
+  a.href = link.href;
+  a.textContent = link.label;
+  if (isCurrentRoute(currentPath, link.href)) {
+    a.setAttribute('aria-current', 'page');
   }
+  return a;
+}
 
+function initUnifiedHeaderNav() {
+  const navLinks = document.querySelector('.nav-links');
   const navMobile = document.querySelector('.nav-mobile-inner');
-  if (navMobile && !navMobile.querySelector('a[href="/contacto/"], a[href="/contacto"]')) {
-    const a = document.createElement('a');
-    a.href = contactHref;
-    a.textContent = 'Contacto';
-    const mobilePrimaryBtn = navMobile.querySelector('a.btn');
-    if (mobilePrimaryBtn) {
-      navMobile.insertBefore(a, mobilePrimaryBtn);
+  const ctaDesktop = document.querySelector('.nav-actions a.btn');
+  const ctaMobile = navMobile?.querySelector('a.btn');
+  const currentPath = normalizePathname(window.location.pathname || '/');
+
+  if (!navLinks || !navMobile) return;
+
+  const ctaDesktopHref = ctaDesktop?.getAttribute('href') || '/contacto/';
+  const ctaDesktopLabel = ctaDesktop?.textContent?.trim() || 'Consulta gratuita';
+  const ctaMobileHref = ctaMobile?.getAttribute('href') || ctaDesktopHref;
+  const ctaMobileLabel = ctaMobile?.textContent?.trim() || ctaDesktopLabel;
+
+  navLinks.innerHTML = '';
+  const servicesItem = document.createElement('li');
+  servicesItem.className = 'nav-services-item';
+  const servicesDetails = document.createElement('details');
+  servicesDetails.className = 'nav-services-dropdown';
+  if (HEADER_SERVICE_LINKS.some((item) => isCurrentRoute(currentPath, item.href))) {
+    servicesDetails.classList.add('is-current');
+  }
+  const servicesSummary = document.createElement('summary');
+  servicesSummary.textContent = 'Servicios';
+  const servicesList = document.createElement('ul');
+  servicesList.className = 'nav-services-menu';
+  servicesList.setAttribute('role', 'list');
+
+  HEADER_SERVICE_LINKS.forEach((link) => {
+    const li = document.createElement('li');
+    li.appendChild(createHeaderLink(link, currentPath));
+    servicesList.appendChild(li);
+  });
+
+  servicesDetails.appendChild(servicesSummary);
+  servicesDetails.appendChild(servicesList);
+  servicesItem.appendChild(servicesDetails);
+  navLinks.appendChild(servicesItem);
+
+  HEADER_PRIMARY_LINKS.forEach((link) => {
+    const li = document.createElement('li');
+    li.appendChild(createHeaderLink(link, currentPath));
+    navLinks.appendChild(li);
+  });
+
+  navMobile.innerHTML = '';
+  const mobileServices = document.createElement('details');
+  mobileServices.className = 'nav-mobile-services';
+  if (HEADER_SERVICE_LINKS.some((item) => isCurrentRoute(currentPath, item.href))) {
+    mobileServices.open = true;
+    mobileServices.classList.add('is-current');
+  }
+  const mobileSummary = document.createElement('summary');
+  mobileSummary.textContent = 'Servicios';
+  const mobileServicesList = document.createElement('div');
+  mobileServicesList.className = 'nav-mobile-services-list';
+
+  HEADER_SERVICE_LINKS.forEach((link) => {
+    mobileServicesList.appendChild(createHeaderLink(link, currentPath));
+  });
+  mobileServices.appendChild(mobileSummary);
+  mobileServices.appendChild(mobileServicesList);
+  navMobile.appendChild(mobileServices);
+
+  HEADER_PRIMARY_LINKS.forEach((link) => {
+    navMobile.appendChild(createHeaderLink(link, currentPath));
+  });
+
+  const mobileCta = document.createElement('a');
+  mobileCta.href = ctaMobileHref;
+  mobileCta.textContent = ctaMobileLabel;
+  mobileCta.className = 'btn btn-primary';
+  if (isCurrentRoute(currentPath, mobileCta.href)) {
+    mobileCta.setAttribute('aria-current', 'page');
+  }
+  navMobile.appendChild(mobileCta);
+
+  if (ctaDesktop) {
+    ctaDesktop.href = ctaDesktopHref;
+    ctaDesktop.textContent = ctaDesktopLabel;
+    if (isCurrentRoute(currentPath, ctaDesktopHref)) {
+      ctaDesktop.setAttribute('aria-current', 'page');
     } else {
-      navMobile.appendChild(a);
+      ctaDesktop.removeAttribute('aria-current');
     }
   }
+}
 
+function ensureFooterContactLink() {
   document.querySelectorAll('.footer-links').forEach((footerLinks) => {
     if (footerLinks.querySelector('a[href="/contacto/"], a[href="/contacto"]')) return;
     const a = document.createElement('a');
-    a.href = contactHref;
+    a.href = '/contacto/';
     a.textContent = 'Contacto';
     footerLinks.appendChild(a);
   });
-}
-
-function ensureIrphLinks() {
-  const irphHref = '/reclamar-irph/';
-
-  const navLinks = document.querySelector('.nav-links');
-  if (navLinks && !navLinks.querySelector('a[href="/reclamar-irph/"], a[href="/reclamar-irph"]')) {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = irphHref;
-    a.textContent = 'Reclamar IRPH';
-    li.appendChild(a);
-    const blogItem = [...navLinks.querySelectorAll('li')].find((item) => item.querySelector('a[href="/blog/"], a[href="/blog"]'));
-    if (blogItem) {
-      navLinks.insertBefore(li, blogItem);
-    } else {
-      navLinks.appendChild(li);
-    }
-  }
-
-  const navMobile = document.querySelector('.nav-mobile-inner');
-  if (navMobile && !navMobile.querySelector('a[href="/reclamar-irph/"], a[href="/reclamar-irph"]')) {
-    const a = document.createElement('a');
-    a.href = irphHref;
-    a.textContent = 'Reclamar IRPH';
-    const blogItem = navMobile.querySelector('a[href="/blog/"], a[href="/blog"]');
-    if (blogItem) {
-      navMobile.insertBefore(a, blogItem);
-    } else {
-      const mobilePrimaryBtn = navMobile.querySelector('a.btn');
-      if (mobilePrimaryBtn) {
-        navMobile.insertBefore(a, mobilePrimaryBtn);
-      } else {
-        navMobile.appendChild(a);
-      }
-    }
-  }
 }
 
 function toggleBancoIrphCrossSell() {
@@ -1442,10 +1501,10 @@ document.addEventListener('error', (e) => {
 }, true);
 
 document.addEventListener('DOMContentLoaded', () => {
+  initUnifiedHeaderNav();
+  ensureFooterContactLink();
   initNavScrollEffect();
   initMobileNav();
-  ensureContactLinks();
-  ensureIrphLinks();
   initBankLeadMagnetCalculator();
   initContactModal();
   initScrollAnimations();
