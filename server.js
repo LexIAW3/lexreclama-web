@@ -7,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
-const busboy = require('busboy');
 const { generateNonce, safeEqual } = require('./utils/crypto');
 const { escapeHtml } = require('./utils/html');
 const { createFetchWithTimeout, sendCompressed } = require('./utils/http');
@@ -51,6 +50,9 @@ const { createPaperclipService } = require('./services/paperclip');
 const { createRenderer } = require('./services/renderer');
 const { createPortalHandlers } = require('./handlers/portal');
 const { createLeadHandlers } = require('./handlers/leads');
+const { createCheckoutHandlers } = require('./handlers/checkout');
+const { validateAndAttachJsonBody, parseMultipartOrJsonBody } = require('./utils/bodyParser');
+const { detectTestLeadReason } = require('./utils/leads');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -96,15 +98,6 @@ const SECONDARY_HOST = 'lexreclama.com';
 const APP_HOST = process.env.APP_HOST || 'app.lexreclama.es';
 const MAX_RECENT_LEADS = 25;
 
-// Test lead blocklist — submissions from these emails are accepted (HTTP 200) but
-// not forwarded to Paperclip so they don't generate noise for the claims manager.
-const TEST_EMAIL_BLOCKLIST = new Set([
-  't@t.com',
-  'test@test.com',
-  'qa@qa.com',
-  'qa@test.com',
-  'test@qa.com',
-]);
 const recentLeads = [];
 
 // Asset content hashes for cache-busting — computed once at startup.
@@ -170,26 +163,6 @@ const BLOG_REDIRECTS = {
   '/blog/cuanto-cuesta-monitorio/': '/blog/coste-monitorio/',
   '/blog/gastos-hipotecarios/': '/blog/reclamar-gastos-hipoteca/',
 };
-
-function detectTestLeadReason(leadData) {
-  const email = String(leadData?.email || '').trim().toLowerCase();
-  const nombre = String(leadData?.nombre || '').trim().toLowerCase();
-  if (!email) return '';
-
-  if (TEST_EMAIL_BLOCKLIST.has(email)) return 'email_blocklist';
-
-  const parts = email.split('@');
-  const local = parts[0] || '';
-  const domain = parts[1] || '';
-
-  if (domain.endsWith('.invalid')) return 'invalid_tld';
-  if (domain === 'lexreclama-test.invalid') return 'qa_domain';
-  if (local.startsWith('qa-smoke')) return 'qa_smoke_local';
-  if (local === 'qa' || local === 'smoke') return 'qa_local';
-  if (nombre.includes('qa test') || nombre.includes('smoke test')) return 'qa_name';
-
-  return '';
-}
 
 const {
   subscribeContactInBrevo,
@@ -305,86 +278,6 @@ const {
   safeEqual,
   parseBody: parseMultipartOrJsonBody,
 });
-
-function validateAndAttachJsonBody(req, res) {
-  return (async () => {
-    if (Object.prototype.hasOwnProperty.call(req, 'parsedBody')) return true;
-    let parsed;
-    try {
-      parsed = JSON.parse(await readBody(req));
-    } catch (err) {
-      const status = err.statusCode || 400;
-      res.writeHead(status, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: status === 413 ? 'Payload too large' : 'Invalid JSON' }));
-      return false;
-    }
-    req.parsedBody = parsed;
-    return true;
-  })();
-}
-
-const MAX_UPLOAD_FILE_BYTES = 10 * 1024 * 1024; // 10 MB per file
-const MAX_UPLOAD_FILES = 3;
-const ALLOWED_UPLOAD_MIMETYPES = new Set(['application/pdf', 'image/jpeg', 'image/png']);
-
-function parseMultipartOrJsonBody(req, res) {
-  return new Promise((resolve) => {
-    if (Object.prototype.hasOwnProperty.call(req, 'parsedBody')) { resolve(true); return; }
-    const contentType = String(req.headers['content-type'] || '');
-    if (!contentType.startsWith('multipart/form-data')) {
-      validateAndAttachJsonBody(req, res).then(resolve);
-      return;
-    }
-    const fields = {};
-    const files = [];
-    let rejected = false;
-    let bb;
-    try {
-      bb = busboy({ headers: req.headers, limits: { fileSize: MAX_UPLOAD_FILE_BYTES, files: MAX_UPLOAD_FILES + 1, fieldSize: 8 * 1024 } });
-    } catch (err) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Formulario inválido' }));
-      resolve(false);
-      return;
-    }
-    bb.on('field', (name, val) => { fields[name] = val; });
-    bb.on('file', (name, stream, info) => {
-      const { filename, mimeType } = info;
-      if (!ALLOWED_UPLOAD_MIMETYPES.has(mimeType)) {
-        stream.resume();
-        return;
-      }
-      const chunks = [];
-      let size = 0;
-      stream.on('data', (d) => { size += d.length; chunks.push(d); });
-      stream.on('close', () => {
-        if (stream.truncated) return; // exceeded fileSize limit — skip
-        if (files.length < MAX_UPLOAD_FILES) {
-          const safeName = (filename || 'upload').replace(/[\r\n"\\]/g, '_').slice(0, 255);
-          files.push({ originalname: safeName, mimetype: mimeType, buffer: Buffer.concat(chunks), size });
-        }
-      });
-    });
-    bb.on('close', () => {
-      if (rejected) return;
-      req.parsedBody = {
-        ...fields,
-        privacidadAceptada: fields.privacidadAceptada === 'true',
-        comercialAceptada: fields.comercialAceptada === 'true',
-      };
-      req.uploadedFiles = files;
-      resolve(true);
-    });
-    bb.on('error', () => {
-      if (rejected) return;
-      rejected = true;
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Error procesando el formulario' }));
-      resolve(false);
-    });
-    req.pipe(bb);
-  });
-}
 
 function logAdminAudit(req, outcome, detail = '') {
   const clientIp = getClientIp(req);
@@ -650,26 +543,6 @@ async function submitIndexNow(urls) {
   return { ok: true, status: response.status, submitted: uniqueUrls.length, responseText: bodyText.slice(0, 500) };
 }
 
-const MAX_BODY_BYTES = 50 * 1024; // 50 KB
-
-function readBody(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    let received = 0;
-    req.on('data', (c) => {
-      received += c.length;
-      if (received > MAX_BODY_BYTES) {
-        req.destroy();
-        reject(Object.assign(new Error('Payload too large'), { statusCode: 413 }));
-        return;
-      }
-      chunks.push(c);
-    });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString()));
-    req.on('error', reject);
-  });
-}
-
 const COMPRESSIBLE_EXTS = new Set(['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg']);
 
 async function handleAdmin(req, res, nonce = '') {
@@ -718,118 +591,22 @@ const {
   completedCheckoutTtlMs: COMPLETED_CHECKOUT_TTL_MS,
 });
 
-async function handleCreateCheckoutSession(req, res) {
-  const body = req.parsedBody;
-
-  const leadData = normalizeLeadPayload(body);
-  if (!leadData.ok) {
-    res.writeHead(400, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: leadData.error }));
-    return;
-  }
-
-  if (!requiresUpfrontPayment(leadData.value.tipo)) {
-    res.writeHead(400, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Este tipo no requiere checkout previo' }));
-    return;
-  }
-
-  sweepPendingCheckoutLeads();
-
-  try {
-    const result = await resolveIdempotentRequest({
-      scope: 'create-checkout-session',
-      key: leadData.value.idempotencyKey,
-      store: recentCheckoutCreations,
-      execute: async () => {
-        const leadToken = crypto.randomUUID();
-        const stripeSession = await createStripeCheckoutSession(req, leadToken, leadData.value);
-        pendingCheckoutLeads.set(leadToken, {
-          leadData: leadData.value,
-          createdAtMs: Date.now(),
-          stripeSessionId: stripeSession.id,
-        });
-        return {
-          leadToken,
-          checkoutUrl: stripeSession.url,
-          checkoutSessionId: stripeSession.id,
-        };
-      },
-    });
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      ok: true,
-      leadToken: result.value.leadToken,
-      checkoutUrl: result.value.checkoutUrl,
-      checkoutSessionId: result.value.checkoutSessionId,
-      deduplicated: result.deduplicated,
-    }));
-  } catch (err) {
-    console.error('Stripe checkout session error:', err.message);
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'No se pudo iniciar el proceso de pago. Inténtalo de nuevo en unos minutos.' }));
-  }
-}
-
-async function handleConfirmCheckout(req, res) {
-  const body = req.parsedBody;
-
-  const leadToken = String(body?.leadToken || '').trim();
-  const sessionId = String(body?.sessionId || '').trim();
-  if (!leadToken || !sessionId) {
-    res.writeHead(400, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'leadToken y sessionId son obligatorios' }));
-    return;
-  }
-
-  const completed = completedCheckoutLeads.get(leadToken);
-  if (completed) {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, issueId: completed.issueId, identifier: completed.identifier, deduplicated: true }));
-    return;
-  }
-
-  const pending = pendingCheckoutLeads.get(leadToken);
-  if (!pending) {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'La sesión de checkout no existe o ha expirado' }));
-    return;
-  }
-  if (pending.stripeSessionId !== sessionId) {
-    res.writeHead(409, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'sessionId no coincide con el checkout pendiente' }));
-    return;
-  }
-
-  try {
-    const stripeSession = await readStripeCheckoutSession(sessionId);
-    const paid = stripeSession.payment_status === 'paid';
-    const tokenMatches = String(stripeSession.metadata?.leadToken || '') === leadToken;
-    if (!paid || !tokenMatches) {
-      res.writeHead(409, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Pago aún no confirmado por Stripe' }));
-      return;
-    }
-
-    const amountLabel = PAID_CLAIM_TYPES[pending.leadData.tipo]?.baseAmountLabel || 'importe inicial';
-    const issue = await createIssueForLead(pending.leadData, {
-      paid: true,
-      amountLabel,
-      checkoutSessionId: stripeSession.id,
-    });
-
-    const payload = { issueId: issue.id, identifier: issue.identifier, completedAtMs: Date.now() };
-    completedCheckoutLeads.set(leadToken, payload);
-    pendingCheckoutLeads.delete(leadToken);
-
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ ok: true, issueId: payload.issueId, identifier: payload.identifier }));
-  } catch (err) {
-    console.error('Confirm checkout error:', err.message);
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'No se pudo confirmar el pago en este momento.' }));
-  }
-}
+const {
+  handleCreateCheckoutSession,
+  handleConfirmCheckout,
+} = createCheckoutHandlers({
+  normalizeLeadPayload,
+  requiresUpfrontPayment,
+  resolveIdempotentRequest,
+  recentCheckoutCreations,
+  pendingCheckoutLeads,
+  completedCheckoutLeads,
+  createStripeCheckoutSession,
+  readStripeCheckoutSession,
+  sweepPendingCheckoutLeads,
+  createIssueForLead,
+  paidClaimTypes: PAID_CLAIM_TYPES,
+});
 
 const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates', '/utils/', '/utils', '/middleware/', '/middleware', '/routes/', '/routes', '/services/', '/services', '/templates/', '/templates', '/handlers/', '/handlers', '/node_modules/', '/node_modules'];
 const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html', 'design-system.html']);
