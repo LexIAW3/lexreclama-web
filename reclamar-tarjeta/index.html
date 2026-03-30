@@ -296,6 +296,10 @@
           <form class="contacto-form" id="lead-form" data-animate data-delay="1">
             <input type="hidden" name="csrfToken" value="" />
             <input type="hidden" name="tipo_reclamacion" value="Tarjeta revolving" />
+            <label for="tipo-reclamacion" class="sr-only">Tipo de reclamación</label>
+            <select id="tipo-reclamacion" name="tipo" class="sr-only" tabindex="-1" aria-hidden="true">
+              <option value="banco" selected>Cláusulas bancarias abusivas</option>
+            </select>
 
             <div class="form-row">
               <div class="field">

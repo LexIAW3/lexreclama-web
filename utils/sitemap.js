@@ -22,6 +22,7 @@ function createSitemapBuilder({
       '/clausulas-bancarias/clausula-suelo/',
       '/clausulas-bancarias/irph-hipoteca/',
       '/reclamar-irph/',
+      '/reclamar-tarjeta/',
       '/recurrir-multas/',
       '/multas-dgt/',
       '/blog/',
