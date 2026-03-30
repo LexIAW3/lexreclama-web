@@ -78,6 +78,9 @@ const WHATSAPP_BUSINESS_TOKEN = (process.env.WHATSAPP_BUSINESS_TOKEN || '').trim
 const WHATSAPP_PHONE_NUMBER_ID = (process.env.WHATSAPP_PHONE_NUMBER_ID || '').trim();
 const WHATSAPP_TEMPLATE_NAME = (process.env.WHATSAPP_TEMPLATE_NAME || 'lexreclama_bienvenida').trim();
 const WHATSAPP_TEMPLATE_LANG = (process.env.WHATSAPP_TEMPLATE_LANG || 'es').trim();
+const INDEXNOW_KEY = (process.env.INDEXNOW_KEY || '').trim();
+const INDEXNOW_ENDPOINT = (process.env.INDEXNOW_ENDPOINT || 'https://api.indexnow.org/indexnow').trim();
+const INDEXNOW_REINDEX_TOKEN = (process.env.INDEXNOW_REINDEX_TOKEN || '').trim();
 const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
 const BREVO_LIST_ID = Number.parseInt(process.env.BREVO_LIST_ID || '3', 10);
 const BREVO_LEAD_MAGNET_TEMPLATE_ID = Number.parseInt(process.env.BREVO_LEAD_MAGNET_TEMPLATE_ID || '', 10);
@@ -666,6 +669,51 @@ function normalizeWhatsappNumber(raw) {
   return cleaned || '';
 }
 
+function normalizeIndexNowUrl(input) {
+  const value = String(input || '').trim();
+  if (!value) return null;
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== 'https:' || parsed.host !== 'www.lexreclama.es') return null;
+    parsed.hash = '';
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
+async function submitIndexNow(urls) {
+  if (!INDEXNOW_KEY) {
+    return { ok: false, status: 503, error: 'INDEXNOW_KEY no configurada' };
+  }
+  const uniqueUrls = [...new Set(urls.map(normalizeIndexNowUrl).filter(Boolean))].slice(0, 10000);
+  if (!uniqueUrls.length) {
+    return { ok: false, status: 400, error: 'No hay URLs válidas para IndexNow' };
+  }
+  const payload = {
+    host: 'www.lexreclama.es',
+    key: INDEXNOW_KEY,
+    keyLocation: `${SITE_URL}/${INDEXNOW_KEY}.txt`,
+    urlList: uniqueUrls,
+  };
+  const response = await fetchWithTimeout(INDEXNOW_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_EXT_MS),
+  });
+  const bodyText = await response.text();
+  if (!response.ok) {
+    return {
+      ok: false,
+      status: response.status,
+      error: 'IndexNow rechazó la solicitud',
+      detail: bodyText.slice(0, 500),
+    };
+  }
+  return { ok: true, status: response.status, submitted: uniqueUrls.length, responseText: bodyText.slice(0, 500) };
+}
+
 function buildWhatsappHref() {
   const number = normalizeWhatsappNumber(WHATSAPP_NUMBER);
   if (!number) return null;
@@ -1193,6 +1241,52 @@ const server = http.createServer(async (req, res) => {
       handleConfirmCheckout,
     },
   })) return;
+
+  if (req.method === 'GET' && INDEXNOW_KEY && url.pathname === `/${INDEXNOW_KEY}.txt`) {
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/robots.txt'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'text/plain; charset=utf-8', 'Retry-After': String(rate.retryAfterSec) });
+      res.end('Too many requests');
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' });
+    res.end(INDEXNOW_KEY);
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/indexnow/reindex') {
+    if (!INDEXNOW_REINDEX_TOKEN) {
+      res.writeHead(503, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'INDEXNOW_REINDEX_TOKEN no configurado' }));
+      return;
+    }
+    const token = String(req.headers['x-indexnow-token'] || '').trim();
+    if (!token || !safeEqual(token, INDEXNOW_REINDEX_TOKEN)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'No autorizado' }));
+      return;
+    }
+    const clientIp = getClientIp(req);
+    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/lead'], clientIp);
+    if (rate.limited) {
+      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
+      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
+      return;
+    }
+    if (!(await validateAndAttachJsonBody(req, res))) return;
+    const body = req.parsedBody || {};
+    const urls = Array.isArray(body.urls) ? body.urls : [];
+    if (!urls.length) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Debes enviar un array `urls`' }));
+      return;
+    }
+    const result = await submitIndexNow(urls);
+    res.writeHead(result.status, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(result));
+    return;
+  }
 
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (routeStaticMeta({
