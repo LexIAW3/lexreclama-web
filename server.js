@@ -57,6 +57,11 @@ const { detectTestLeadReason } = require('./utils/leads');
 const { createIdempotencyManager } = require('./utils/idempotency');
 const { createIndexNowService } = require('./services/indexnow');
 const { createBlogUtils, formatSlug } = require('./utils/blog');
+const { buildAssetVersions } = require('./utils/assets');
+const { PILLAR_PAGES } = require('./config/pillarPages');
+const { RATE_LIMIT_WINDOW_MS, RATE_LIMIT_RULES } = require('./config/rateLimitRules');
+const { MIME } = require('./config/mime');
+const { routeIndexNow } = require('./routes/indexnow');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -105,24 +110,7 @@ const MAX_RECENT_LEADS = 25;
 const recentLeads = [];
 
 // Asset content hashes for cache-busting — computed once at startup.
-// HTML pages reference /styles.min.css?v=HASH and /app.min.js?v=HASH so browsers
-// re-fetch on deploy while still caching aggressively (max-age=1y, immutable).
-function computeFileHash(filePath) {
-  try {
-    const buf = fs.readFileSync(filePath);
-    return crypto.createHash('sha256').update(buf).digest('hex').slice(0, 8);
-  } catch {
-    return 'dev';
-  }
-}
-// Each entry: [attr, url-path, fs-path]  — single source of truth for all assets.
-const ASSET_VERSIONS = [
-  ['href', '/styles.min.css',            path.join(__dirname, 'styles.min.css')],
-  ['src',  '/app.min.js',                path.join(__dirname, 'app.min.js')],
-  ['href', '/portal-cliente/styles.min.css', path.join(__dirname, 'portal-cliente', 'styles.min.css')],
-  ['src',  '/portal-cliente/app.min.js',     path.join(__dirname, 'portal-cliente', 'app.min.js')],
-].map(([attr, url, file]) => ({ attr, url, hash: computeFileHash(file) }));
-// Named shorthand used in renderContentShell template literal.
+const ASSET_VERSIONS = buildAssetVersions(STATIC_DIR);
 const ASSET_CSS_HASH = ASSET_VERSIONS[0].hash;
 const STRIPE_API = 'https://api.stripe.com/v1';
 
@@ -245,27 +233,6 @@ const {
 });
 
 /* ─── RATE LIMITER + CSRF ────────────────────────────────────── */
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-const RATE_LIMIT_RULES = {
-  '/health': { scope: 'health', max: 60, windowMs: 60 * 1000 },
-  '/submit-lead': { scope: 'submit-lead', max: 5 },
-  '/api/lead': { scope: 'api-lead', max: 8 },
-  '/api/leads': { scope: 'api-lead', max: 8 },
-  '/admin': { scope: 'admin-login', max: 10 },
-  '/api/admin/portal-test-code': { scope: 'admin-portal-test-code', max: 20 },
-  '/create-checkout-session': { scope: 'create-checkout-session', max: 3 },
-  '/confirm-checkout': { scope: 'confirm-checkout', max: 10 },
-  '/api/subscribe': { scope: 'api-subscribe', max: 12 },
-  '/api/portal/request-code': { scope: 'portal-request-code', max: 6 },
-  '/api/portal/verify-code': { scope: 'portal-verify-code', max: 20 },
-  '/api/portal/logout': { scope: 'portal-logout', max: 30 },
-  '/api/portal/cases': { scope: 'portal-cases', max: 60 },
-  '/api/portal/documents': { scope: 'portal-documents', max: 80 },
-  '/api/portal/me': { scope: 'portal-me', max: 120 },
-  '/robots.txt': { scope: 'robots-txt', max: 300 },
-  '/sitemap.xml': { scope: 'sitemap-xml', max: 240 },
-  '/dynamic-pages': { scope: 'dynamic-pages', max: 180 },
-};
 
 const CSRF_COOKIE_NAME = 'lex_csrf_token';
 const CSRF_TTL_MS = 12 * 60 * 60 * 1000;
@@ -328,53 +295,6 @@ const {
   privacyPolicyVersion: PRIVACY_POLICY_VERSION,
 });
 
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.css':  'text/css',
-  '.js':   'application/javascript',
-  '.json': 'application/json',
-  '.txt':  'text/plain; charset=utf-8',
-  '.xml':  'application/xml; charset=utf-8',
-  '.ico':  'image/x-icon',
-  '.svg':  'image/svg+xml',
-  '.png':  'image/png',
-  '.jpg':  'image/jpeg',
-  '.webp': 'image/webp',
-  '.pdf':  'application/pdf',
-};
-
-const PILLAR_PAGES = {
-  '/reclamacion-deudas/': {
-    title: 'Reclamacion de deudas',
-    subtitle: 'Pilar: procedimiento monitorio',
-    placeholder: 'Contenido en preparacion. Aqui se publicara la guia completa sobre reclamacion de deudas y procedimiento monitorio.',
-  },
-  '/clausulas-bancarias/': {
-    title: 'Clausulas bancarias abusivas',
-    subtitle: 'Pilar: clausulas bancarias',
-    placeholder: 'Contenido en preparacion. Aqui se publicara la pagina pilar sobre clausulas bancarias abusivas.',
-  },
-  '/clausulas-bancarias/gastos-hipotecarios/': {
-    title: 'Gastos hipotecarios',
-    subtitle: 'Subpagina de clausulas bancarias',
-    placeholder: 'Contenido en preparacion. Aqui se publicara la guia de reclamacion de gastos hipotecarios.',
-  },
-  '/clausulas-bancarias/clausula-suelo/': {
-    title: 'Clausula suelo',
-    subtitle: 'Subpagina de clausulas bancarias',
-    placeholder: 'Contenido en preparacion. Aqui se publicara la guia para reclamar clausula suelo.',
-  },
-  '/clausulas-bancarias/irph-hipoteca/': {
-    title: 'IRPH hipoteca',
-    subtitle: 'Subpagina de clausulas bancarias',
-    placeholder: 'Contenido en preparacion. Aqui se publicara la guia para reclamar el IRPH hipotecario.',
-  },
-  '/recurrir-multas/': {
-    title: 'Recurrir multas y sanciones',
-    subtitle: 'Pilar: multas y sanciones',
-    placeholder: 'Contenido en preparacion. Aqui se publicara la guia para recurrir multas DGT y sanciones administrativas.',
-  },
-};
 
 function normalizePathname(pathname) {
   if (!pathname || pathname === '/') return '/';
@@ -492,7 +412,7 @@ const {
   paidClaimTypes: PAID_CLAIM_TYPES,
 });
 
-const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates', '/utils/', '/utils', '/middleware/', '/middleware', '/routes/', '/routes', '/services/', '/services', '/templates/', '/templates', '/handlers/', '/handlers', '/node_modules/', '/node_modules'];
+const BLOCKED_PREFIXES = ['/social-templates/', '/social-templates', '/utils/', '/utils', '/middleware/', '/middleware', '/routes/', '/routes', '/services/', '/services', '/templates/', '/templates', '/handlers/', '/handlers', '/config/', '/config', '/node_modules/', '/node_modules'];
 const BLOCKED_FILENAMES = new Set(['server.js', 'package.json', 'package-lock.json', 'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html', 'design-system.html']);
 
 const server = http.createServer(async (req, res) => {
@@ -608,38 +528,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'POST' && url.pathname === '/api/indexnow/reindex') {
-    if (!INDEXNOW_REINDEX_TOKEN) {
-      res.writeHead(503, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'INDEXNOW_REINDEX_TOKEN no configurado' }));
-      return;
-    }
-    const token = String(req.headers['x-indexnow-token'] || '').trim();
-    if (!token || !safeEqual(token, INDEXNOW_REINDEX_TOKEN)) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'No autorizado' }));
-      return;
-    }
-    const clientIp = getClientIp(req);
-    const rate = consumeRateLimit(RATE_LIMIT_RULES['/api/lead'], clientIp);
-    if (rate.limited) {
-      res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
-      res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
-      return;
-    }
-    if (!(await validateAndAttachJsonBody(req, res))) return;
-    const body = req.parsedBody || {};
-    const urls = Array.isArray(body.urls) ? body.urls : [];
-    if (!urls.length) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Debes enviar un array `urls`' }));
-      return;
-    }
-    const result = await submitIndexNow(urls);
-    res.writeHead(result.status, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(result));
-    return;
-  }
+  if (await routeIndexNow({
+    req, res, url, getClientIp, consumeRateLimit, rateLimitRules: RATE_LIMIT_RULES,
+    safeEqual, indexNowReindexToken: INDEXNOW_REINDEX_TOKEN,
+    validateAndAttachJsonBody, submitIndexNow,
+  })) return;
 
   if (req.method === 'GET' && handleLegalPage(req, res, normalizedPath, nonce)) return;
   if (routeStaticMeta({
