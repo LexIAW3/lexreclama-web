@@ -740,143 +740,26 @@ function inferClaimTypeFromPath(pathname) {
   return 'otro';
 }
 
-const HEADER_SERVICE_LINKS = [
-  { href: '/reclamacion-deudas/', label: 'Reclamar deuda' },
-  { href: '/clausulas-bancarias/', label: 'Cláusulas bancarias' },
-  { href: '/reclamar-irph/', label: 'Reclamar IRPH' },
-  { href: '/reclamar-tarjeta/', label: 'Reclamar tarjeta revolving' },
-  { href: '/recurrir-multas/', label: 'Recurrir multa' },
-];
-
-const HEADER_PRIMARY_LINKS = [
-  { href: '/blog/', label: 'Blog' },
-  { href: '/contacto/', label: 'Contacto' },
-];
-
 function normalizePathname(pathname) {
   const path = String(pathname || '/').split('#')[0].split('?')[0].trim() || '/';
   if (path === '/') return '/';
   return path.endsWith('/') ? path : `${path}/`;
 }
 
-function isCurrentRoute(currentPath, href) {
-  return normalizePathname(currentPath) === normalizePathname(href);
-}
-
-function createHeaderLink(link, currentPath) {
-  const a = document.createElement('a');
-  a.href = link.href;
-  a.textContent = link.label;
-  if (isCurrentRoute(currentPath, link.href)) {
-    a.setAttribute('aria-current', 'page');
-  }
-  return a;
-}
-
-function initUnifiedHeaderNav() {
-  const navRoot = document.getElementById('main-nav') || document.querySelector('.nav');
-  const navLinks = navRoot?.querySelector('.nav-links');
-  const navActions = navRoot?.querySelector('.nav-actions');
-  const navMobile = document.getElementById('nav-mobile') || document.querySelector('.nav-mobile');
-  const hamburger = navActions?.querySelector('.nav-hamburger');
-  let navMobileInner = navMobile?.querySelector('.nav-mobile-inner');
-  if (navMobile && !navMobileInner) {
-    navMobileInner = document.createElement('div');
-    navMobileInner.className = 'nav-mobile-inner';
-    navMobile.innerHTML = '';
-    navMobile.appendChild(navMobileInner);
-  }
-  let ctaDesktop = navActions?.querySelector('a.btn');
-  const ctaMobile = navMobileInner?.querySelector('a.btn');
+function setCurrentNavLink() {
   const currentPath = normalizePathname(window.location.pathname || '/');
-
-  if (!navLinks || !navMobileInner) return;
-  if (!ctaDesktop && navActions) {
-    ctaDesktop = document.createElement('a');
-    ctaDesktop.className = 'btn btn-sm btn-primary';
-    navActions.appendChild(ctaDesktop);
-  }
-  if (navActions && hamburger && ctaDesktop && navActions.firstElementChild !== hamburger) {
-    navActions.insertBefore(hamburger, ctaDesktop);
-  }
-
-  const ctaDesktopHref = ctaDesktop?.getAttribute('href') || '/contacto/';
-  const ctaDesktopLabel = ctaDesktop?.textContent?.trim() || 'Consulta gratuita';
-  const ctaMobileHref = ctaMobile?.getAttribute('href') || ctaDesktopHref;
-  const ctaMobileLabel = ctaMobile?.textContent?.trim() || ctaDesktopLabel;
-
-  navLinks.innerHTML = '';
-  const servicesItem = document.createElement('li');
-  servicesItem.className = 'nav-services-item';
-  const servicesDetails = document.createElement('details');
-  servicesDetails.className = 'nav-services-dropdown';
-  if (HEADER_SERVICE_LINKS.some((item) => isCurrentRoute(currentPath, item.href))) {
-    servicesDetails.classList.add('is-current');
-  }
-  const servicesSummary = document.createElement('summary');
-  servicesSummary.textContent = 'Servicios';
-  const servicesList = document.createElement('ul');
-  servicesList.className = 'nav-services-menu';
-  servicesList.setAttribute('role', 'list');
-
-  HEADER_SERVICE_LINKS.forEach((link) => {
-    const li = document.createElement('li');
-    li.appendChild(createHeaderLink(link, currentPath));
-    servicesList.appendChild(li);
-  });
-
-  servicesDetails.appendChild(servicesSummary);
-  servicesDetails.appendChild(servicesList);
-  servicesItem.appendChild(servicesDetails);
-  navLinks.appendChild(servicesItem);
-
-  HEADER_PRIMARY_LINKS.forEach((link) => {
-    const li = document.createElement('li');
-    li.appendChild(createHeaderLink(link, currentPath));
-    navLinks.appendChild(li);
-  });
-
-  navMobileInner.innerHTML = '';
-  const mobileServices = document.createElement('details');
-  mobileServices.className = 'nav-mobile-services';
-  if (HEADER_SERVICE_LINKS.some((item) => isCurrentRoute(currentPath, item.href))) {
-    mobileServices.open = true;
-    mobileServices.classList.add('is-current');
-  }
-  const mobileSummary = document.createElement('summary');
-  mobileSummary.textContent = 'Servicios';
-  const mobileServicesList = document.createElement('div');
-  mobileServicesList.className = 'nav-mobile-services-list';
-
-  HEADER_SERVICE_LINKS.forEach((link) => {
-    mobileServicesList.appendChild(createHeaderLink(link, currentPath));
-  });
-  mobileServices.appendChild(mobileSummary);
-  mobileServices.appendChild(mobileServicesList);
-  navMobileInner.appendChild(mobileServices);
-
-  HEADER_PRIMARY_LINKS.forEach((link) => {
-    navMobileInner.appendChild(createHeaderLink(link, currentPath));
-  });
-
-  const mobileCta = document.createElement('a');
-  mobileCta.href = ctaMobileHref;
-  mobileCta.textContent = ctaMobileLabel;
-  mobileCta.className = 'btn btn-primary';
-  if (isCurrentRoute(currentPath, mobileCta.href)) {
-    mobileCta.setAttribute('aria-current', 'page');
-  }
-  navMobileInner.appendChild(mobileCta);
-
-  if (ctaDesktop) {
-    ctaDesktop.href = ctaDesktopHref;
-    ctaDesktop.textContent = ctaDesktopLabel;
-    if (isCurrentRoute(currentPath, ctaDesktopHref)) {
-      ctaDesktop.setAttribute('aria-current', 'page');
-    } else {
-      ctaDesktop.removeAttribute('aria-current');
+  document.querySelectorAll('.nav-links a, .nav-mobile-inner a').forEach((a) => {
+    try {
+      const href = normalizePathname(new URL(a.href, location.origin).pathname);
+      if (href === currentPath) {
+        a.setAttribute('aria-current', 'page');
+      } else {
+        a.removeAttribute('aria-current');
+      }
+    } catch {
+      // enlace externo — ignorar
     }
-  }
+  });
 }
 
 function ensureFooterContactLink() {
@@ -1519,7 +1402,7 @@ document.addEventListener('error', (e) => {
 }, true);
 
 document.addEventListener('DOMContentLoaded', () => {
-  initUnifiedHeaderNav();
+  setCurrentNavLink();
   ensureFooterContactLink();
   initNavScrollEffect();
   initMobileNav();
