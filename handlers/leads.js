@@ -260,7 +260,7 @@ function createLeadHandlers({
       try {
         await sendLeadMagnetEmail(parsed.value);
       } catch (emailErr) {
-        console.error(`[lead-magnet] email send failed for ${parsed.value.email}: ${emailErr.message}`);
+        console.error(`[lead-magnet] email send failed for ${maskEmail(parsed.value.email)}: ${emailErr.message}`);
       }
       res.writeHead(200, { 'Content-Type': 'application/json' });
       const response = { success: true };
