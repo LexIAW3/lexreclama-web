@@ -425,72 +425,30 @@ const {
   formatSlug,
 });
 
-function normalizeIndexNowUrl(input) {
-  const value = String(input || '').trim();
-  if (!value) return null;
-  try {
-    const parsed = new URL(value);
-    if (parsed.protocol !== 'https:' || parsed.host !== 'www.lexreclama.es') return null;
-    parsed.hash = '';
-    return parsed.toString();
-  } catch {
-    return null;
-  }
-}
-
-async function submitIndexNow(urls) {
-  if (!INDEXNOW_KEY) {
-    return { ok: false, status: 503, error: 'INDEXNOW_KEY no configurada' };
-  }
-  const uniqueUrls = [...new Set(urls.map(normalizeIndexNowUrl).filter(Boolean))].slice(0, 10000);
-  if (!uniqueUrls.length) {
-    return { ok: false, status: 400, error: 'No hay URLs válidas para IndexNow' };
-  }
-  const payload = {
-    host: 'www.lexreclama.es',
-    key: INDEXNOW_KEY,
-    keyLocation: `${SITE_URL}/${INDEXNOW_KEY}.txt`,
-    urlList: uniqueUrls,
-  };
-  const response = await fetchWithTimeout(INDEXNOW_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify(payload),
-  });
-  const bodyText = await response.text();
-  if (!response.ok) {
-    return {
-      ok: false,
-      status: response.status,
-      error: 'IndexNow rechazó la solicitud',
-      detail: bodyText.slice(0, 500),
-    };
-  }
-  return { ok: true, status: response.status, submitted: uniqueUrls.length, responseText: bodyText.slice(0, 500) };
-}
+const {
+  normalizeIndexNowUrl,
+  submitIndexNow,
+} = createIndexNowService({
+  indexNowKey: INDEXNOW_KEY,
+  siteUrl: SITE_URL,
+  indexNowEndpoint: INDEXNOW_ENDPOINT,
+  fetchWithTimeout,
+});
 
 const COMPRESSIBLE_EXTS = new Set(['.html', '.css', '.js', '.json', '.xml', '.txt', '.svg']);
 
-async function handleAdmin(req, res, nonce = '') {
-  if (!ADMIN_PASSWORD) {
-    logAdminAudit(req, 'admin_disabled', 'ADMIN_PASSWORD_missing');
-    res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
-    res.end('ADMIN_PASSWORD is not configured');
-    return;
-  }
-
-  if (!isAdminAuthorized(req, { adminUser: ADMIN_USER, adminPassword: ADMIN_PASSWORD, safeEqual })) {
-    logAdminAudit(req, 'auth_failed');
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    sendAdminAuthChallenge(res);
-    return;
-  }
-
-  logAdminAudit(req, 'auth_success');
-  const html = renderAdminPage(nonce);
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-  res.end(html);
-}
+const {
+  handleAdmin,
+  logAdminAudit,
+} = createAdminHandlers({
+  getClientIp,
+  adminPassword: ADMIN_PASSWORD,
+  adminUser: ADMIN_USER,
+  isAdminAuthorized,
+  safeEqual,
+  sendAdminAuthChallenge,
+  renderAdminPage,
+});
 
 function getBaseUrl(req) {
   const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
