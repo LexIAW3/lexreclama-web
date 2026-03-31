@@ -288,18 +288,45 @@ ${configLines}${trackingBlock}
   ${renderGa4Snippet(nonce)}
 </head>
 <body>
-  <nav class="nav" aria-label="Navegación principal">
+  <a href="#main-content" class="skip-link">Ir al contenido principal</a>
+
+  <nav class="nav" id="main-nav" aria-label="Navegación principal">
     <div class="nav-inner">
-      <a href="/" class="logo" aria-label="LexReclama — inicio">LexReclama<span>.</span></a>
-      <div>
-        <a class="btn btn-sm" href="/reclamacion-deudas/"${canonicalPath.startsWith('/reclamacion-deudas/') ? ' aria-current="page"' : ''}>Deudas</a>
-        <a class="btn btn-sm" href="/clausulas-bancarias/"${canonicalPath.startsWith('/clausulas-bancarias/') ? ' aria-current="page"' : ''}>Cláusulas</a>
-        <a class="btn btn-sm" href="/recurrir-multas/"${canonicalPath.startsWith('/recurrir-multas/') ? ' aria-current="page"' : ''}>Multas</a>
-        <a class="btn btn-sm" href="/blog/"${canonicalPath.startsWith('/blog/') ? ' aria-current="page"' : ''}>Blog</a>
+      <a href="/" class="logo" aria-label="LexReclama — inicio">
+        <img src="/logo.svg" alt="LexReclama" class="logo-img" width="188" height="35" />
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="/reclamacion-deudas/"${canonicalPath.startsWith('/reclamacion-deudas/') ? ' aria-current="page"' : ''}>Reclamar deuda</a></li>
+        <li><a href="/clausulas-bancarias/"${canonicalPath.startsWith('/clausulas-bancarias/') ? ' aria-current="page"' : ''}>Cláusulas bancarias</a></li>
+        <li><a href="/reclamar-irph/"${canonicalPath.startsWith('/reclamar-irph/') ? ' aria-current="page"' : ''}>Reclamar IRPH</a></li>
+        <li><a href="/reclamar-tarjeta/"${canonicalPath.startsWith('/reclamar-tarjeta/') ? ' aria-current="page"' : ''}>Reclamar tarjeta revolving</a></li>
+        <li><a href="/recurrir-multas/"${canonicalPath.startsWith('/recurrir-multas/') ? ' aria-current="page"' : ''}>Recurrir multa</a></li>
+        <li><a href="/blog/"${canonicalPath.startsWith('/blog/') ? ' aria-current="page"' : ''}>Blog</a></li>
+        <li><a href="/contacto/"${canonicalPath.startsWith('/contacto/') ? ' aria-current="page"' : ''}>Contacto</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button type="button" class="nav-hamburger" id="nav-hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-mobile">
+          <span></span><span></span><span></span>
+        </button>
+        <a class="btn btn-sm btn-primary" href="/contacto/"${canonicalPath.startsWith('/contacto/') ? ' aria-current="page"' : ''}>Consulta gratuita</a>
       </div>
     </div>
   </nav>
-  <main id="content-root" class="container content-shell-main">
+
+  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-modal="true" aria-label="Menú de navegación" hidden>
+    <div class="nav-mobile-inner">
+      <a href="/reclamacion-deudas/"${canonicalPath.startsWith('/reclamacion-deudas/') ? ' aria-current="page"' : ''}>Reclamar deuda</a>
+      <a href="/clausulas-bancarias/"${canonicalPath.startsWith('/clausulas-bancarias/') ? ' aria-current="page"' : ''}>Cláusulas bancarias</a>
+      <a href="/reclamar-irph/"${canonicalPath.startsWith('/reclamar-irph/') ? ' aria-current="page"' : ''}>Reclamar IRPH</a>
+      <a href="/reclamar-tarjeta/"${canonicalPath.startsWith('/reclamar-tarjeta/') ? ' aria-current="page"' : ''}>Reclamar tarjeta revolving</a>
+      <a href="/recurrir-multas/"${canonicalPath.startsWith('/recurrir-multas/') ? ' aria-current="page"' : ''}>Recurrir multa</a>
+      <a href="/blog/"${canonicalPath.startsWith('/blog/') ? ' aria-current="page"' : ''}>Blog</a>
+      <a href="/contacto/"${canonicalPath.startsWith('/contacto/') ? ' aria-current="page"' : ''}>Contacto</a>
+      <a href="/contacto/" class="btn btn-primary"${canonicalPath.startsWith('/contacto/') ? ' aria-current="page"' : ''}>Consulta gratuita</a>
+    </div>
+  </div>
+
+  <main id="main-content" class="container content-shell-main">
     <section>
       <p class="eyebrow">${escapeHtml(intro)}</p>
       <h1 class="content-shell-h1">${escapeHtml(heading)}</h1>
@@ -319,6 +346,7 @@ ${configLines}${trackingBlock}
     </div>
   </footer>
   ${renderWhatsappButtonHtml()}
+  <script defer src="/app.min.js"></script>
 </body>
 </html>`;
   }

@@ -774,13 +774,31 @@ function createHeaderLink(link, currentPath) {
 }
 
 function initUnifiedHeaderNav() {
-  const navLinks = document.querySelector('.nav-links');
-  const navMobile = document.querySelector('.nav-mobile-inner');
-  const ctaDesktop = document.querySelector('.nav-actions a.btn');
-  const ctaMobile = navMobile?.querySelector('a.btn');
+  const navRoot = document.getElementById('main-nav') || document.querySelector('.nav');
+  const navLinks = navRoot?.querySelector('.nav-links');
+  const navActions = navRoot?.querySelector('.nav-actions');
+  const navMobile = document.getElementById('nav-mobile') || document.querySelector('.nav-mobile');
+  const hamburger = navActions?.querySelector('.nav-hamburger');
+  let navMobileInner = navMobile?.querySelector('.nav-mobile-inner');
+  if (navMobile && !navMobileInner) {
+    navMobileInner = document.createElement('div');
+    navMobileInner.className = 'nav-mobile-inner';
+    navMobile.innerHTML = '';
+    navMobile.appendChild(navMobileInner);
+  }
+  let ctaDesktop = navActions?.querySelector('a.btn');
+  const ctaMobile = navMobileInner?.querySelector('a.btn');
   const currentPath = normalizePathname(window.location.pathname || '/');
 
-  if (!navLinks || !navMobile) return;
+  if (!navLinks || !navMobileInner) return;
+  if (!ctaDesktop && navActions) {
+    ctaDesktop = document.createElement('a');
+    ctaDesktop.className = 'btn btn-sm btn-primary';
+    navActions.appendChild(ctaDesktop);
+  }
+  if (navActions && hamburger && ctaDesktop && navActions.firstElementChild !== hamburger) {
+    navActions.insertBefore(hamburger, ctaDesktop);
+  }
 
   const ctaDesktopHref = ctaDesktop?.getAttribute('href') || '/contacto/';
   const ctaDesktopLabel = ctaDesktop?.textContent?.trim() || 'Consulta gratuita';
@@ -818,7 +836,7 @@ function initUnifiedHeaderNav() {
     navLinks.appendChild(li);
   });
 
-  navMobile.innerHTML = '';
+  navMobileInner.innerHTML = '';
   const mobileServices = document.createElement('details');
   mobileServices.className = 'nav-mobile-services';
   if (HEADER_SERVICE_LINKS.some((item) => isCurrentRoute(currentPath, item.href))) {
@@ -835,10 +853,10 @@ function initUnifiedHeaderNav() {
   });
   mobileServices.appendChild(mobileSummary);
   mobileServices.appendChild(mobileServicesList);
-  navMobile.appendChild(mobileServices);
+  navMobileInner.appendChild(mobileServices);
 
   HEADER_PRIMARY_LINKS.forEach((link) => {
-    navMobile.appendChild(createHeaderLink(link, currentPath));
+    navMobileInner.appendChild(createHeaderLink(link, currentPath));
   });
 
   const mobileCta = document.createElement('a');
@@ -848,7 +866,7 @@ function initUnifiedHeaderNav() {
   if (isCurrentRoute(currentPath, mobileCta.href)) {
     mobileCta.setAttribute('aria-current', 'page');
   }
-  navMobile.appendChild(mobileCta);
+  navMobileInner.appendChild(mobileCta);
 
   if (ctaDesktop) {
     ctaDesktop.href = ctaDesktopHref;

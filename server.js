@@ -51,8 +51,12 @@ const { createRenderer } = require('./services/renderer');
 const { createPortalHandlers } = require('./handlers/portal');
 const { createLeadHandlers } = require('./handlers/leads');
 const { createCheckoutHandlers } = require('./handlers/checkout');
+const { createAdminHandlers } = require('./handlers/admin');
 const { validateAndAttachJsonBody, parseMultipartOrJsonBody } = require('./utils/bodyParser');
 const { detectTestLeadReason } = require('./utils/leads');
+const { createIdempotencyManager } = require('./utils/idempotency');
+const { createIndexNowService } = require('./services/indexnow');
+const { createBlogUtils, formatSlug } = require('./utils/blog');
 
 const PORT = Number(process.env.PORT) || 8080;
 const STATIC_DIR = __dirname;
@@ -130,12 +134,10 @@ const FETCH_TIMEOUT_OCR_MS   = 30 * 1000; // OCR upload — file transfer + proc
 const fetchWithTimeout = createFetchWithTimeout(FETCH_TIMEOUT_EXT_MS);
 const PENDING_CHECKOUT_TTL_MS = 6 * 60 * 60 * 1000;
 const COMPLETED_CHECKOUT_TTL_MS = 24 * 60 * 60 * 1000;
-const IDEMPOTENCY_WINDOW_MS = 60 * 1000;
 const pendingCheckoutLeads = new Map();
 const completedCheckoutLeads = new Map();
 const recentLeadSubmissions = new Map();
 const recentCheckoutCreations = new Map();
-const idempotencyInFlight = new Map();
 const PORTAL_CODE_TTL_MS = 10 * 60 * 1000;
 const PORTAL_SESSION_TTL_MS = 4 * 60 * 60 * 1000;
 const PORTAL_SESSION_COOKIE_NAME = 'lex_portal_session';
@@ -279,67 +281,20 @@ const {
   parseBody: parseMultipartOrJsonBody,
 });
 
-function logAdminAudit(req, outcome, detail = '') {
-  const clientIp = getClientIp(req);
-  const forwardedFor = String(req.headers['x-forwarded-for'] || '').trim();
-  const userAgent = String(req.headers['user-agent'] || '').replace(/[\r\n\t]+/g, ' ').trim();
-  const safeDetail = String(detail || '').replace(/[\r\n\t]+/g, ' ').trim();
-  const safeXff = forwardedFor.replace(/[\r\n\t]+/g, ' ').trim();
-  const detailPart = safeDetail ? ` detail=${safeDetail}` : '';
-  const xffPart = safeXff ? ` xff="${safeXff}"` : '';
-  console.log(`[audit][admin] outcome=${outcome} ip=${clientIp} method=${req.method} path=${req.url}${detailPart}${xffPart} ua="${userAgent}"`);
-}
 
 const {
   consumeRateLimit,
   sweepRateLimitEntries,
 } = createRateLimiter({ defaultWindowMs: RATE_LIMIT_WINDOW_MS });
 
-function sweepIdempotencyMaps() {
-  const now = Date.now();
-  for (const [key, entry] of recentLeadSubmissions) {
-    if (now - entry.createdAtMs > IDEMPOTENCY_WINDOW_MS) {
-      recentLeadSubmissions.delete(key);
-    }
-  }
-  for (const [key, entry] of recentCheckoutCreations) {
-    if (now - entry.createdAtMs > IDEMPOTENCY_WINDOW_MS) {
-      recentCheckoutCreations.delete(key);
-    }
-  }
-}
+const {
+  sweepIdempotencyMaps,
+  resolveIdempotentRequest,
+} = createIdempotencyManager({
+  maps: [recentLeadSubmissions, recentCheckoutCreations],
+  windowMs: 60 * 1000,
+});
 
-async function resolveIdempotentRequest({ scope, key, store, execute }) {
-  if (!key) {
-    return { value: await execute(), deduplicated: false };
-  }
-
-  sweepIdempotencyMaps();
-  const cached = store.get(key);
-  if (cached) {
-    return { value: cached.payload, deduplicated: true };
-  }
-
-  const inFlightKey = `${scope}:${key}`;
-  if (idempotencyInFlight.has(inFlightKey)) {
-    const value = await idempotencyInFlight.get(inFlightKey);
-    return { value, deduplicated: true };
-  }
-
-  const pending = (async () => {
-    const value = await execute();
-    store.set(key, { createdAtMs: Date.now(), payload: value });
-    return value;
-  })();
-
-  idempotencyInFlight.set(inFlightKey, pending);
-  try {
-    const value = await pending;
-    return { value, deduplicated: false };
-  } finally {
-    idempotencyInFlight.delete(inFlightKey);
-  }
-}
 const PAID_CLAIM_TYPES = {
   deuda: {
     label: 'Reclamación de deuda impagada',
@@ -426,36 +381,7 @@ function normalizePathname(pathname) {
   return pathname.endsWith('/') ? pathname : `${pathname}/`;
 }
 
-const BLOG_ARTICLES_CACHE_TTL_MS = 60 * 1000; // 60 s
-let blogArticlesCache = null;
-let blogArticlesCachedAtMs = 0;
-
-function listBlogArticles() {
-  const now = Date.now();
-  if (blogArticlesCache && now - blogArticlesCachedAtMs < BLOG_ARTICLES_CACHE_TTL_MS) {
-    return blogArticlesCache;
-  }
-  try {
-    const entries = fs.readdirSync(BLOG_DIR, { withFileTypes: true });
-    const result = entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name)
-      .filter((slug) => fs.existsSync(path.join(BLOG_DIR, slug, 'index.html')))
-      .sort();
-    blogArticlesCache = result;
-    blogArticlesCachedAtMs = now;
-    return result;
-  } catch {
-    return [];
-  }
-}
-
-function formatSlug(slug) {
-  return slug
-    .split('-')
-    .map((part) => (part ? part[0].toUpperCase() + part.slice(1) : part))
-    .join(' ');
-}
+const { listBlogArticles } = createBlogUtils({ fs, path, blogDir: BLOG_DIR });
 
 const buildSitemapXml = createSitemapBuilder({
   siteUrl: SITE_URL,
