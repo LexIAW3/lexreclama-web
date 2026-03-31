@@ -6291,3 +6291,22 @@ html[data-theme='light'] .area-card {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Infografía section ──────────────────────────────────── */
+.infografia-section {
+  margin: 0;
+  text-align: center;
+}
+.infografia-section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: block;
+  margin: 0 auto;
+}
+.infografia-section figcaption {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
