@@ -284,7 +284,7 @@ const {
   listBlogArticles, formatSlug,
 });
 
-const { submitIndexNow, normalizeIndexNowUrl } = createIndexNowService({
+const { submitIndexNow } = createIndexNowService({
   indexNowKey: INDEXNOW_KEY, siteUrl: SITE_URL,
   indexNowEndpoint: INDEXNOW_ENDPOINT, fetchWithTimeout,
 });
@@ -342,7 +342,7 @@ module.exports = {
   fetchWithTimeout, sendCompressed, validateAndAttachJsonBody,
   getOrCreateCsrfToken, validateCsrfToken, consumeRateLimit,
   injectRuntimeSnippets, renderBlogIndex, renderPillarPage, handleLegalPage, send404,
-  submitIndexNow, normalizeIndexNowUrl, buildSitemapXml,
+  submitIndexNow, buildSitemapXml,
   isAdminIpAllowed, isAdminAuthorized, safeEqual, sendAdminAuthChallenge,
   logAdminAudit, handleAdmin,
   handleCreateCheckoutSession, handleConfirmCheckout,
