@@ -656,8 +656,9 @@ html[data-theme='light'] .topbar {
   -webkit-backdrop-filter: blur(22px) saturate(1.6);
 }
 
+/* index.html y blog/service pages (renderContentShell): activa con clase .open */
 .nav-mobile.open { display: block; }
-/* Support para el patrón dialog/hidden (páginas nuevas): visible cuando se elimina [hidden] */
+/* Legacy: soporte residual patrón role="dialog" — no usado en nuevas páginas */
 .nav-mobile[role="dialog"]:not([hidden]) { display: block; }
 
 .nav-mobile-inner {

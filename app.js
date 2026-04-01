@@ -302,6 +302,7 @@ function initMobileNav() {
   function setOpen(open) {
     hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
     hamburger.classList.toggle('open', open);
+    mobileNav.classList.toggle('open', open);
     if (open) {
       mobileNav.removeAttribute('hidden');
     } else {
