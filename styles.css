@@ -3766,7 +3766,8 @@ h1.article-h1 {
   backdrop-filter: blur(8px) saturate(1.3);
 }
 
-.cta-inline h3 {
+.cta-inline h3,
+.cta-inline .cta-title {
   color: var(--text);
   margin: 0 0 8px;
   font-size: 1.2rem;
