@@ -313,7 +313,7 @@ ${configLines}${trackingBlock}
     </div>
   </nav>
 
-  <div class="nav-mobile" id="nav-mobile" role="dialog" aria-modal="true" aria-label="Menú de navegación" hidden>
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Menú móvil" hidden>
     <div class="nav-mobile-inner">
       <a href="/reclamacion-deudas/"${canonicalPath.startsWith('/reclamacion-deudas/') ? ' aria-current="page"' : ''}>Reclamar deuda</a>
       <a href="/clausulas-bancarias/"${canonicalPath.startsWith('/clausulas-bancarias/') ? ' aria-current="page"' : ''}>Cláusulas bancarias</a>
@@ -324,7 +324,7 @@ ${configLines}${trackingBlock}
       <a href="/contacto/"${canonicalPath.startsWith('/contacto/') ? ' aria-current="page"' : ''}>Contacto</a>
       <a href="/contacto/" class="btn btn-primary"${canonicalPath.startsWith('/contacto/') ? ' aria-current="page"' : ''}>Consulta gratuita</a>
     </div>
-  </div>
+  </nav>
 
   <main id="main-content" class="container content-shell-main">
     <section>
