@@ -306,7 +306,7 @@ function getBaseUrl(req) {
 const {
   createStripeCheckoutSession,
   readStripeCheckoutSession,
-  sweepPendingCheckoutLeads,
+  sweepPendingCheckoutLeads: sweepStripeCheckoutLeads,
 } = createStripeService({
   stripeSecretKey: STRIPE_SECRET_KEY, stripeApi: STRIPE_API,
   fetchWithTimeout, paidClaimTypes: PAID_CLAIM_TYPES,
@@ -318,7 +318,8 @@ const {
 const { handleCreateCheckoutSession, handleConfirmCheckout } = createCheckoutHandlers({
   normalizeLeadPayload, requiresUpfrontPayment, resolveIdempotentRequest,
   recentCheckoutCreations, pendingCheckoutLeads, completedCheckoutLeads,
-  createStripeCheckoutSession, readStripeCheckoutSession, sweepPendingCheckoutLeads,
+  createStripeCheckoutSession, readStripeCheckoutSession,
+  sweepPendingCheckoutLeads: sweepStripeCheckoutLeads,
   createIssueForLead, paidClaimTypes: PAID_CLAIM_TYPES,
 });
 
@@ -331,6 +332,7 @@ function sweepAllMaps() {
     if (!activeCaseIds.has(caseId)) portalMessages.delete(caseId);
   }
   sweepRateLimitEntries();
+  sweepStripeCheckoutLeads();
 }
 
 // ── Exports ───────────────────────────────────────────────────────────
