@@ -246,7 +246,7 @@ body:has(#portal-app[hidden]) .portal-footer {
 
 /* ── Form elements ─────────────────────────────────────────────────────────── */
 
-label {
+label, .field-label {
   display: block;
   font-size: 0.88rem;
   font-weight: 600;
