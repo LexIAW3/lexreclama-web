@@ -109,6 +109,8 @@ const BLOCKED_PREFIXES = [
   '/handlers/', '/handlers',
   '/config/', '/config',
   '/node_modules/', '/node_modules',
+  '/nginx/', '/nginx',
+  '/pages/', '/pages',
 ];
 const BLOCKED_FILENAMES = new Set([
   'server.js', 'bootstrap.js', 'package.json', 'package-lock.json',
