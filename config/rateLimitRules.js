@@ -18,6 +18,7 @@ const RATE_LIMIT_RULES = {
   '/api/portal/cases': { scope: 'portal-cases', max: 60 },
   '/api/portal/documents': { scope: 'portal-documents', max: 80 },
   '/api/portal/me': { scope: 'portal-me', max: 120 },
+  '/api/indexnow/reindex': { scope: 'indexnow-reindex', max: 20 },
   '/robots.txt': { scope: 'robots-txt', max: 300 },
   '/sitemap.xml': { scope: 'sitemap-xml', max: 240 },
   '/dynamic-pages': { scope: 'dynamic-pages', max: 180 },

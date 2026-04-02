@@ -32,7 +32,7 @@ async function routeIndexNow({
     return true;
   }
   const clientIp = getClientIp(req);
-  const rate = consumeRateLimit(rateLimitRules['/api/lead'], clientIp);
+  const rate = consumeRateLimit(rateLimitRules['/api/indexnow/reindex'], clientIp);
   if (rate.limited) {
     res.writeHead(429, { 'Content-Type': 'application/json', 'Retry-After': String(rate.retryAfterSec) });
     res.end(JSON.stringify({ error: 'Demasiadas solicitudes' }));
