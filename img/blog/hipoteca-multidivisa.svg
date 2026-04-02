@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#09090e"/>
+      <stop offset="100%" style="stop-color:#0f0f18"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5b72ff"/>
+      <stop offset="100%" style="stop-color:#38d9ff"/>
+    </linearGradient>
+    <linearGradient id="acc2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5b72ff;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#38d9ff;stop-opacity:0.12"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Grid dots -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="1" cy="1" r="1" fill="rgba(255,255,255,0.025)"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <!-- Accent glow -->
+  <ellipse cx="600" cy="280" rx="300" ry="160" fill="url(#acc2)" filter="url(#glow)"/>
+
+  <!-- House outline (center) -->
+  <!-- Roof -->
+  <polygon points="600,105 480,205 720,205" fill="none" stroke="url(#acc)" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Walls -->
+  <rect x="500" y="205" width="200" height="155" rx="4" fill="rgba(22,22,32,0.9)" stroke="rgba(91,114,255,0.3)" stroke-width="2"/>
+  <!-- Door -->
+  <rect x="568" y="298" width="64" height="62" rx="6" fill="rgba(91,114,255,0.1)" stroke="rgba(91,114,255,0.25)" stroke-width="1.5"/>
+  <!-- Windows -->
+  <rect x="515" y="228" width="48" height="38" rx="5" fill="rgba(56,217,255,0.1)" stroke="rgba(56,217,255,0.2)" stroke-width="1.5"/>
+  <rect x="637" y="228" width="48" height="38" rx="5" fill="rgba(56,217,255,0.1)" stroke="rgba(56,217,255,0.2)" stroke-width="1.5"/>
+  <!-- Roof cap -->
+  <circle cx="600" cy="105" r="8" fill="url(#acc)"/>
+
+  <!-- Currency exchange arrows (left side of house) -->
+  <!-- Euro symbol -->
+  <circle cx="400" cy="230" r="36" fill="rgba(91,114,255,0.1)" stroke="rgba(91,114,255,0.3)" stroke-width="1.5"/>
+  <text x="400" y="238" font-family="'Space Grotesk', Arial, sans-serif" font-size="26" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">€</text>
+
+  <!-- Arrow right (exchange) -->
+  <path d="M448,218 L478,218" stroke="#ff5264" stroke-width="2.5" stroke-dasharray="5,3"/>
+  <polygon points="475,213 485,218 475,223" fill="#ff5264"/>
+  <path d="M478,242 L448,242" stroke="#ff5264" stroke-width="2.5" stroke-dasharray="5,3"/>
+  <polygon points="451,237 441,242 451,247" fill="#ff5264"/>
+
+  <!-- CHF symbol (right side) -->
+  <circle cx="800" cy="230" r="36" fill="rgba(255,82,100,0.1)" stroke="rgba(255,82,100,0.3)" stroke-width="1.5"/>
+  <text x="800" y="238" font-family="'Space Grotesk', Arial, sans-serif" font-size="19" font-weight="700" fill="#ff5264" text-anchor="middle" dominant-baseline="middle">CHF</text>
+
+  <!-- Yen symbol below CHF -->
+  <circle cx="800" cy="318" r="28" fill="rgba(255,82,100,0.08)" stroke="rgba(255,82,100,0.2)" stroke-width="1.5"/>
+  <text x="800" y="326" font-family="'Space Grotesk', Arial, sans-serif" font-size="22" font-weight="700" fill="#ff5264" text-anchor="middle" dominant-baseline="middle">¥</text>
+
+  <!-- Warning badge under house -->
+  <rect x="468" y="378" width="264" height="52" rx="12" fill="rgba(255,82,100,0.1)" stroke="#ff5264" stroke-width="1.5"/>
+  <text x="600" y="400" font-family="'Space Grotesk', Arial, sans-serif" font-size="13" font-weight="700" fill="#ff5264" text-anchor="middle" dominant-baseline="middle">RIESGO CAMBIARIO NO INFORMADO</text>
+  <text x="600" y="420" font-family="'Space Grotesk', Arial, sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">cláusula abusiva · TJUE 2017</text>
+
+  <!-- Left stat card -->
+  <rect x="80" y="240" width="290" height="165" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="80" y="240" width="290" height="5" rx="3" fill="url(#acc)"/>
+  <text x="225" y="310" font-family="'Space Grotesk', Arial, sans-serif" font-size="46" font-weight="900" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">TJUE</text>
+  <text x="225" y="350" font-family="'Space Grotesk', Arial, sans-serif" font-size="14" font-weight="700" fill="#5b72ff" text-anchor="middle" dominant-baseline="middle">2017</text>
+  <text x="225" y="382" font-family="'Space Grotesk', Arial, sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">declaró abusiva la cláusula</text>
+
+  <!-- Right stat card -->
+  <rect x="830" y="240" width="290" height="165" rx="16" fill="rgba(22,22,32,0.95)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <rect x="830" y="240" width="290" height="5" rx="3" fill="#00d48a"/>
+  <text x="975" y="308" font-family="'Space Grotesk', Arial, sans-serif" font-size="36" font-weight="900" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">NULIDAD</text>
+  <text x="975" y="348" font-family="'Space Grotesk', Arial, sans-serif" font-size="13" font-weight="700" fill="#00d48a" text-anchor="middle" dominant-baseline="middle">POSIBLE</text>
+  <text x="975" y="382" font-family="'Space Grotesk', Arial, sans-serif" font-size="11" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">recupera cantidades pagadas de más</text>
+
+  <!-- Title -->
+  <text x="600" y="547" font-family="'Space Grotesk', Arial, sans-serif" font-size="28" font-weight="700" fill="#eeeef2" text-anchor="middle" dominant-baseline="middle">Hipoteca Multidivisa: Nulidad y Reclamación</text>
+  <text x="600" y="585" font-family="'Space Grotesk', Arial, sans-serif" font-size="15" font-weight="normal" fill="#9292a8" text-anchor="middle" dominant-baseline="middle">Francos suizos o yenes — recupera lo pagado de más · LexReclama</text>
+</svg>
