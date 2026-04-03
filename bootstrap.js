@@ -115,6 +115,7 @@ const BLOCKED_PREFIXES = [
 const BLOCKED_FILENAMES = new Set([
   'server.js', 'bootstrap.js', 'package.json', 'package-lock.json',
   'start.sh', 'ensure-running.sh', 'legal-texts.md', 'logo-preview.html', 'design-system.html',
+  'vercel.json',
 ]);
 
 // ── In-memory state ───────────────────────────────────────────────────
